@@ -1,15 +1,58 @@
+# Ignore Mike Rapp #
+###################
+
+# Compiled Object files, Static and Dynamic libs (Shared Objects) #
+###################
 # Binaries for programs and plugins
+*.com
+*.class
+*.dll
 *.exe
 *.exe~
-*.dll
+*.o
+*.suo
 *.so
 *.dylib
-
 # Test binary, built with `go test -c`
 *.test
-
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+bin
+*.a
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
+# Folders
+_obj
+obj
+
+
+
+*.cgo1.go
+*.cgo2.c
+_cgo_defun.c
+_cgo_gotypes.go
+_cgo_export.*
+
+*.prof
+
+
+# Ignore GoLand #
+.idea
+*.iml
+
+#Ignore VSCode
+.vscode
+
+
+
+#other
+*.gpState
+*.user
+# security / ssl
+*.pem
+
+# OS generated files #
+######################
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db

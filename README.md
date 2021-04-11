@@ -13,4 +13,21 @@ Stay tuned ...
 
 ## Release Notes
 
+Original Release Date: 2021-02-10 01:17:00 USA-CST
+
 [Release Notes](./releasenotes.md)
+
+## License
+
+Use of this source code is governed by the (open-source) MIT-style license which can be found in the LICENSE file
+located in this directory.
+
+[MIT License](./LICENSE)
+
+## Comments And Questions
+
+Send questions or comments to:
+
+``` text
+    mike.go@paladinacs.net
+```
