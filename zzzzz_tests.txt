@@ -1,0 +1,96 @@
+=== RUN   TestErrPref_FmtStr_000100
+--- PASS: TestErrPref_FmtStr_000100 (0.00s)
+=== RUN   TestErrPref_FmtStr_000200
+--- PASS: TestErrPref_FmtStr_000200 (0.00s)
+=== RUN   TestErrPref_FmtStr_000300
+--- PASS: TestErrPref_FmtStr_000300 (0.00s)
+=== RUN   TestErrPref_FmtStr_000400
+--- PASS: TestErrPref_FmtStr_000400 (0.00s)
+=== RUN   TestErrPref_EPref_000100
+--- PASS: TestErrPref_EPref_000100 (0.00s)
+=== RUN   TestErrPref_EPref_000200
+--- PASS: TestErrPref_EPref_000200 (0.00s)
+=== RUN   TestErrPref_EPref_000300
+--- PASS: TestErrPref_EPref_000300 (0.00s)
+=== RUN   TestErrPref_EPref_000400
+--- PASS: TestErrPref_EPref_000400 (0.00s)
+=== RUN   TestErrPref_EPrefCtx_000100
+--- PASS: TestErrPref_EPrefCtx_000100 (0.00s)
+=== RUN   TestErrPref_EPrefCtx_000200
+--- PASS: TestErrPref_EPrefCtx_000200 (0.00s)
+=== RUN   TestErrPref_EPrefCtx_000300
+--- PASS: TestErrPref_EPrefCtx_000300 (0.00s)
+=== RUN   TestErrPref_EPrefCtx_000400
+--- PASS: TestErrPref_EPrefCtx_000400 (0.00s)
+=== RUN   TestErrPref_EPrefOld_000100
+--- PASS: TestErrPref_EPrefOld_000100 (0.00s)
+=== RUN   TestErrPref_EPrefOld_000200
+--- PASS: TestErrPref_EPrefOld_000200 (0.00s)
+=== RUN   TestErrPref_EPrefOld_000300
+--- PASS: TestErrPref_EPrefOld_000300 (0.00s)
+=== RUN   TestErrPref_GetLastEPref_000100
+--- PASS: TestErrPref_GetLastEPref_000100 (0.00s)
+=== RUN   TestErrPref_GetMaxErrPrefTextLineLength_000100
+--- PASS: TestErrPref_GetMaxErrPrefTextLineLength_000100 (0.00s)
+=== RUN   TestErrPref_SetMaxErrPrefTextLineLength_000100
+--- PASS: TestErrPref_SetMaxErrPrefTextLineLength_000100 (0.00s)
+=== RUN   TestErrPref_SetMaxErrPrefTextLineLengthToDefault_000100
+--- PASS: TestErrPref_SetMaxErrPrefTextLineLengthToDefault_000100 (0.00s)
+=== RUN   TestErrPref_SetCtxt_000100
+--- PASS: TestErrPref_SetCtxt_000100 (0.00s)
+=== RUN   TestErrPref_SetCtxt_000200
+--- PASS: TestErrPref_SetCtxt_000200 (0.00s)
+=== RUN   TestErrPref_SetCtxt_000300
+--- PASS: TestErrPref_SetCtxt_000300 (0.00s)
+=== RUN   TestNewErrPref_Multiple_000100
+--- PASS: TestNewErrPref_Multiple_000100 (0.00s)
+=== RUN   TestNewErrPref_Multiple_000200
+--- PASS: TestNewErrPref_Multiple_000200 (0.00s)
+=== RUN   TestNewErrPref_Multiple_000300
+--- PASS: TestNewErrPref_Multiple_000300 (0.00s)
+=== RUN   TestErrPrefixDto_Multiple_000100
+--- PASS: TestErrPrefixDto_Multiple_000100 (0.00s)
+=== RUN   TestErrPrefixDto_Multiple_000200
+--- PASS: TestErrPrefixDto_Multiple_000200 (0.00s)
+=== RUN   TestErrPrefixDto_Multiple_000300
+--- PASS: TestErrPrefixDto_Multiple_000300 (0.00s)
+=== RUN   TestErrPrefixDto_NewEPrefOld_000100
+--- PASS: TestErrPrefixDto_NewEPrefOld_000100 (0.00s)
+=== RUN   TestErrPrefixDto_NewEPrefOld_000200
+--- PASS: TestErrPrefixDto_NewEPrefOld_000200 (0.00s)
+=== RUN   TestErrPrefixDto_SetCtx_000100
+--- PASS: TestErrPrefixDto_SetCtx_000100 (0.00s)
+=== RUN   TestErrPrefixDto_SetCtx_000200
+--- PASS: TestErrPrefixDto_SetCtx_000200 (0.00s)
+=== RUN   TestErrPrefixDto_SetCtx_000300
+--- PASS: TestErrPrefixDto_SetCtx_000300 (0.00s)
+=== RUN   TestErrPrefixDto_SetEPref_000100
+--- PASS: TestErrPrefixDto_SetEPref_000100 (0.00s)
+=== RUN   TestErrPrefixDto_SetEPref_000200
+--- PASS: TestErrPrefixDto_SetEPref_000200 (0.00s)
+=== RUN   TestErrPrefixDto_SetEPref_000300
+--- PASS: TestErrPrefixDto_SetEPref_000300 (0.00s)
+=== RUN   TestErrPrefixDto_SetEPref_000400
+--- PASS: TestErrPrefixDto_SetEPref_000400 (0.00s)
+=== RUN   TestErrPrefixDto_SetEPrefCollection000100
+--- PASS: TestErrPrefixDto_SetEPrefCollection000100 (0.00s)
+=== RUN   TestErrPrefixDto_SetEPrefCollection000200
+--- PASS: TestErrPrefixDto_SetEPrefCollection000200 (0.00s)
+=== RUN   TestErrPrefixDto_SetEPrefCtx_000100
+--- PASS: TestErrPrefixDto_SetEPrefCtx_000100 (0.00s)
+=== RUN   TestErrPrefixDto_SetEPrefCtx_000200
+--- PASS: TestErrPrefixDto_SetEPrefCtx_000200 (0.00s)
+=== RUN   TestErrPrefixDto_SetEPrefCtx_000300
+--- PASS: TestErrPrefixDto_SetEPrefCtx_000300 (0.00s)
+=== RUN   TestErrPrefixDto_SetEPrefCtx_000400
+--- PASS: TestErrPrefixDto_SetEPrefCtx_000400 (0.00s)
+=== RUN   TestErrPrefixDto_SetIsLastLineTermWithNewLine_000100
+--- PASS: TestErrPrefixDto_SetIsLastLineTermWithNewLine_000100 (0.00s)
+=== RUN   TestErrPrefixDto_SetMaxErrPrefTextLineLength_000100
+--- PASS: TestErrPrefixDto_SetMaxErrPrefTextLineLength_000100 (0.00s)
+=== RUN   TestErrPrefixDto_String_000100
+--- PASS: TestErrPrefixDto_String_000100 (0.00s)
+=== RUN   TestErrPrefixDto_String_000200
+--- PASS: TestErrPrefixDto_String_000200 (0.00s)
+PASS
+ok  	github.com/MikeAustin71/errprefops/errpref	1.407s
