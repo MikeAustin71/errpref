@@ -1,8 +1,23 @@
-# ErrPref Release Notes Version 1.3.0
+# ErrPref Release Notes Version 1.4.0
 
 This version of ***ErrPref*** was compiled and tested using Go 1.15.8.
 
 This version supports ***Go*** modules.
+
+## Version 1.4.0
+
+Original Release Date: 2021-02-16 16:59:00 USA CST
+
+1. Modified the interface IErrorPrefix. Removed references to ErrorPrefixInfo.
+   
+2. Added 'Z' methods which return an ErrPrefixDto by value.
+   - ZCtx()
+   - ZCtxEmpty()
+   - ZEPref()
+   - ZEPrefCtx()
+   - ZEPrefOld()
+
+3. Added tests
 
 ## Version 1.3.0
 
