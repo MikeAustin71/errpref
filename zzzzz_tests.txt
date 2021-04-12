@@ -197,4 +197,4 @@
 === RUN   TestErrPrefixDto_CallSeries01_000100
 --- PASS: TestErrPrefixDto_CallSeries01_000100 (0.00s)
 PASS
-ok  	github.com/MikeAustin71/errpref	0.808s
+ok  	github.com/MikeAustin71/errpref	3.532s

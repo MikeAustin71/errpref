@@ -1,8 +1,16 @@
-# ErrPref Release Notes Version 1.5.0
+# ErrPref Release Notes Version 1.5.1
 
 This version of ***ErrPref*** was compiled and tested using Go 1.16.3.
 
 This version supports ***Go*** modules.
+
+## Version 1.5.1
+
+Original Release Date: 2021-04-07 21:39:00 USA CST
+
+Compiled and Tested: Go 1.16.3
+
+1. Fixed Go Mod File to assign correct version.
 
 ## Version 1.5.0
 
@@ -13,9 +21,9 @@ Compiled and Tested: Go 1.16.3
 1. Modified interface IErrorPrefix. Added Methods:
    - GetEPrefStrings() [][2]string
    - SetEPrefStrings(twoDStrArray [][2]string)
-   
+
 2. Added interface IBuilderErrorPrefix
-   
+
 3. Added interface IBasicErrorPrefix
 
 4. Added methods on Type ErrPrefixDto

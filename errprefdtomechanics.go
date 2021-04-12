@@ -290,10 +290,12 @@ func (ePrefDtoMech *errPrefixDtoMechanics) setFromEmptyInterface(
 		"'iEPref' IS NOT convertible to one of the seven\n"+
 		"supported types listed as follows:\n"+
 		"    nil\n"+
+		"    fmt.Stringer\n" +
 		"    string\n"+
-		"    fmt.Stringer\n"+
 		"    []string\n"+
-		"    [][2]string\n"+
+		"    [][2]string\n" +
+		"    strings.Builder" +
+		"    *strings.Builder" +
 		"    ErrPrefixDto\n"+
 		"    *ErrPrefixDto\n"+
 		"    IBasicErrorPrefix\n",
