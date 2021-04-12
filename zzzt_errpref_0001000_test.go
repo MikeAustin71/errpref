@@ -4,6 +4,177 @@ import (
 	"testing"
 )
 
+func TestErrPrefixDto_AddEPrefStrings_000100(t *testing.T) {
+
+	var twoDSlice01 [][2]string
+
+	twoDSlice01 = make([][2]string, 14)
+
+	twoDSlice01[0][0] = "Tx1.Something()"
+	twoDSlice01[0][1] = ""
+
+	twoDSlice01[1][0] = "Tx2.SomethingElse()"
+	twoDSlice01[1][1] = ""
+
+	twoDSlice01[2][0] = "Tx3.DoSomething()"
+	twoDSlice01[2][1] = ""
+
+	twoDSlice01[3][0] = "Tx4()"
+	twoDSlice01[3][1] = ""
+
+	twoDSlice01[4][0] = "Tx5()"
+	twoDSlice01[4][1] = ""
+
+	twoDSlice01[5][0] = "Tx6.DoSomethingElse()"
+	twoDSlice01[5][1] = ""
+
+	twoDSlice01[6][0] = "Tx7.TrySomethingNew()"
+	twoDSlice01[6][1] = "something->newSomething"
+
+	twoDSlice01[7][0] = "Tx8.TryAnyCombination()"
+	twoDSlice01[7][1] = ""
+
+	twoDSlice01[8][0] = "Tx9.TryAHammer()"
+	twoDSlice01[8][1] = "x->y"
+
+	twoDSlice01[9][0] = "Tx10.X()"
+	twoDSlice01[9][1] = ""
+
+	twoDSlice01[10][0] = "Tx11.TryAnything()"
+	twoDSlice01[10][1] = ""
+
+	twoDSlice01[11][0] = "Tx12.TryASalad()"
+	twoDSlice01[11][1] = ""
+
+	twoDSlice01[12][0] = "Tx13.SomeFabulousAndComplexStuff()"
+	twoDSlice01[12][1] = ""
+
+	twoDSlice01[13][0] = "Tx14.MoreAwesomeGoodness"
+	twoDSlice01[13][1] = "A=7 B=8 C=9"
+
+	var twoDSlice02 [][2]string
+
+	twoDSlice02 = make([][2]string, 14)
+
+	twoDSlice02[0][0] = "Tx1.TryBeer()"
+	twoDSlice02[0][1] = ""
+
+	twoDSlice02[1][0] = "Tx2.TryMescal()"
+	twoDSlice02[1][1] = ""
+
+	twoDSlice02[2][0] = "Tx3.TryWhiskey()"
+	twoDSlice02[2][1] = ""
+
+	twoDSlice02[3][0] = "Tx4.TryMoonShine()"
+	twoDSlice02[3][1] = ""
+
+	twoDSlice02[4][0] = "Tx5.TryScotch()"
+	twoDSlice02[4][1] = ""
+
+	twoDSlice02[5][0] = "Tx6.TryWine()"
+	twoDSlice02[5][1] = ""
+
+	twoDSlice02[6][0] = "Tx7.TryBrandy()"
+	twoDSlice02[6][1] = "something->newSomething"
+
+	twoDSlice02[7][0] = "Tx8.TryCognac()"
+	twoDSlice02[7][1] = ""
+
+	twoDSlice02[8][0] = "Tx9.TryAle()"
+	twoDSlice02[8][1] = "x->y"
+
+	twoDSlice02[9][0] = "Tx10.Vodka()"
+	twoDSlice02[9][1] = ""
+
+	twoDSlice02[10][0] = "Tx11.TryRum()"
+	twoDSlice02[10][1] = ""
+
+	twoDSlice02[11][0] = "Tx12.TryBourbon()"
+	twoDSlice02[11][1] = ""
+
+	twoDSlice02[12][0] = "Tx13.TryTequila()"
+	twoDSlice02[12][1] = ""
+
+	twoDSlice02[13][0] = "Tx14.TryWater"
+	twoDSlice02[13][1] = "A=7 B=8 C=9"
+
+	var ePDto1, ePDto3 *ErrPrefixDto
+	var err error
+
+	ePDto1,
+		err = ErrPrefixDto{}.NewIEmpty(
+		twoDSlice01,
+		"",
+		"")
+
+	if err != nil {
+		t.Errorf("Unexpected error return from\n"+
+			"ErrPrefixDto{}.NewIEmpty(twoDSlice01)\n"+
+			"%v\n", err.Error())
+
+		return
+	}
+
+	ePDto1.AddEPrefStrings(twoDSlice02)
+
+	ePDto1.SetMaxTextLineLen(40)
+
+	var twoDSlice03 [][2]string
+
+	twoDSlice03 = make([][2]string,
+		len(twoDSlice01)+len(twoDSlice02))
+
+	copy(twoDSlice03[:len(twoDSlice01)],
+		twoDSlice01[:])
+
+	copy(twoDSlice03[len(twoDSlice01):],
+		twoDSlice02[:])
+
+	ePDto3,
+		err = ErrPrefixDto{}.NewIEmpty(
+		twoDSlice03,
+		"",
+		"")
+
+	if err != nil {
+		t.Errorf("Unexpected error return from\n"+
+			"ErrPrefixDto{}.NewIEmpty(twoDSlice03)\n"+
+			"%v\n", err.Error())
+
+		return
+	}
+
+	ePDto3.SetMaxTextLineLen(40)
+
+	expectedStr := ErrPref{}.ConvertNonPrintableChars(
+		[]rune(ePDto3.String()),
+		true)
+
+	actualStr := ErrPref{}.ConvertNonPrintableChars(
+		[]rune(ePDto1.String()),
+		true)
+
+	if expectedStr != actualStr {
+		t.Errorf("Error: Expected expectedStr == actualStr\n"+
+			"Instead:\n"+
+			"expectedStr=\n%v\n\n"+
+			"actualStr=\n%v\n\n",
+			expectedStr,
+			actualStr)
+		return
+	}
+
+	if !ePDto1.Equal(ePDto3) {
+		t.Errorf("Error: Expected ePDto1 == ePDto3\n"+
+			"HOWEVER, THEY ARE NOT EQUAL!!\n"+
+			"ePDto1.String()=\n%v\n\n"+
+			"ePDto3.String()=\n%v\n\n",
+			ePDto1.String(),
+			ePDto3.String())
+	}
+
+}
+
 func TestErrPref_FmtStr_000100(t *testing.T) {
 
 	ErrPref{}.SetMaxErrPrefTextLineLength(40)
@@ -1003,6 +1174,166 @@ func TestNewErrPref_Multiple_000300(t *testing.T) {
 			"Instead, Actual Result == '%v'\n",
 			expectedResult,
 			actualResult)
+	}
+
+}
+
+func TestErrPrefixDto_SetEPrefStrings_000100(t *testing.T) {
+
+	var twoDSlice01 [][2]string
+
+	twoDSlice01 = make([][2]string, 14)
+
+	twoDSlice01[0][0] = "Tx1.Something()"
+	twoDSlice01[0][1] = ""
+
+	twoDSlice01[1][0] = "Tx2.SomethingElse()"
+	twoDSlice01[1][1] = ""
+
+	twoDSlice01[2][0] = "Tx3.DoSomething()"
+	twoDSlice01[2][1] = ""
+
+	twoDSlice01[3][0] = "Tx4()"
+	twoDSlice01[3][1] = ""
+
+	twoDSlice01[4][0] = "Tx5()"
+	twoDSlice01[4][1] = ""
+
+	twoDSlice01[5][0] = "Tx6.DoSomethingElse()"
+	twoDSlice01[5][1] = ""
+
+	twoDSlice01[6][0] = "Tx7.TrySomethingNew()"
+	twoDSlice01[6][1] = "something->newSomething"
+
+	twoDSlice01[7][0] = "Tx8.TryAnyCombination()"
+	twoDSlice01[7][1] = ""
+
+	twoDSlice01[8][0] = "Tx9.TryAHammer()"
+	twoDSlice01[8][1] = "x->y"
+
+	twoDSlice01[9][0] = "Tx10.X()"
+	twoDSlice01[9][1] = ""
+
+	twoDSlice01[10][0] = "Tx11.TryAnything()"
+	twoDSlice01[10][1] = ""
+
+	twoDSlice01[11][0] = "Tx12.TryASalad()"
+	twoDSlice01[11][1] = ""
+
+	twoDSlice01[12][0] = "Tx13.SomeFabulousAndComplexStuff()"
+	twoDSlice01[12][1] = ""
+
+	twoDSlice01[13][0] = "Tx14.MoreAwesomeGoodness"
+	twoDSlice01[13][1] = "A=7 B=8 C=9"
+
+	var ePDto1, ePDtoExpected *ErrPrefixDto
+	var err error
+
+	ePDto1,
+		err = ErrPrefixDto{}.NewIEmpty(
+		twoDSlice01,
+		"",
+		"")
+
+	if err != nil {
+		t.Errorf("Unexpected error return from\n"+
+			"ErrPrefixDto{}.NewIEmpty(twoDSlice01)\n"+
+			"%v\n", err.Error())
+
+		return
+	}
+
+	var twoDSlice02 [][2]string
+
+	twoDSlice02 = make([][2]string, 14)
+
+	twoDSlice02[0][0] = "Tx1.TryBeer()"
+	twoDSlice02[0][1] = ""
+
+	twoDSlice02[1][0] = "Tx2.TryMescal()"
+	twoDSlice02[1][1] = ""
+
+	twoDSlice02[2][0] = "Tx3.TryWhiskey()"
+	twoDSlice02[2][1] = ""
+
+	twoDSlice02[3][0] = "Tx4.TryMoonShine()"
+	twoDSlice02[3][1] = ""
+
+	twoDSlice02[4][0] = "Tx5.TryScotch()"
+	twoDSlice02[4][1] = ""
+
+	twoDSlice02[5][0] = "Tx6.TryWine()"
+	twoDSlice02[5][1] = ""
+
+	twoDSlice02[6][0] = "Tx7.TryBrandy()"
+	twoDSlice02[6][1] = "something->newSomething"
+
+	twoDSlice02[7][0] = "Tx8.TryCognac()"
+	twoDSlice02[7][1] = ""
+
+	twoDSlice02[8][0] = "Tx9.TryAle()"
+	twoDSlice02[8][1] = "x->y"
+
+	twoDSlice02[9][0] = "Tx10.Vodka()"
+	twoDSlice02[9][1] = ""
+
+	twoDSlice02[10][0] = "Tx11.TryRum()"
+	twoDSlice02[10][1] = ""
+
+	twoDSlice02[11][0] = "Tx12.TryBourbon()"
+	twoDSlice02[11][1] = ""
+
+	twoDSlice02[12][0] = "Tx13.TryTequila()"
+	twoDSlice02[12][1] = ""
+
+	twoDSlice02[13][0] = "Tx14.TryWater"
+	twoDSlice02[13][1] = "A=7 B=8 C=9"
+
+	ePDtoExpected,
+		err = ErrPrefixDto{}.NewIEmpty(
+		twoDSlice02,
+		"",
+		"")
+
+	if err != nil {
+		t.Errorf("Unexpected error return from\n"+
+			"ErrPrefixDto{}.NewIEmpty(twoDSlice02)\n"+
+			"%v\n", err.Error())
+
+		return
+	}
+
+	ePDtoExpected.SetMaxTextLineLen(40)
+
+	ePDto1.SetEPrefStrings(twoDSlice02)
+
+	ePDto1.SetMaxTextLineLen(40)
+
+	expectedStr := ErrPref{}.ConvertNonPrintableChars(
+		[]rune(ePDtoExpected.String()),
+		true)
+
+	actualStr := ErrPref{}.ConvertNonPrintableChars(
+		[]rune(ePDto1.String()),
+		true)
+
+	if expectedStr != actualStr {
+		t.Errorf("Error: Expected expectedStr == actualStr\n"+
+			"Instead:\n"+
+			"expectedStr=\n%v\n\n"+
+			"actualStr=\n%v\n\n",
+			expectedStr,
+			actualStr)
+		return
+	}
+
+	if !ePDto1.Equal(ePDtoExpected) {
+		t.Errorf("Error: Expected ePDto1 == ePDtoExpected\n"+
+			"HOWEVER, THEY ARE NOT EQUAL!!\n"+
+			"ePDto1.String()=\n%v\n\n"+
+			"ePDtoExpected.String()=\n%v\n\n",
+			ePDto1.String(),
+			ePDtoExpected.String())
 	}
 
 }

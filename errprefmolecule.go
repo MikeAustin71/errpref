@@ -195,12 +195,15 @@ func (ePrefMolecule errPrefMolecule) ptr() *errPrefMolecule {
 // Return Values
 //
 //  error
-//     - If the current instance of NumStrFmtSpecCurrencyValueDto
-//       contains invalid data, a detailed error message will be
-//       returned identifying the invalid data item.
+//     - If this method completes successfully, the returned error
+//       Type is set equal to 'nil'.
 //
-//       If the current instance is valid, this error parameter
-//       will be set to nil.
+//       If errors are encountered during processing, the returned
+//       error Type will encapsulate an error message. This
+//       returned error message will incorporate the method chain
+//       and text passed by input parameter, 'ePrefix'. The
+//       'ePrefix' text will be attached to the beginning of the
+//       error message.
 //
 func (ePrefMolecule *errPrefMolecule) writeNewEPrefWithContext(
 	strBuilder *strings.Builder,
@@ -335,12 +338,15 @@ func (ePrefMolecule *errPrefMolecule) writeNewEPrefWithContext(
 // Return Values
 //
 //  error
-//     - If the current instance of NumStrFmtSpecCurrencyValueDto
-//       contains invalid data, a detailed error message will be
-//       returned identifying the invalid data item.
+//     - If this method completes successfully, the returned error
+//       Type is set equal to 'nil'.
 //
-//       If the current instance is valid, this error parameter
-//       will be set to nil.
+//       If errors are encountered during processing, the returned
+//       error Type will encapsulate an error message. This
+//       returned error message will incorporate the method chain
+//       and text passed by input parameter, 'ePrefix'. The
+//       'ePrefix' text will be attached to the beginning of the
+//       error message.
 //
 func (ePrefMolecule *errPrefMolecule) writeNewEPrefWithOutContext(
 	strBuilder *strings.Builder,

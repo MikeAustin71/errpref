@@ -142,6 +142,29 @@ func (errorPrefixInfo *ErrorPrefixInfo) CopyOut(
 		ePrefix)
 }
 
+// Empty - Resets all internal member variables to their
+// zero values.
+func (errorPrefixInfo *ErrorPrefixInfo) Empty() {
+
+	if errorPrefixInfo.lock == nil {
+		errorPrefixInfo.lock = new(sync.Mutex)
+	}
+
+	errorPrefixInfo.lock.Lock()
+	errorPrefixInfo.isFirstIdx = false
+	errorPrefixInfo.isLastIdx = false
+	errorPrefixInfo.isPopulated = false
+	errorPrefixInfo.errorPrefixStr = ""
+	errorPrefixInfo.lenErrorPrefixStr = 0
+	errorPrefixInfo.errPrefixHasContextStr = false
+	errorPrefixInfo.errorContextStr = ""
+	errorPrefixInfo.lenErrorContextStr = 0
+
+	errorPrefixInfo.lock.Unlock()
+
+	errorPrefixInfo.lock = nil
+}
+
 // Equal - Returns a boolean flag signaling whether the data values
 // contained in the current ErrorPrefixInfo instance are equal to
 // to those contained in input parameter, 'ePrefixInfo02'

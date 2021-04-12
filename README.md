@@ -20,7 +20,10 @@ This software package was written in the [Go](https://golang.org/) programming l
   - [ErrPref](#errpref)
     - [Example Usage Summary](#example-usage-summary)
     - [Conclusion](#conclusion)
-  - [ErrPrefixDto - Error Prefix Data Transfer Object](#errprefixdto---error-prefix-data-transfer-object)
+  - [ErrPrefixDto - Error Prefix Data Transfer Object](#errprefixdto---error-prefix-data-transfer-object)   
+    - [Public Facing Methods](#public-facing-methods)
+    - [Internal or Private Methods](#internal-or-private-methods)
+    - [Error Context Example](#error-context-example)
   - [Source Code Documentation](#source-code-documentation)
   - [Version](#version)
   - [License](#license)
@@ -149,7 +152,156 @@ The type, ***ErrPrefixDto***, offers the same services as type, ***ErrPref***, b
 
 With the sole exception of the ***String()*** method, All ***ErrPrefixDto*** methods have pointer receivers.
 
-Consider what the example function calling sequence would look like if ***ErrPrefixDto*** was employed:
+### Public Facing Methods
+A public method may receive error prefix information in a variety of formats. To date, the best use scenario follows this pattern:
+
+``` go
+func (numStrBasic *NumStrBasic) GetCountryFormatters(
+	fmtCollection *FormatterCollection,
+	countryCulture CountryCultureId,
+	errorPrefix interface{}) error {
+	
+	var ePrefix *ErrPrefixDto
+	var err error
+
+	ePrefix,
+		err = ErrPrefixDto{}.NewIEmpty(
+		errorPrefix,
+		"NumStrBasic.GetCountryFormatters()",
+		"")
+
+	if err != nil {
+		return err
+	}
+
+	return numStrBasicQuark{}.ptr().
+		getCountryFormatters(
+			fmtCollection,
+			countryCulture,
+			ePrefix)
+}
+```
+
+By calling ***ErrPrefixDto{}.NewIEmpty()*** with an empty interface, functions can pass error prefix information in any
+of 10-different formats:
+
+   1. **nil** - A nil value is valid and generates an empty collection of error prefix and error context information.
+
+   2. **Stringer** - The Stringer interface from the 'fmt' package. This interface has only one method:
+``` go
+              type Stringer interface {
+                String() string
+              }
+```
+
+   3. **string** - A string containing error prefix information.
+
+   4. **\[\]string** - A one-dimensional slice of strings containing error prefix information.
+
+   5. **\[\]\[2\]string** - A two-dimensional slice of strings containing error prefix and error context information.
+
+   6. **strings.Builder** - An instance of strings.Builder. Error prefix information will be imported into the new
+      returned instance of ErrPrefixDto.
+
+   7. **\*strings.Builder** - A pointer to an instance of strings.Builder.  Error prefix information will be imported
+      into the new returned instance of ErrPrefixDto.
+
+   8. **ErrPrefixDto** - An instance of **ErrPrefixDto**. The **ErrorPrefixInfo** from this object will be copied to
+      the new returned instance of **ErrPrefixDto*.
+
+   9. **\*ErrPrefixDto** - A pointer to an instance of **ErrPrefixDto**. ErrorPrefixInfo from this object will be
+      copied to the new returned instance of **ErrPrefixDto*.
+
+  10. **IBasicErrorPrefix** - An interface to a method generating a two-dimensional slice of strings containing error
+      prefix and error context information. 
+      
+``` go
+             type IBasicErrorPrefix interface {
+               GetEPrefStrings() [][2]string
+             }
+      
+```
+
+The Method Signature for ***ErrPrefixDto{}.NewIEmpty()*** is shown below:
+
+``` go
+func (ePrefDto ErrPrefixDto) NewIEmpty(
+	iEPref interface{},
+	newErrPrefix string,
+	newErrContext string) (
+	*ErrPrefixDto,
+	error)
+```
+
+This pattern allows for use of the 'nil' value. ***iEPref*** takes a 'nil' value. If no error prefix information is present or required, just pass a 'nil' value for the ***iEPref*** parameter.
+
+Finally, notice how the method name is added to the error prefix chain:
+
+``` go
+	ePrefix,
+		err = ErrPrefixDto{}.NewIEmpty(
+		errorPrefix,
+		"NumStrBasic.GetCountryFormatters()",
+		"")
+```
+
+The final empty string parameter is optional and could be used to add error context information.
+
+
+
+### Internal or Private Methods
+
+In the **Public Facing Methods** example, above, method ***GetCountryFormatters()*** makes a call to internal, private method, ***getCountryFormatters()***. Calls like this one to a supporting or subsidiary method usually pass a pointer to an instance of ***ErrPrefixDto***.  To date, the best use scenario for subsidiary methods follows this pattern:
+
+``` go
+
+func (nStrBasicQuark numStrBasicQuark) getCountryFormatters(
+	fmtCollection *FormatterCollection,
+	countryCulture CountryCultureId,
+	ePrefix *ErrPrefixDto) (
+	err error) {
+
+	if ePrefix == nil {
+		ePrefix = ErrPrefixDto{}.Ptr()
+	} else {
+		ePrefix = ePrefix.CopyPtr()
+	}
+
+	ePrefix.SetEPref(
+		"numStrBasicQuark." +
+			"getCountryFormatters()")
+
+	if fmtCollection == nil {
+		err = fmt.Errorf("%v\n"+
+			"Error: Input parameter 'fmtCollection' is "+
+			"a 'nil' pointer!\n",
+			ePrefix.String())
+
+		return err
+	}
+
+    ...
+```
+
+Notice how the function name is added to the error prefix chain:
+
+``` go
+ePrefix.SetEPref(
+		"numStrBasicQuark." +
+			"getCountryFormatters()")
+```
+
+ 
+
+Notice that this pattern allows for use of the 'nil' value for ***ePrefix***. If no error prefix information is present or required, just pass a 'nil' parameter value.
+
+This pattern provides a separate function chain string for each method. This architecture allows for multiple calls from parent methods without adding unnecessary and irrelevant text to the function chain. If an error occurs, only the relevant error prefix and error context information will be returned.
+
+
+
+### Error Context Example
+
+In this example, a function chain is built by calls to multiple levels of the code hierarchy.  The final call to method **Tx3.DoSomething()** triggers an error thereby returning the names of all methods in the call chains plus error context information.
 
 ``` go
 func(tx1 *Tx1) Something() {
@@ -160,7 +312,7 @@ func(tx1 *Tx1) Something() {
 
   tx2 := Tx2{}
 
-  err := Tx2.SomethingElse(ePrefDto)
+  err := Tx2.SomethingElse(&ePrefDto)
 
   if err !=nil {
     fmt.Printf("%v\n",
@@ -170,20 +322,32 @@ func(tx1 *Tx1) Something() {
 
 }
 
-func(tx2 *Tx2) SomethingElse(ePrefDto ErrPrefixDto) error {
+func(tx2 *Tx2) SomethingElse(ePrefDto *ErrPrefixDto) error {
+    
+	if ePrefDto == nil {
+		ePrefDto = ErrPrefixDto{}.Ptr()
+	} else {
+		ePrefDto = ePrefDto.CopyPtr()
+	}
 
-  ePrefDto.SetEPref("Tx2.SomethingElse()")
+  	ePrefDto.SetEPref("Tx2.SomethingElse()")
 
-  tx3 := Tx3{}
+  	tx3 := Tx3{}
 
-  err := Tx3.DoSomething(ePrefDto)
+  	err := Tx3.DoSomething(ePrefDto)
 
-  if err !=nil {
-    return err
-  }
+  	if err !=nil {
+    	return err
+  	}
 }
 
-func(tx3 *Tx3) DoSomething(ePrefDto ErrPrefixDto) error {
+func(tx3 *Tx3) DoSomething(ePrefDto *ErrPrefixDto) error {
+    
+	if ePrefDto == nil {
+		ePrefDto = ErrPrefixDto{}.Ptr()
+	} else {
+		ePrefDto = ePrefDto.CopyPtr()
+	}
 
     // Add error prefix and error context
     // information.
@@ -218,11 +382,11 @@ When this error is returned up the function chain and finally printed out, the t
 
 ## Version
 
-The latest version is Version 1.4.0.
+The latest version is Version 1.5.0.
 
 This Version supports *Go* modules.
 
-[Version 1.4.0 Release Notes](./releasenotes.md)
+[Version 1.5.0 Release Notes](./releasenotes.md)
 
 ## License
 

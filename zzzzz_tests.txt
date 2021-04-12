@@ -1,3 +1,5 @@
+=== RUN   TestErrPrefixDto_AddEPrefStrings_000100
+--- PASS: TestErrPrefixDto_AddEPrefStrings_000100 (0.00s)
 === RUN   TestErrPref_FmtStr_000100
 --- PASS: TestErrPref_FmtStr_000100 (0.00s)
 === RUN   TestErrPref_FmtStr_000200
@@ -48,6 +50,8 @@
 --- PASS: TestNewErrPref_Multiple_000200 (0.00s)
 === RUN   TestNewErrPref_Multiple_000300
 --- PASS: TestNewErrPref_Multiple_000300 (0.00s)
+=== RUN   TestErrPrefixDto_SetEPrefStrings_000100
+--- PASS: TestErrPrefixDto_SetEPrefStrings_000100 (0.00s)
 === RUN   TestErrPrefixDto_Copy_000100
 --- PASS: TestErrPrefixDto_Copy_000100 (0.00s)
 === RUN   TestErrPrefixDto_CopyIn_000100
@@ -68,6 +72,38 @@
 --- PASS: TestErrPrefixDto_NewEPrefOld_000200 (0.00s)
 === RUN   TestErrPrefixDto_NewFromIErrorPrefix_000100
 --- PASS: TestErrPrefixDto_NewFromIErrorPrefix_000100 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmpty_000100
+--- PASS: TestErrPrefixDto_NewIEmpty_000100 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmpty_000200
+--- PASS: TestErrPrefixDto_NewIEmpty_000200 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmpty_000300
+--- PASS: TestErrPrefixDto_NewIEmpty_000300 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmpty_000400
+--- PASS: TestErrPrefixDto_NewIEmpty_000400 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmpty_000500
+--- PASS: TestErrPrefixDto_NewIEmpty_000500 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmpty_000600
+--- PASS: TestErrPrefixDto_NewIEmpty_000600 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmpty_000700
+--- PASS: TestErrPrefixDto_NewIEmpty_000700 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmpty_000800
+--- PASS: TestErrPrefixDto_NewIEmpty_000800 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmpty_000900
+--- PASS: TestErrPrefixDto_NewIEmpty_000900 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmpty_001000
+--- PASS: TestErrPrefixDto_NewIEmpty_001000 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmpty_001100
+--- PASS: TestErrPrefixDto_NewIEmpty_001100 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmpty_001200
+--- PASS: TestErrPrefixDto_NewIEmpty_001200 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmpty_001300
+--- PASS: TestErrPrefixDto_NewIEmpty_001300 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmpty_001400
+--- PASS: TestErrPrefixDto_NewIEmpty_001400 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmpty_001500
+--- PASS: TestErrPrefixDto_NewIEmpty_001500 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmpty_001600
+--- PASS: TestErrPrefixDto_NewIEmpty_001600 (0.00s)
 === RUN   TestErrPrefixDto_SetCtx_000100
 --- PASS: TestErrPrefixDto_SetCtx_000100 (0.00s)
 === RUN   TestErrPrefixDto_SetCtx_000200
@@ -158,5 +194,7 @@
 --- PASS: TestErrPrefixDto_XMethods_000100 (0.00s)
 === RUN   TestErrPrefixDto_YMethods_000200
 --- PASS: TestErrPrefixDto_YMethods_000200 (0.00s)
+=== RUN   TestErrPrefixDto_CallSeries01_000100
+--- PASS: TestErrPrefixDto_CallSeries01_000100 (0.00s)
 PASS
-ok  	github.com/MikeAustin71/errpref	1.909s
+ok  	github.com/MikeAustin71/errpref	0.808s

@@ -92,7 +92,7 @@ func (ePrefMech *errPrefMechanics) assembleErrPrefix(
 
 	var lenPrefixContextCol int
 
-	prefixContextCol := make([]ErrorPrefixInfo, 0, 256)
+	prefixContextCol := make([]ErrorPrefixInfo, 0)
 
 	lenPrefixContextCol = 0
 
@@ -148,7 +148,7 @@ func (ePrefMech *errPrefMechanics) formatErrPrefix(
 
 	localErrPrefix := "errPrefMechanics.formatErrPrefix() "
 
-	prefixContextCol := make([]ErrorPrefixInfo, 0, 256)
+	prefixContextCol := make([]ErrorPrefixInfo, 0)
 
 	ePrefAtom := errPrefAtom{}
 
@@ -197,7 +197,7 @@ func (ePrefMech *errPrefMechanics) extractLastErrPrefCtxPair(
 		return ""
 	}
 
-	prefixContextCol := make([]ErrorPrefixInfo, 0, 5)
+	prefixContextCol := make([]ErrorPrefixInfo, 0)
 
 	prefixContextCol = append(prefixContextCol, errPrefInfo)
 
@@ -266,7 +266,7 @@ func (ePrefMech *errPrefMechanics) setErrorContext(
 		return oldErrPref
 	}
 
-	prefixContextCol := make([]ErrorPrefixInfo, 0, 256)
+	prefixContextCol := make([]ErrorPrefixInfo, 0)
 
 	errPrefAtom{}.ptr().getEPrefContextArray(
 		oldErrPref,

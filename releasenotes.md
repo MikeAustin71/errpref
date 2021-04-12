@@ -1,15 +1,38 @@
-# ErrPref Release Notes Version 1.4.0
+# ErrPref Release Notes Version 1.5.0
 
-This version of ***ErrPref*** was compiled and tested using Go 1.15.8.
+This version of ***ErrPref*** was compiled and tested using Go 1.16.3.
 
 This version supports ***Go*** modules.
+
+## Version 1.5.0
+
+Original Release Date: 2021-04-07 17:34:00 USA CST
+
+Compiled and Tested: Go 1.16.3
+
+1. Modified interface IErrorPrefix. Added Methods:
+   - GetEPrefStrings() [][2]string
+   - SetEPrefStrings(twoDStrArray [][2]string)
+   
+2. Added interface IBuilderErrorPrefix
+   
+3. Added interface IBasicErrorPrefix
+
+4. Added methods on Type ErrPrefixDto
+   - AddEPrefStrings()
+   - GetEPrefStrings()
+   - NewIBasicErrorPrefix()
+   - NewIEmpty()
+   - SetEPrefStrings()
 
 ## Version 1.4.0
 
 Original Release Date: 2021-02-16 16:59:00 USA CST
 
+Compiled and Tested: Go 1.15.8
+
 1. Modified the interface IErrorPrefix. Removed references to ErrorPrefixInfo.
-   
+
 2. Added 'Z' methods which return an ErrPrefixDto by value.
    - ZCtx()
    - ZCtxEmpty()
@@ -22,6 +45,8 @@ Original Release Date: 2021-02-16 16:59:00 USA CST
 ## Version 1.3.0
 
 Original Release Date: 2021-02-14 23:38:00 USA CST
+
+Compiled and Tested: Go 1.15.8
 
 1. Added IErrorPrefix interface. 
 
@@ -39,6 +64,8 @@ Original Release Date: 2021-02-14 23:38:00 USA CST
 
 Original Release Date: 2021-02-11 16:46:00 USA CST
 
+Compiled and Tested: Go 1.15.8
+
 1. Removed Maximum Line Length operation from ErrPrefixDto.String()
 2. Added Ptr() method to ErrPrefixDto.
 3. Added tests for ErrPrefixDto methods CopyIn() and CopyOut()
@@ -51,7 +78,7 @@ Original Release Date: 2021-02-11 16:46:00 USA CST
 
 Original Release Date:  2021-02-11 02:11:00 USA CST
 
-This version of ***ErrPref*** was compiled and tested using Go 1.15.8.
+Compiled and Tested: Go 1.15.8
 
 This version supports ***Go*** modules.
 
@@ -77,7 +104,7 @@ This version supports ***Go*** modules.
 
 Original Release Date:  2021-02-10 01:17:00 USA CST
 
-This version of ***ErrPref*** was compiled and tested using Go 1.15.8.
+Compiled and Tested: Go 1.15.8
 
 This version supports ***Go*** modules.
 

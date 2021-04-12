@@ -178,6 +178,53 @@ func (ePrefQuark *errPrefQuark) convertNonPrintableChars(
 	return b.String(), err
 }
 
+// emptyEPrefCollection - Receives a pointer to an ErrPrefixDto
+// object an proceeds to delete all of the existing error prefix
+// and error context information. When completed, the ErrPrefixDto
+// object's collection of ErrorPrefixInfo elements will be set to
+// 'nil'.
+//
+func (ePrefQuark *errPrefQuark) emptyErrPrefInfoCollection(
+	ePrefixDto *ErrPrefixDto,
+	errPrefStr string) error {
+
+	if ePrefQuark.lock == nil {
+		ePrefQuark.lock = new(sync.Mutex)
+	}
+
+	ePrefQuark.lock.Lock()
+
+	defer ePrefQuark.lock.Unlock()
+
+	errPrefStr = errPrefStr +
+		"\nerrPrefQuark.emptyErrPrefInfoCollection()"
+
+	if ePrefixDto == nil {
+		return fmt.Errorf("%v\n"+
+			"Error: Input parameter 'ePrefixDto' is invalid!\n"+
+			"'ePrefixDto' is a 'nil' pointer.\n",
+			errPrefStr)
+	}
+
+	if ePrefixDto.ePrefCol == nil {
+		return nil
+	}
+
+	lenEPrefCol := len(ePrefixDto.ePrefCol)
+
+	if lenEPrefCol == 0 {
+		return nil
+	}
+
+	for i := 0; i < lenEPrefCol; i++ {
+		ePrefixDto.ePrefCol[i].Empty()
+	}
+
+	ePrefixDto.ePrefCol = nil
+
+	return nil
+}
+
 // getErrPrefDisplayLineLength - Returns the current value for the
 // maximum number of characters allowed in an error prefix text
 // display line.

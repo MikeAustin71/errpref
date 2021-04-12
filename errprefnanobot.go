@@ -85,7 +85,7 @@ func (ePrefNanobot *errPrefNanobot) addEPrefInfo(
 	}
 
 	if *errPrefixCollection == nil {
-		*errPrefixCollection = make([]ErrorPrefixInfo, 0, 100)
+		*errPrefixCollection = make([]ErrorPrefixInfo, 0)
 	}
 
 	*errPrefixCollection = append(
@@ -131,7 +131,7 @@ func (ePrefNanobot *errPrefNanobot) deleteLastErrContext(
 	}
 
 	if ePrefixDto.ePrefCol == nil {
-		ePrefixDto.ePrefCol = make([]ErrorPrefixInfo, 0, 10)
+		ePrefixDto.ePrefCol = make([]ErrorPrefixInfo, 0)
 	}
 
 	collectionIdx := len(ePrefixDto.ePrefCol)
@@ -159,7 +159,7 @@ func (ePrefNanobot *errPrefNanobot) extractLastErrPrfInfo(
 
 	defer ePrefNanobot.lock.Unlock()
 
-	prefixContextCol := make([]ErrorPrefixInfo, 0, 256)
+	prefixContextCol := make([]ErrorPrefixInfo, 0)
 
 	errPrefAtom{}.
 		ptr().getEPrefContextArray(
@@ -593,7 +593,7 @@ func (ePrefNanobot *errPrefNanobot) setLastCtx(
 	}
 
 	if errPrefixCollection == nil {
-		errPrefixCollection = make([]ErrorPrefixInfo, 0, 100)
+		errPrefixCollection = make([]ErrorPrefixInfo, 0)
 	}
 
 	lenCollection = len(errPrefixCollection)

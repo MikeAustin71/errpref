@@ -10,6 +10,64 @@ type errPrefAtom struct {
 	lock *sync.Mutex
 }
 
+func (ePrefAtom *errPrefAtom) addTwoDimensionalStringArray(
+	errPrefixDto *ErrPrefixDto,
+	twoDStrArray [][2]string,
+	errPrefStr string) error {
+
+	if ePrefAtom.lock == nil {
+		ePrefAtom.lock = new(sync.Mutex)
+	}
+
+	ePrefAtom.lock.Lock()
+
+	defer ePrefAtom.lock.Unlock()
+
+	errPrefStr = errPrefStr +
+		"\nerrPrefAtom." +
+		"addTwoDimensionalStringArray()"
+
+	if errPrefixDto == nil {
+		return fmt.Errorf("%v\n"+
+			"Error: Input parameter 'errPrefixDto' is invalid!\n"+
+			"'' is a 'nil' pointer.\n",
+			errPrefStr)
+	}
+
+	if twoDStrArray == nil {
+		return nil
+	}
+
+	lenTwoDStrAry := len(twoDStrArray)
+
+	if lenTwoDStrAry == 0 {
+		return nil
+	}
+
+	var ePrefInfo ErrorPrefixInfo
+
+	for i := 0; i < lenTwoDStrAry; i++ {
+
+		ePrefInfo = ErrorPrefixInfo{
+			isFirstIdx:             false,
+			isLastIdx:              false,
+			isPopulated:            true,
+			errorPrefixStr:         twoDStrArray[i][0],
+			lenErrorPrefixStr:      uint(len(twoDStrArray[i][0])),
+			errPrefixHasContextStr: len(twoDStrArray[i][1]) > 0,
+			errorContextStr:        twoDStrArray[i][1],
+			lenErrorContextStr:     uint(len(twoDStrArray[i][1])),
+			lock:                   nil,
+		}
+
+		errPrefixDto.ePrefCol =
+			append(errPrefixDto.ePrefCol,
+				ePrefInfo)
+	}
+
+	return nil
+}
+
 // areEqualErrPrefDtos - Receives pointers to two ErrPrefixDto
 // objects and proceeds to compare the internal data values.
 // If the ErrPrefixDto objects contain data values which ARE EQUAL
@@ -60,12 +118,12 @@ func (ePrefAtom *errPrefAtom) areEqualErrPrefDtos(
 
 	if errPrefixDto1.ePrefCol == nil {
 		errPrefixDto1.ePrefCol =
-			make([]ErrorPrefixInfo, 0, 256)
+			make([]ErrorPrefixInfo, 0)
 	}
 
 	if errPrefixDto2.ePrefCol == nil {
 		errPrefixDto2.ePrefCol =
-			make([]ErrorPrefixInfo, 0, 256)
+			make([]ErrorPrefixInfo, 0)
 	}
 
 	lenIncomingEPrefCol01 :=
@@ -166,10 +224,25 @@ func (ePrefAtom *errPrefAtom) copyInErrPrefDto(
 
 	}
 
+	if (*ErrPrefixDto)(nil) == targetErrPrefixDto {
+		return fmt.Errorf("%v\n"+
+			"\nInput parameter 'targetErrPrefixDto' is INVALID!\n"+
+			"The pointer 'targetErrPrefixDto' points to a 'nil' object.\n",
+			eMsg)
+
+	}
+
 	if inComingErrPrefixDto == nil {
 		return fmt.Errorf("%v\n"+
 			"\nInput parameter 'inComingErrPrefixDto' is INVALID!\n"+
-			"'inComingErrPrefixDto' is a nil pointer!\n",
+			"'inComingErrPrefixDto' is a nil pointer.\n",
+			eMsg)
+	}
+
+	if (*ErrPrefixDto)(nil) == inComingErrPrefixDto {
+		return fmt.Errorf("%v\n"+
+			"\nInput parameter 'inComingErrPrefixDto' is INVALID!\n"+
+			"The pointer 'inComingErrPrefixDto' points to a 'nil' object.\n",
 			eMsg)
 	}
 
@@ -196,7 +269,7 @@ func (ePrefAtom *errPrefAtom) copyInErrPrefDto(
 
 	if inComingErrPrefixDto.ePrefCol == nil {
 		inComingErrPrefixDto.ePrefCol =
-			make([]ErrorPrefixInfo, 0, 256)
+			make([]ErrorPrefixInfo, 0)
 	}
 
 	lenIncomingEPrefCol :=
@@ -205,8 +278,7 @@ func (ePrefAtom *errPrefAtom) copyInErrPrefDto(
 	targetErrPrefixDto.ePrefCol =
 		make(
 			[]ErrorPrefixInfo,
-			lenIncomingEPrefCol,
-			lenIncomingEPrefCol+256)
+			lenIncomingEPrefCol)
 
 	if lenIncomingEPrefCol == 0 {
 		return nil
@@ -312,7 +384,7 @@ func (ePrefAtom *errPrefAtom) copyOutErrPrefDto(
 
 	if ePrefixDto.ePrefCol == nil {
 		ePrefixDto.ePrefCol =
-			make([]ErrorPrefixInfo, 0, 256)
+			make([]ErrorPrefixInfo, 0)
 	}
 
 	lenIncomingEPrefCol :=
@@ -321,8 +393,7 @@ func (ePrefAtom *errPrefAtom) copyOutErrPrefDto(
 	newEPrefixDto.ePrefCol =
 		make(
 			[]ErrorPrefixInfo,
-			lenIncomingEPrefCol,
-			lenIncomingEPrefCol+256)
+			lenIncomingEPrefCol)
 
 	if lenIncomingEPrefCol == 0 {
 		return newEPrefixDto, err
@@ -393,7 +464,7 @@ func (ePrefAtom *errPrefAtom) getEPrefContextArray(
 	defer ePrefAtom.lock.Unlock()
 
 	if *prefixContextCol == nil {
-		*prefixContextCol = make([]ErrorPrefixInfo, 0, 256)
+		*prefixContextCol = make([]ErrorPrefixInfo, 0)
 	}
 
 	if len(errPrefix) == 0 {
@@ -506,7 +577,7 @@ func (ePrefAtom *errPrefAtom) setFlagsErrorPrefixInfoArray(
 	defer ePrefAtom.lock.Unlock()
 
 	if prefixContextCol == nil {
-		prefixContextCol = make([]ErrorPrefixInfo, 0, 256)
+		prefixContextCol = make([]ErrorPrefixInfo, 0)
 	}
 
 	lenCollection := len(prefixContextCol)
