@@ -757,7 +757,7 @@ func (ePrefDto *ErrPrefixDto) SetCtx(
 // This method is designed to process a single error prefix string
 // passed in input parameter 'ErrPrefixDto'. If this string
 // contains multiple error prefixes, use method
-// 'ErrPrefixDto.SetEPrefCollection()'.
+// 'ErrPrefixDto.SetEPrefOld()'.
 //
 //
 // ----------------------------------------------------------------
@@ -887,7 +887,7 @@ func (ePrefDto *ErrPrefixDto) SetEPrefCollection(
 //
 //       This method is designed to process a single new error prefix
 //       string. To process a collection of error prefix strings, see
-//       method 'ErrPrefixDto.SetEPrefCollection()'.
+//       method 'ErrPrefixDto.SetEPrefOld()'.
 //
 //
 //  newErrContext       string
@@ -1131,7 +1131,7 @@ func (ePrefDto *ErrPrefixDto) SetMaxErrPrefTextLineLengthToDefault() {
 // Error prefix information is stored internally in the 'ePrefCol'
 // array.
 //
-func (ePrefDto *ErrPrefixDto) String() string {
+func (ePrefDto ErrPrefixDto) String() string {
 
 	if ePrefDto.lock == nil {
 		ePrefDto.lock = new(sync.Mutex)
@@ -1165,4 +1165,295 @@ func (ePrefDto *ErrPrefixDto) String() string {
 			ePrefDto.isLastLineTerminatedWithNewLine,
 			ePrefDto.ePrefCol)
 
+}
+
+// XCtx - Sets or resets the error context for the last error
+// prefix. This operation either adds, or replaces, the error
+// context string associated with the last error prefix the
+// current list of error prefixes maintained by this instance.
+//
+// This method is identical in function to ErrPrefixDto.SetCtx().
+// The only difference is that this method returns a pointer to the
+// current ErrPrefixDto instance.
+//
+// If the last error prefix already has an error context string, it
+// will be replaced by input parameter, 'newErrContext'.
+//
+// If the last error prefix does NOT have an associated error
+// context, this new error context string will be associated
+// with that error prefix.
+//
+// If the internal list of error prefixes is currently empty, this
+// method will take no action and exit.
+//
+//
+// ----------------------------------------------------------------
+//
+// Input Parameters
+//
+//  newErrContext       string
+//     - This string holds the new error context information. If
+//       the last error prefix in internal storage already has an
+//       associated error context, that context will be deleted and
+//       replaced by 'newErrContext'. If, however, the last error
+//       prefix does NOT have an associated error context, this
+//       'newErrContext' string will be added and associated with
+//       that last error prefix.
+//
+//       If this string is 'empty', this method will take no action
+//       and exit.
+//
+//
+// -----------------------------------------------------------------
+//
+// Return Values
+//
+//
+//
+func (ePrefDto *ErrPrefixDto) XCtx(
+	newErrContext string) *ErrPrefixDto {
+
+	if ePrefDto.lock == nil {
+		ePrefDto.lock = new(sync.Mutex)
+	}
+
+	ePrefDto.lock.Lock()
+
+	defer ePrefDto.lock.Unlock()
+
+	if ePrefDto.ePrefCol == nil {
+		ePrefDto.ePrefCol = make([]ErrorPrefixInfo, 0, 100)
+		return ePrefDto
+	}
+
+	if len(ePrefDto.ePrefCol) == 0 {
+		return ePrefDto
+	}
+
+	errPrefNanobot{}.ptr().setLastCtx(
+		newErrContext,
+		ePrefDto.ePrefCol)
+
+	return ePrefDto
+}
+
+// XEPref - Adds an error prefix string to the list of previous
+// error prefix strings maintained by this instance of ErrPrefixDto.
+//
+// This method is identical in function to ErrPrefixDto.SetEPref().
+// The only difference is that this method returns a pointer to the
+// current ErrPrefixDto instance.
+//
+// The error prefix text is designed to be configured at the
+// beginning of error messages and is most often used to document
+// the thread of code execution by listing the calling sequence for
+// specific functions and methods.
+//
+// This method is designed to process a single error prefix string
+// passed in input parameter 'ErrPrefixDto'. If this string
+// contains multiple error prefixes, use method
+// 'ErrPrefixDto.SetEPrefOld()'.
+//
+//
+// ----------------------------------------------------------------
+//
+// Input Parameters
+//
+//  newErrPrefix        string
+//     - The new error prefix represents typically identifies
+//       the function or method which is currently executing. This
+//       information is used to document source code execution flow
+//       in error messages.
+//
+//       This new error prefix will be added to the internal list
+//       of error prefixes maintained by this ErrPrefixDto
+//       instance.
+//
+//
+// -----------------------------------------------------------------
+//
+// Return Values
+//
+//  *ErrPrefixDto
+//     - Returns a pointer to the current ErrPrefixDto instance
+//
+func (ePrefDto *ErrPrefixDto) XEPref(
+	newErrPrefix string) *ErrPrefixDto {
+
+	if ePrefDto.lock == nil {
+		ePrefDto.lock = new(sync.Mutex)
+	}
+
+	ePrefDto.lock.Lock()
+
+	defer ePrefDto.lock.Unlock()
+
+	if ePrefDto.ePrefCol == nil {
+		ePrefDto.ePrefCol = make([]ErrorPrefixInfo, 0, 100)
+	}
+
+	errPrefNanobot{}.ptr().addEPrefInfo(
+		newErrPrefix,
+		"",
+		&ePrefDto.ePrefCol)
+
+	errPrefAtom{}.ptr().setFlagsErrorPrefixInfoArray(
+		ePrefDto.ePrefCol)
+
+	return ePrefDto
+}
+
+// XEPrefCtx - Adds an error prefix and an error context string
+// to the list of previous error prefix/context information.
+//
+// This method is identical in function to ErrPrefixDto.SetEPrefCtx().
+// The only difference is that this method returns a pointer to the
+// current ErrPrefixDto instance.
+//
+// Error prefix text is designed to be configured at the beginning
+// of error messages and is most often used to document the thread
+// of code execution by listing the calling sequence for a specific
+// list of functions and methods.
+//
+// The error context string is designed to provide additional
+// information about the function or method identified by the
+// associated error prefix string. Typical context information
+// might include variable names, variable values and additional
+// details on function execution.
+//
+//
+// ----------------------------------------------------------------
+//
+// Input Parameters
+//
+//  newErrPrefix        string
+//     - The new error prefix represents typically identifies
+//       the function or method which is currently executing. This
+//       information is used to document source code execution flow
+//       in error messages.
+//
+//       This method is designed to process a single new error prefix
+//       string. To process a collection of error prefix strings, see
+//       method 'ErrPrefixDto.SetEPrefOld()'.
+//
+//
+//  newErrContext       string
+//     - This is the error context information associated with the
+//       new error prefix ('newErrPrefix'). This parameter is
+//       optional and will accept an empty string.
+//
+//
+// -----------------------------------------------------------------
+//
+// Return Values
+//
+//  *ErrPrefixDto
+//     - Returns a pointer to the current ErrPrefixDto instance
+//
+func (ePrefDto *ErrPrefixDto) XEPrefCtx(
+	newErrPrefix string,
+	newErrContext string) *ErrPrefixDto {
+
+	if ePrefDto.lock == nil {
+		ePrefDto.lock = new(sync.Mutex)
+	}
+
+	ePrefDto.lock.Lock()
+
+	defer ePrefDto.lock.Unlock()
+
+	if ePrefDto.ePrefCol == nil {
+		ePrefDto.ePrefCol = make([]ErrorPrefixInfo, 0, 100)
+	}
+
+	errPrefNanobot{}.ptr().addEPrefInfo(
+		newErrPrefix,
+		newErrContext,
+		&ePrefDto.ePrefCol)
+
+	errPrefAtom{}.ptr().setFlagsErrorPrefixInfoArray(
+		ePrefDto.ePrefCol)
+
+	return ePrefDto
+}
+
+// XEPrefOld - Deletes the current error prefix information and
+// initializes this ErrPrefixDto instance with an old or preexisting
+// error prefix string. This error prefix string input parameter
+// typically includes one or more error prefix elements and may
+// also include associated error context elements. This string will
+// be parsed and into individual error prefix and error context
+// components and stored internally in the current ErrPrefixDto
+// instance.
+//
+// This method is identical in function to ErrPrefixDto.SetEPrefOld().
+// The only difference is that this method returns a pointer to the
+// current ErrPrefixDto instance.
+//
+// Error prefix text is designed to be configured at the beginning
+// of error messages and is most often used to document the thread
+// of code execution by listing the calling sequence for a specific
+// list of functions and methods.
+//
+// The error context string is designed to provide additional
+// information about the function or method identified by the
+// associated error prefix string. Typical context information
+// might include variable names, variable values and additional
+// details on function execution.
+//
+// IMPORTANT
+// All existing error prefix and error context information in this
+// ErrPrefixDto instance will be overwritten and deleted.
+//
+// ----------------------------------------------------------------
+//
+// Input Parameters
+//
+//  oldErrPrefix        string
+//     - This includes the previous or preexisting error prefix
+//       string. This string will be parsed into error prefix
+//       and error context components and stored in the current
+//       ErrPrefixDto instance.
+//
+//       This string should consist of a series of error prefix
+//       strings. Error prefixes should be delimited by either a
+//       new line character ('\n') or the in-line delimiter string,
+//       " - ".
+//
+//       If this string contains associated error context strings
+//       as well, they should be delimited with either a new line
+//       delimiter string, "\n :  " or an in-line delimiter string,
+//       " : ".
+//
+//
+// -----------------------------------------------------------------
+//
+// Return Values
+//
+//  *ErrPrefixDto
+//     - Returns a pointer to the current ErrPrefixDto instance
+//
+func (ePrefDto *ErrPrefixDto) XEPrefOld(
+	oldErrPrefix string) *ErrPrefixDto {
+
+	if ePrefDto.lock == nil {
+		ePrefDto.lock = new(sync.Mutex)
+	}
+
+	ePrefDto.lock.Lock()
+
+	defer ePrefDto.lock.Unlock()
+
+	ePrefDto.ePrefCol = make([]ErrorPrefixInfo, 0, 100)
+
+	ePrefAtom := errPrefAtom{}
+
+	ePrefAtom.getEPrefContextArray(
+		oldErrPrefix,
+		&ePrefDto.ePrefCol)
+
+	ePrefAtom.setFlagsErrorPrefixInfoArray(
+		ePrefDto.ePrefCol)
+
+	return ePrefDto
 }

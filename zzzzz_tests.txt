@@ -92,5 +92,9 @@
 --- PASS: TestErrPrefixDto_String_000100 (0.00s)
 === RUN   TestErrPrefixDto_String_000200
 --- PASS: TestErrPrefixDto_String_000200 (0.00s)
+=== RUN   TestErrPrefixDto_XMethods_000100
+--- PASS: TestErrPrefixDto_XMethods_000100 (0.00s)
+=== RUN   TestErrPrefixDto_YMethods_000200
+--- PASS: TestErrPrefixDto_YMethods_000200 (0.00s)
 PASS
-ok  	github.com/MikeAustin71/errprefops/errpref	1.407s
+ok  	github.com/MikeAustin71/errprefops/errpref	1.154s
