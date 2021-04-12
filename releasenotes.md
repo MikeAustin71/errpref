@@ -1,8 +1,18 @@
-# ErrPref Release Notes Version 1.5.1
+# ErrPref Release Notes Version 1.5.2
 
 This version of ***ErrPref*** was compiled and tested using Go 1.16.3.
 
 This version supports ***Go*** modules.
+
+## Version 1.5.2
+
+Original Release Date: 2021-04-09 02:05:00 USA CST
+
+Compiled and Tested: Go 1.16.3
+
+1. Fixed link to source code documentation.
+2. Added documentation providing more usage examples.
+3. Added new method ErrPrefixDto.NewEPrefCtx()
 
 ## Version 1.5.1
 

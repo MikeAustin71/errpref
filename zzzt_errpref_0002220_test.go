@@ -6,6 +6,147 @@ import (
 	"testing"
 )
 
+func TestErrPrefixDto_NewEPrefCtx_000100(t *testing.T) {
+
+	newErrPrefix := "Tx5.BrandNewMethod()"
+	newErrContext := "X->G"
+
+	expectedDto := new(ErrPrefixDto)
+
+	expectedDto.SetMaxTextLineLen(40)
+
+	expectedDto.SetEPrefCtx(newErrPrefix, newErrContext)
+
+	actualDto := ErrPrefixDto{}.NewEPrefCtx(
+		newErrPrefix,
+		newErrContext)
+
+	actualDto.SetMaxTextLineLen(40)
+
+	expectedStr := ErrPref{}.ConvertNonPrintableChars(
+		[]rune(expectedDto.String()),
+		true)
+
+	actualStr := ErrPref{}.ConvertNonPrintableChars(
+		[]rune(actualDto.String()),
+		true)
+
+	if !actualDto.Equal(expectedDto) {
+		t.Errorf("ERROR: Expected expectedDto==actualDto.\n"+
+			"HOWEVER, THEY ARE NOT EQUAL!\n"+
+			"expectedDto='%v'\n"+
+			"actualDto='%v'\n",
+			expectedStr,
+			actualStr)
+
+		return
+	}
+
+	if expectedStr != actualStr {
+		t.Errorf("ERROR: Expected expectedStr==actualStr.\n"+
+			"HOWEVER, THEY ARE NOT EQUAL!\n"+
+			"expectedStr='%v'\n"+
+			"actualStr='%v'\n",
+			expectedStr,
+			actualStr)
+	}
+
+}
+
+func TestErrPrefixDto_NewEPrefCtx_000200(t *testing.T) {
+
+	newErrPrefix := "Tx5.BrandNewMethod()"
+	newErrContext := ""
+
+	expectedDto := new(ErrPrefixDto)
+
+	expectedDto.SetMaxTextLineLen(40)
+
+	expectedDto.SetEPrefCtx(newErrPrefix, newErrContext)
+
+	actualDto := ErrPrefixDto{}.NewEPrefCtx(
+		newErrPrefix,
+		newErrContext)
+
+	actualDto.SetMaxTextLineLen(40)
+
+	expectedStr := ErrPref{}.ConvertNonPrintableChars(
+		[]rune(expectedDto.String()),
+		true)
+
+	actualStr := ErrPref{}.ConvertNonPrintableChars(
+		[]rune(actualDto.String()),
+		true)
+
+	if !actualDto.Equal(expectedDto) {
+		t.Errorf("ERROR: Expected expectedDto==actualDto.\n"+
+			"HOWEVER, THEY ARE NOT EQUAL!\n"+
+			"expectedDto='%v'\n"+
+			"actualDto='%v'\n",
+			expectedStr,
+			actualStr)
+
+		return
+	}
+
+	if expectedStr != actualStr {
+		t.Errorf("ERROR: Expected expectedStr==actualStr.\n"+
+			"HOWEVER, THEY ARE NOT EQUAL!\n"+
+			"expectedStr='%v'\n"+
+			"actualStr='%v'\n",
+			expectedStr,
+			actualStr)
+	}
+
+}
+
+func TestErrPrefixDto_NewEPrefCtx_000300(t *testing.T) {
+
+	newErrPrefix := ""
+	newErrContext := ""
+
+	expectedDto := new(ErrPrefixDto)
+
+	expectedDto.SetMaxTextLineLen(40)
+
+	expectedDto.SetEPrefCtx(newErrPrefix, newErrContext)
+
+	actualDto := ErrPrefixDto{}.NewEPrefCtx(
+		newErrPrefix,
+		newErrContext)
+
+	actualDto.SetMaxTextLineLen(40)
+
+	expectedStr := ErrPref{}.ConvertNonPrintableChars(
+		[]rune(expectedDto.String()),
+		true)
+
+	actualStr := ErrPref{}.ConvertNonPrintableChars(
+		[]rune(actualDto.String()),
+		true)
+
+	if !actualDto.Equal(expectedDto) {
+		t.Errorf("ERROR: Expected expectedDto==actualDto.\n"+
+			"HOWEVER, THEY ARE NOT EQUAL!\n"+
+			"expectedDto='%v'\n"+
+			"actualDto='%v'\n",
+			expectedStr,
+			actualStr)
+
+		return
+	}
+
+	if expectedStr != actualStr {
+		t.Errorf("ERROR: Expected expectedStr==actualStr.\n"+
+			"HOWEVER, THEY ARE NOT EQUAL!\n"+
+			"expectedStr='%v'\n"+
+			"actualStr='%v'\n",
+			expectedStr,
+			actualStr)
+	}
+
+}
+
 func TestErrPrefixDto_NewEPrefOld_000100(t *testing.T) {
 
 	initialStr :=

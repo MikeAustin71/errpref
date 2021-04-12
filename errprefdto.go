@@ -694,10 +694,107 @@ func (ePrefDto ErrPrefixDto) New() ErrPrefixDto {
 	return newErrPrefixDto
 }
 
+// NewEPrefCtx - Returns a new and properly initialized instance of
+// ErrPrefixDto. The returned ErrPrefixDto instance will be
+// configured with error prefix information extracted from input
+// parameter, 'newErrPrefix'. Optional error context information
+// is extracted from input parameter, 'newErrContext'.
+//
+// Error prefix text is designed to be configured at the beginning
+// of error messages and is most often used to document the thread
+// of code execution by listing the calling sequence for a specific
+// list of functions and methods.
+//
+// The error context string is designed to provide additional
+// information about the function or method identified by the
+// associated error prefix string. Typical context information
+// might include variable names, variable values and additional
+// details on function execution.
+//
+//
+// ----------------------------------------------------------------
+//
+// Input Parameters
+//
+//  newErrPrefix        string
+//     - The new error prefix string typically identifies the
+//       function or method which is currently executing. This
+//       information is used to document source code execution flow
+//       in error messages.
+//
+//       This method is designed to process a single new error prefix
+//       string. To process a collection of error prefix strings, see
+//       method 'ErrPrefixDto.NewEPrefOld()'.
+//
+//
+//  newErrContext       string
+//     - This is the error context information associated with the
+//       new error prefix string ('newErrPrefix'). This parameter
+//       is optional and will accept an empty string.
+//
+//
+// -----------------------------------------------------------------
+//
+// Return Values
+//
+//  ErrPrefixDto
+//     - This method will return a new, properly initialized
+//       instance of ErrPrefixDto containing error prefix
+//       information extracted from input parameters,
+//       'newErrPrefix' and 'newErrContext'.
+//
+func (ePrefDto ErrPrefixDto) NewEPrefCtx(
+	newErrPrefix string,
+	newErrContext string) ErrPrefixDto {
+
+	if ePrefDto.lock == nil {
+		ePrefDto.lock = new(sync.Mutex)
+	}
+
+	ePrefDto.lock.Lock()
+
+	defer ePrefDto.lock.Unlock()
+
+	newErrPrefixDto := ErrPrefixDto{}
+
+	newErrPrefixDto.lock = new(sync.Mutex)
+
+	newErrPrefixDto.ePrefCol = make([]ErrorPrefixInfo, 0)
+
+	newErrPrefixDto.maxErrPrefixTextLineLength =
+		errPrefQuark{}.ptr().getMasterErrPrefDisplayLineLength()
+
+	errPrefNanobot{}.ptr().addEPrefInfo(
+		newErrPrefix,
+		newErrContext,
+		&newErrPrefixDto.ePrefCol)
+
+	errPrefAtom{}.ptr().setFlagsErrorPrefixInfoArray(
+		newErrPrefixDto.ePrefCol)
+
+	return newErrPrefixDto
+}
+
 // NewEPrefOld - Returns a new and properly initialized instance of
 // ErrPrefixDto. The returned ErrPrefixDto instance will be
 // configured with error prefix information extracted from input
 // parameter, 'oldErrPrefix'.
+//
+// Error prefix text is designed to be configured at the beginning
+// of error messages and is most often used to document the thread
+// of code execution by listing the calling sequence for a specific
+// list of functions and methods.
+//
+// The error context string is designed to provide additional
+// information about the function or method identified by the
+// associated error prefix string. Typical context information
+// might include variable names, variable values and additional
+// details on function execution.
+//
+// This method is designed to process a series of error prefix
+// strings passed through input parameter, 'oldErrPrefix'. If
+// only one error prefix string is available, consider using
+// method 'ErrPrefixDto.NewEPrefCtx()'.
 //
 //
 // ----------------------------------------------------------------
@@ -1362,7 +1459,7 @@ func (ePrefDto *ErrPrefixDto) SetCtxEmpty() {
 // specific functions and methods.
 //
 // This method is designed to process a single error prefix string
-// passed in input parameter 'ErrPrefixDto'. If this string
+// passed in input parameter 'newErrPrefix'. If this string
 // contains multiple error prefixes, use method
 // 'ErrPrefixDto.SetEPrefOld()'.
 //
