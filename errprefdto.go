@@ -100,6 +100,47 @@ func (ePrefDto *ErrPrefixDto) AddEPrefCollectionStr(
 	return numberOfCollectionItemsParsed
 }
 
+// Copy - Creates a deep copy of the data fields contained in
+// the current ErrPrefixDto instance, and returns that data as a
+// pointer to a new instance of ErrPrefixDto.
+//
+//
+// ------------------------------------------------------------------------
+//
+// Input Parameters
+//
+//  --- NONE ---
+//
+//
+// ------------------------------------------------------------------------
+//
+// Return Values
+//
+//  *ErrPrefixDto
+//     - If this method completes successfully, a deep copy of the
+//       current ErrPrefixDto instance will be returned through
+//       this parameter as a pointer to a new instance of
+//       ErrPrefixDto.
+//
+func (ePrefDto *ErrPrefixDto) Copy() *ErrPrefixDto {
+
+	if ePrefDto.lock == nil {
+		ePrefDto.lock = new(sync.Mutex)
+	}
+
+	ePrefDto.lock.Lock()
+
+	defer ePrefDto.lock.Unlock()
+
+	newErrPrefixDto,
+		_ := errPrefAtom{}.ptr().
+		copyOutErrPrefDto(
+			ePrefDto,
+			"")
+
+	return &newErrPrefixDto
+}
+
 // CopyIn - Copies the data fields from an incoming instance of
 // ErrPrefixDto ('inComingErrPrefixDto') to the data fields of
 // the current ErrPrefixDto instance ('ePrefDto').
@@ -414,7 +455,7 @@ func (ePrefDto *ErrPrefixDto) GetEPrefCollectionLen() int {
 // This unsigned integer value controls the maximum character limit
 // for this specific ErrPrefixDto instance. This maximum limit will
 // remain in force for the life of this ErrPrefixDto instance or
-// until a call is made to the method 'SetMaxErrPrefTextLineLength()'
+// until a call is made to the method 'SetMaxTextLineLen()'
 // which is used to change the value.
 //
 //
@@ -530,6 +571,8 @@ func (ePrefDto ErrPrefixDto) New() ErrPrefixDto {
 
 	newErrPrefixDto := ErrPrefixDto{}
 
+	newErrPrefixDto.lock = new(sync.Mutex)
+
 	newErrPrefixDto.ePrefCol = make([]ErrorPrefixInfo, 0, 100)
 
 	newErrPrefixDto.maxErrPrefixTextLineLength =
@@ -589,6 +632,8 @@ func (ePrefDto ErrPrefixDto) NewEPrefOld(
 	defer ePrefDto.lock.Unlock()
 
 	newErrPrefixDto := ErrPrefixDto{}
+
+	newErrPrefixDto.lock = new(sync.Mutex)
 
 	newErrPrefixDto.ePrefCol = make([]ErrorPrefixInfo, 0, 100)
 
@@ -663,6 +708,8 @@ func (ePrefDto ErrPrefixDto) NewEPrefCollection(
 
 	defer ePrefDto.lock.Unlock()
 
+	newErrPrefixDto.lock = new(sync.Mutex)
+
 	newErrPrefixDto.ePrefCol = make([]ErrorPrefixInfo, 0, 100)
 
 	newErrPrefixDto.maxErrPrefixTextLineLength =
@@ -679,6 +726,48 @@ func (ePrefDto ErrPrefixDto) NewEPrefCollection(
 			previousCollectionLen
 
 	return numberOfCollectionItemsParsed, newErrPrefixDto
+}
+
+// Ptr - Returns a pointer to a new and properly initialized
+// instance of ErrPrefixDto.
+//
+//
+// ----------------------------------------------------------------
+//
+// Input Parameters
+//
+//  -- NONE --
+//
+//
+// -----------------------------------------------------------------
+//
+// Return Values
+//
+//  ErrPrefixDto
+//     - This method will return a pointer to a new and properly
+//       initialized instance of ErrPrefixDto.
+//
+//
+func (ePrefDto ErrPrefixDto) Ptr() *ErrPrefixDto {
+
+	if ePrefDto.lock == nil {
+		ePrefDto.lock = new(sync.Mutex)
+	}
+
+	ePrefDto.lock.Lock()
+
+	defer ePrefDto.lock.Unlock()
+
+	newErrPrefixDto := new(ErrPrefixDto)
+
+	newErrPrefixDto.lock = new(sync.Mutex)
+
+	newErrPrefixDto.ePrefCol = make([]ErrorPrefixInfo, 0, 100)
+
+	newErrPrefixDto.maxErrPrefixTextLineLength =
+		errPrefQuark{}.ptr().getMasterErrPrefDisplayLineLength()
+
+	return newErrPrefixDto
 }
 
 // SetCtx - Sets or resets the error context for the last error
@@ -1052,9 +1141,9 @@ func (ePrefDto *ErrPrefixDto) SetIsLastLineTermWithNewLine(
 		isLastLineTerminatedWithNewLine
 }
 
-// SetMaxErrPrefTextLineLength - Sets the maximum limit on the
-// number of characters allowed in an error prefix text line output
-// for display purposes.
+// SetMaxTextLineLen - Sets the maximum limit on the number of
+// characters allowed in an error prefix text line output for
+// display purposes.
 //
 // Setting this value will control the maximum character limit for
 // this specific ErrPrefixDto instance. This maximum limit will
@@ -1068,13 +1157,14 @@ func (ePrefDto *ErrPrefixDto) SetIsLastLineTermWithNewLine(
 //
 // Input Parameters
 //
-//  maxErrPrefixTextLineLength      uint
+//  maxErrPrefixTextLineLength      int
 //     - This unsigned integer value will be used to set the
 //       maximum number of characters allowed in a text display
 //       line for error prefix information.
 //
 //       If 'maxErrPrefixTextLineLength' is set to a value less
-//       than ten (10), this method will take no action and return.
+//       than ten (10) or to a value greater than one-million
+//       (1,000,000), this method will take no action and exit.
 //
 //
 // -----------------------------------------------------------------
@@ -1084,8 +1174,8 @@ func (ePrefDto *ErrPrefixDto) SetIsLastLineTermWithNewLine(
 //  --- NONE ---
 //
 //
-func (ePrefDto *ErrPrefixDto) SetMaxErrPrefTextLineLength(
-	maxErrPrefixTextLineLength uint) {
+func (ePrefDto *ErrPrefixDto) SetMaxTextLineLen(
+	maxErrPrefixTextLineLength int) {
 
 	if ePrefDto.lock == nil {
 		ePrefDto.lock = new(sync.Mutex)
@@ -1095,22 +1185,23 @@ func (ePrefDto *ErrPrefixDto) SetMaxErrPrefTextLineLength(
 
 	defer ePrefDto.lock.Unlock()
 
-	if maxErrPrefixTextLineLength < 10 {
+	if maxErrPrefixTextLineLength < 10 ||
+		maxErrPrefixTextLineLength > 1000000 {
 		return
 	}
 
 	ePrefDto.maxErrPrefixTextLineLength =
-		maxErrPrefixTextLineLength
+		uint(maxErrPrefixTextLineLength)
 }
 
-// SetMaxErrPrefTextLineLengthToDefault - Maximum Error Prefix Line
+// SetMaxTextLineLenToDefault - Maximum Error Prefix Line
 // Length is the maximum limit on the number of characters allowed
 // in a single error prefix text line.
 //
 // This method resets that maximum limit to its default value of
 // 40-characters.
 //
-func (ePrefDto *ErrPrefixDto) SetMaxErrPrefTextLineLengthToDefault() {
+func (ePrefDto *ErrPrefixDto) SetMaxTextLineLenToDefault() {
 
 	if ePrefDto.lock == nil {
 		ePrefDto.lock = new(sync.Mutex)
@@ -1134,7 +1225,7 @@ func (ePrefDto *ErrPrefixDto) SetMaxErrPrefTextLineLengthToDefault() {
 func (ePrefDto ErrPrefixDto) String() string {
 
 	if ePrefDto.lock == nil {
-		ePrefDto.lock = new(sync.Mutex)
+		return ""
 	}
 
 	ePrefDto.lock.Lock()
@@ -1142,14 +1233,7 @@ func (ePrefDto ErrPrefixDto) String() string {
 	defer ePrefDto.lock.Unlock()
 
 	if ePrefDto.ePrefCol == nil {
-		ePrefDto.ePrefCol = make([]ErrorPrefixInfo, 0, 100)
-	}
-
-	if ePrefDto.maxErrPrefixTextLineLength < 10 {
-
-		ePrefDto.maxErrPrefixTextLineLength =
-			errPrefQuark{}.ptr().
-				getMasterErrPrefDisplayLineLength()
+		return ""
 	}
 
 	if len(ePrefDto.ePrefCol) == 0 {
@@ -1165,6 +1249,53 @@ func (ePrefDto ErrPrefixDto) String() string {
 			ePrefDto.isLastLineTerminatedWithNewLine,
 			ePrefDto.ePrefCol)
 
+}
+
+// StrMaxLineLen - Returns a formatted error prefix/context string
+// incorporating all error prefix and error context information
+// previously added to this ErrPrefixDto instance.
+//
+// Input parameter 'maxLineLen' is used to set the maximum line
+// length for text returned by this method. It does not alter the
+// maximum line length default value for this ErrPrefixDto instance.
+//
+// Error prefix information is stored internally in the 'ePrefCol'
+// array.
+//
+func (ePrefDto *ErrPrefixDto) StrMaxLineLen(
+	maxLineLen int) string {
+
+	if ePrefDto.lock == nil {
+		ePrefDto.lock = new(sync.Mutex)
+	}
+
+	ePrefDto.lock.Lock()
+
+	defer ePrefDto.lock.Unlock()
+
+	maxErrPrefixTextLineLength := uint(maxLineLen)
+
+	if maxErrPrefixTextLineLength < 10 {
+		maxErrPrefixTextLineLength =
+			ePrefDto.maxErrPrefixTextLineLength
+	}
+
+	if ePrefDto.ePrefCol == nil {
+		ePrefDto.ePrefCol = make([]ErrorPrefixInfo, 0, 100)
+	}
+
+	if len(ePrefDto.ePrefCol) == 0 {
+		return ""
+	}
+
+	errPrefAtom{}.ptr().setFlagsErrorPrefixInfoArray(
+		ePrefDto.ePrefCol)
+
+	return errPrefNanobot{}.ptr().
+		formatErrPrefixComponents(
+			maxErrPrefixTextLineLength,
+			ePrefDto.isLastLineTerminatedWithNewLine,
+			ePrefDto.ePrefCol)
 }
 
 // XCtx - Sets or resets the error context for the last error

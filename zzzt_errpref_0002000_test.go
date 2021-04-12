@@ -2,6 +2,166 @@ package errpref
 
 import "testing"
 
+func TestErrPrefixDto_Copy_000100(t *testing.T) {
+
+	initialStr := "Tx1.Something()\nTx2.SomethingElse()\nTx3.DoSomething()\nTx4() - Tx5()\nTx6.DoSomethingElse()\n"
+
+	ePDto := ErrPrefixDto{}.NewEPrefOld(initialStr)
+
+	// Setting Line Length to 60-Characters
+	ePDto.SetMaxTextLineLen(60)
+
+	ePDto.SetEPrefCtx(
+		"Tx7.TrySomethingNew()",
+		"")
+
+	ePDto.SetCtx("something->newSomething")
+
+	ePDto.SetEPrefCtx(
+		"Tx8.TryAnyCombination()",
+		"")
+
+	ePDto.SetEPref("Tx9.TryAHammer()")
+
+	ePDto.SetCtx("x->y")
+
+	ePDto.SetEPref("Tx10.X()")
+
+	ePDto.SetEPrefCtx(
+		"Tx11.TryAnything()",
+		"")
+
+	ePDto.SetEPrefCtx(
+		"Tx12.TryASalad()",
+		"")
+
+	ePDto.SetEPref("Tx13.SomeFabulousAndComplexStuff()")
+
+	ePDto.SetEPrefCtx(
+		"Tx14.MoreAwesomeGoodness",
+		"A=7 B=8 C=9")
+
+	ePDto2 := ePDto.Copy()
+
+	if !ePDto.Equal(ePDto2) {
+		t.Error("Expected ePDto to Equal ePDto2\n" +
+			"However, THEY ARE NOT EQUAL!\n")
+	}
+
+}
+
+func TestErrPrefixDto_CopyIn_000100(t *testing.T) {
+
+	initialStr := "Tx1.Something()\nTx2.SomethingElse()\nTx3.DoSomething()\nTx4() - Tx5()\nTx6.DoSomethingElse()\n"
+
+	ePDto := ErrPrefixDto{}.NewEPrefOld(initialStr)
+
+	// Setting Line Length to 60-Characters
+	ePDto.SetMaxTextLineLen(60)
+
+	ePDto.SetEPrefCtx(
+		"Tx7.TrySomethingNew()",
+		"")
+
+	ePDto.SetCtx("something->newSomething")
+
+	ePDto.SetEPrefCtx(
+		"Tx8.TryAnyCombination()",
+		"")
+
+	ePDto.SetEPref("Tx9.TryAHammer()")
+
+	ePDto.SetCtx("x->y")
+
+	ePDto.SetEPref("Tx10.X()")
+
+	ePDto.SetEPrefCtx(
+		"Tx11.TryAnything()",
+		"")
+
+	ePDto.SetEPrefCtx(
+		"Tx12.TryASalad()",
+		"")
+
+	ePDto.SetEPref("Tx13.SomeFabulousAndComplexStuff()")
+
+	ePDto.SetEPrefCtx(
+		"Tx14.MoreAwesomeGoodness",
+		"A=7 B=8 C=9")
+
+	ePDto2 := ErrPrefixDto{}.Ptr()
+
+	err := ePDto2.CopyIn(
+		&ePDto,
+		"TestErrPrefixDto_CopyIn_000100")
+
+	if err != nil {
+		t.Errorf("Error:\n"+
+			"%v", err.Error())
+		return
+	}
+
+	if !ePDto.Equal(ePDto2) {
+		t.Error("Expected ePDto to Equal ePDto2\n" +
+			"However, THEY ARE NOT EQUAL!\n")
+	}
+}
+
+func TestErrPrefixDto_CopyOut_000100(t *testing.T) {
+
+	initialStr := "Tx1.Something()\nTx2.SomethingElse()\nTx3.DoSomething()\nTx4() - Tx5()\nTx6.DoSomethingElse()\n"
+
+	ePDto := ErrPrefixDto{}.NewEPrefOld(initialStr)
+
+	// Setting Line Length to 60-Characters
+	ePDto.SetMaxTextLineLen(60)
+
+	ePDto.SetEPrefCtx(
+		"Tx7.TrySomethingNew()",
+		"")
+
+	ePDto.SetCtx("something->newSomething")
+
+	ePDto.SetEPrefCtx(
+		"Tx8.TryAnyCombination()",
+		"")
+
+	ePDto.SetEPref("Tx9.TryAHammer()")
+
+	ePDto.SetCtx("x->y")
+
+	ePDto.SetEPref("Tx10.X()")
+
+	ePDto.SetEPrefCtx(
+		"Tx11.TryAnything()",
+		"")
+
+	ePDto.SetEPrefCtx(
+		"Tx12.TryASalad()",
+		"")
+
+	ePDto.SetEPref("Tx13.SomeFabulousAndComplexStuff()")
+
+	ePDto.SetEPrefCtx(
+		"Tx14.MoreAwesomeGoodness",
+		"A=7 B=8 C=9")
+
+	ePDto2,
+		err := ePDto.CopyOut("TestErrPrefixDto_CopyOut_000100")
+
+	if err != nil {
+		t.Errorf("Error:\n"+
+			"%v", err.Error())
+		return
+	}
+
+	if !ePDto.Equal(&ePDto2) {
+		t.Error("Expected ePDto to Equal ePDto2\n" +
+			"However, THEY ARE NOT EQUAL!\n")
+	}
+
+}
+
 func TestErrPrefixDto_Multiple_000100(t *testing.T) {
 
 	initialStr := "Tx1.Something()\nTx2.SomethingElse()\nTx3.DoSomething()\nTx4() - Tx5()\nTx6.DoSomethingElse()\n"
@@ -9,7 +169,7 @@ func TestErrPrefixDto_Multiple_000100(t *testing.T) {
 	ePDto := ErrPrefixDto{}.NewEPrefOld(initialStr)
 
 	// Setting Line Length to 60-Characters
-	ePDto.SetMaxErrPrefTextLineLength(60)
+	ePDto.SetMaxTextLineLen(60)
 
 	ePDto.SetEPrefCtx(
 		"Tx7.TrySomethingNew()",
@@ -65,7 +225,7 @@ func TestErrPrefixDto_Multiple_000100(t *testing.T) {
 			actualStr)
 	}
 
-	ePDto.SetMaxErrPrefTextLineLengthToDefault()
+	ePDto.SetMaxTextLineLenToDefault()
 }
 
 func TestErrPrefixDto_Multiple_000200(t *testing.T) {
@@ -80,7 +240,7 @@ func TestErrPrefixDto_Multiple_000200(t *testing.T) {
 	ePDto := ErrPrefixDto{}.NewEPrefOld(initialStr)
 
 	// Setting Line Length to 40-Characters
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	ePDto.SetEPrefCtx(
 		"Tx7.TrySomethingNew()",
@@ -146,7 +306,7 @@ func TestErrPrefixDto_Multiple_000200(t *testing.T) {
 			actualStr)
 	}
 
-	ePDto.SetMaxErrPrefTextLineLengthToDefault()
+	ePDto.SetMaxTextLineLenToDefault()
 }
 
 func TestErrPrefixDto_Multiple_000300(t *testing.T) {
@@ -161,7 +321,7 @@ func TestErrPrefixDto_Multiple_000300(t *testing.T) {
 	ePDto := ErrPrefixDto{}.NewEPrefOld(initialStr)
 
 	// Setting Line Length to 40-Characters
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	ePDto.SetEPrefCtx(
 		"Tx7.TrySomethingNew()",
@@ -227,7 +387,7 @@ func TestErrPrefixDto_Multiple_000300(t *testing.T) {
 			actualStr)
 	}
 
-	ePDto.SetMaxErrPrefTextLineLengthToDefault()
+	ePDto.SetMaxTextLineLenToDefault()
 }
 
 func TestErrPrefixDto_NewEPrefOld_000100(t *testing.T) {
@@ -239,7 +399,7 @@ func TestErrPrefixDto_NewEPrefOld_000100(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.NewEPrefOld(initialStr)
 
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	actualStr := ePDto.String()
 
@@ -270,7 +430,7 @@ func TestErrPrefixDto_NewEPrefOld_000200(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.NewEPrefOld(initialStr)
 
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	actualStr := ePDto.String()
 
@@ -297,7 +457,7 @@ func TestErrPrefixDto_SetCtx_000100(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
 
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	initialStr :=
 		"Tx1.AVeryVeryLongMethodNameCalledSomething() : A->B\nTx2.SomethingElse() : A==B\n" +
@@ -338,7 +498,7 @@ func TestErrPrefixDto_SetCtx_000200(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
 
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	initialStr :=
 		"Tx1.AVeryVeryLongMethodNameCalledSomething() : A->B\nTx2.SomethingElse() : A==B\n" +
@@ -379,7 +539,7 @@ func TestErrPrefixDto_SetCtx_000300(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
 
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	expectedStr := ""
 
@@ -410,7 +570,7 @@ func TestErrPrefixDto_SetEPref_000100(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
 
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	initialStr :=
 		"Tx1.AVeryVeryLongMethodNameCalledSomething() : A->B\nTx2.SomethingElse() : A==B\n" +
@@ -452,7 +612,7 @@ func TestErrPrefixDto_SetEPref_000200(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
 
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	expectedStr := "Tx5.BrandNewMethod()"
 
@@ -483,7 +643,7 @@ func TestErrPrefixDto_SetEPref_000300(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
 
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	initialStr :=
 		"Tx1.AVeryVeryLongMethodNameCalledSomething() : A->B\nTx2.SomethingElse() : A==B\n" +
@@ -524,7 +684,7 @@ func TestErrPrefixDto_SetEPref_000400(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
 
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	initialStr := "Tx1.StartThis()"
 
@@ -559,7 +719,7 @@ func TestErrPrefixDto_SetEPrefCollection000100(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
 
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	initialStr :=
 		"Tx1.Something() - Tx2.SomethingElse() - Tx3.DoSomething()\n" +
@@ -574,7 +734,7 @@ func TestErrPrefixDto_SetEPrefCollection000100(t *testing.T) {
 
 	ePDto2 := ErrPrefixDto{}.New()
 
-	ePDto2.SetMaxErrPrefTextLineLength(40)
+	ePDto2.SetMaxTextLineLen(40)
 
 	initialStr2 :=
 		"ZzA1.AVeryVeryLongMethodNameCalledSomething() : A->B\nZzA2.SomethingElse() : A==B\n" +
@@ -621,7 +781,7 @@ func TestErrPrefixDto_SetEPrefCollection000200(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
 
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	initialStr :=
 		"Tx1.Something() - Tx2.SomethingElse() - Tx3.DoSomething()\n" +
@@ -638,7 +798,7 @@ func TestErrPrefixDto_SetEPrefCollection000200(t *testing.T) {
 
 	ePDto2 := ErrPrefixDto{}.New()
 
-	ePDto2.SetMaxErrPrefTextLineLength(40)
+	ePDto2.SetMaxTextLineLen(40)
 
 	ePDto2.SetIsLastLineTermWithNewLine(true)
 
@@ -699,7 +859,7 @@ func TestErrPrefixDto_SetEPrefCtx_000100(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
 
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	initialStr :=
 		"Tx1.AVeryVeryLongMethodNameCalledSomething() : A->B\nTx2.SomethingElse() : A==B\n" +
@@ -742,7 +902,7 @@ func TestErrPrefixDto_SetEPrefCtx_000200(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
 
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	initialStr :=
 		"Tx1.AVeryVeryLongMethodNameCalledSomething() : A->B\nTx2.SomethingElse() : A==B\n" +
@@ -785,7 +945,7 @@ func TestErrPrefixDto_SetEPrefCtx_000300(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
 
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	initialStr :=
 		"Tx1.AVeryVeryLongMethodNameCalledSomething() : A->B\nTx2.SomethingElse() : A==B\n" +
@@ -827,7 +987,7 @@ func TestErrPrefixDto_SetEPrefCtx_000400(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
 
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	initialStr :=
 		"Tx1.AVeryVeryLongMethodNameCalledSomething() : A->B\nTx2.SomethingElse() : A==B\n" +
@@ -869,7 +1029,7 @@ func TestErrPrefixDto_SetIsLastLineTermWithNewLine_000100(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
 
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	initialStr :=
 		"Tx1.Something()\n" +
@@ -913,7 +1073,7 @@ func TestErrPrefixDto_SetMaxErrPrefTextLineLength_000100(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
 
-	ePDto.SetMaxErrPrefTextLineLength(60)
+	ePDto.SetMaxTextLineLen(60)
 
 	initialStr :=
 		"Tx1.Something()\nTx2.SomethingElse()\nTx3.DoSomething()\nTx4() - Tx5()\nTx6.DoSomethingElse()"
@@ -947,7 +1107,7 @@ func TestErrPrefixDto_String_000100(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
 
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	initialStr :=
 		"Tx1.Something()\nTx2.SomethingElse()\nTx3.DoSomething()\nTx4() - Tx5()\nTx6.DoSomethingElse()"
@@ -981,7 +1141,7 @@ func TestErrPrefixDto_String_000200(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
 
-	ePDto.SetMaxErrPrefTextLineLength(40)
+	ePDto.SetMaxTextLineLen(40)
 
 	initialStr := "Tx1.StartThis()"
 
@@ -1008,4 +1168,68 @@ func TestErrPrefixDto_String_000200(t *testing.T) {
 			actualStr)
 	}
 
+}
+
+func TestErrPrefixDto_StrMaxLineLen_000200(t *testing.T) {
+
+	initialStr := "Tx1.Something()\nTx2.SomethingElse()\nTx3.DoSomething()\nTx4() - Tx5()\nTx6.DoSomethingElse()\n"
+
+	ePDto := ErrPrefixDto{}.NewEPrefOld(initialStr)
+
+	ePDto.SetEPrefCtx(
+		"Tx7.TrySomethingNew()",
+		"")
+
+	ePDto.SetCtx("something->newSomething")
+
+	ePDto.SetEPrefCtx(
+		"Tx8.TryAnyCombination()",
+		"")
+
+	ePDto.SetEPref("Tx9.TryAHammer()")
+
+	ePDto.SetCtx("x->y")
+
+	ePDto.SetEPref("Tx10.X()")
+
+	ePDto.SetEPrefCtx(
+		"Tx11.TryAnything()",
+		"")
+
+	ePDto.SetEPrefCtx(
+		"Tx12.TryASalad()",
+		"")
+
+	ePDto.SetEPref("Tx13.SomeFabulousAndComplexStuff()")
+
+	ePDto.SetEPrefCtx(
+		"Tx14.MoreAwesomeGoodness",
+		"A=7 B=8 C=9")
+
+	expectedStr :=
+		"Tx1.Something() - Tx2.SomethingElse() - Tx3.DoSomething()\\n" +
+			"Tx4() - Tx5() - Tx6.DoSomethingElse()\\n" +
+			"Tx7.TrySomethingNew() : something->newSomething\\n" +
+			"Tx8.TryAnyCombination() - Tx9.TryAHammer() : x->y - Tx10.X()\\n" +
+			"Tx11.TryAnything() - Tx12.TryASalad()\\n" +
+			"Tx13.SomeFabulousAndComplexStuff()\\n" +
+			"Tx14.MoreAwesomeGoodness : A=7 B=8 C=9"
+
+	// Setting Line Length to 60-Characters
+	actualStr := ePDto.StrMaxLineLen(60)
+
+	actualStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(actualStr),
+		false)
+
+	if expectedStr != actualStr {
+
+		t.Errorf("Error:"+
+			"Expected actualStr= '%v'\n"+
+			"Instead, actualStr= '%v'\n",
+			expectedStr,
+			actualStr)
+	}
+
+	ePDto.SetMaxTextLineLenToDefault()
 }

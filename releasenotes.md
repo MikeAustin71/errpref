@@ -1,8 +1,34 @@
-# ErrPref Release Notes Version 1.1.0
+# ErrPref Release Notes Version 1.2.0
+
+This version of ***ErrPref*** was compiled and tested using Go 1.15.8.
+
+This version supports ***Go*** modules.
+
+## Version 1.2.0
+
+Original Release Date: 2021-02-11 16:46:00 USA CST
+
+1. Removed Maximum Line Length operation from ErrPrefixDto.String()
+
+2. Added Ptr() method to ErrPrefixDto.
+
+3. Added tests for ErrPrefixDto methods CopyIn() and CopyOut()
+
+4. Added new method ErrPrefixDto.StrMaxLineLen().
+
+5. Changed method name and signature for ErrPrefixDto.SetMaxTextLineLen()
+
+6. Changed method name for ErrPrefixDto.SetMaxTextLineLenToDefault()
+
+7. Added new method ErrPrefixDto.Copy()
 
 ## Version 1.1.0
 
+Original Release Date:  2021-02-11 02:11:00 USA CST
+
 This version of ***ErrPref*** was compiled and tested using Go 1.15.8.
+
+This version supports ***Go*** modules.
 
 ### ErrPrefixDto
 
@@ -21,5 +47,12 @@ This version of ***ErrPref*** was compiled and tested using Go 1.15.8.
 
 
 
-## Version 0.0.0 
+## Version 1.0.0 
+
+Original Release Date:  2021-02-10 01:17:00 USA CST
+
+This version of ***ErrPref*** was compiled and tested using Go 1.15.8.
+
+This version supports ***Go*** modules.
+
 Initial release of ***ErrPref***.
