@@ -453,6 +453,37 @@ func TestErrPrefixDto_NewEPrefOld_000200(t *testing.T) {
 
 }
 
+func TestErrPrefixDto_NewFromIErrorPrefix_000100(t *testing.T) {
+
+	ePDto := ErrPrefixDto{}.New()
+
+	ePDto.SetMaxTextLineLen(40)
+
+	initialStr :=
+		"Tx1.Something() - Tx2.SomethingElse() - Tx3.DoSomething()\n" +
+			"Tx4() - Tx5() - Tx6.DoSomethingElse()\n" +
+			"Tx7.TrySomethingNew() : something->newSomething\n" +
+			"Tx8.TryAnyCombination() - Tx9.TryAHammer() : x->y - Tx10.X()\n" +
+			"Tx11.TryAnything() - Tx12.TryASalad()\n" +
+			"Tx13.SomeFabulousAndComplexStuff()\n" +
+			"Tx14.MoreAwesomeGoodness : A=7 B=8 C=9"
+
+	ePDto.SetEPrefOld(initialStr)
+
+	ePDto2 := ErrPrefixDto{}.NewFromIErrorPrefix(
+		&ePDto)
+
+	ePDto2.SetMaxTextLineLen(40)
+
+	areEqual := ePDto.Equal(&ePDto2)
+
+	if !areEqual {
+		t.Error("Error: Expected ePDto and ePDto2 would be equal.\n" +
+			"THEY ARE NOT EQUAL!\n")
+	}
+
+}
+
 func TestErrPrefixDto_SetCtx_000100(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
@@ -561,6 +592,141 @@ func TestErrPrefixDto_SetCtx_000300(t *testing.T) {
 			"Expected actualStr= '%v'\n"+
 			"Instead, actualStr= '%v'\n",
 			expectedStr,
+			actualStr)
+	}
+
+}
+
+func TestErrPrefixDto_SetCtx_000400(t *testing.T) {
+
+	ePDto := ErrPrefixDto{}.New()
+
+	ePDto.SetMaxTextLineLen(40)
+
+	initialStr :=
+		"Tx1.AVeryVeryLongMethodNameCalledSomething() : A->B\nTx2.SomethingElse() : A==B\n" +
+			"Tx3.DoSomething() : A==10\nTx4() : A/10==4 - Tx5() : B==999"
+
+	expectedStr1 := "Tx1.AVeryVeryLongMethodNameCalledSomething()\\n" +
+		"[SPACE]:[SPACE][SPACE]A->B\\n" +
+		"Tx2.SomethingElse()[SPACE]:[SPACE]A==B\\n" +
+		"Tx3.DoSomething()[SPACE]:[SPACE]A==10\\n" +
+		"Tx4()[SPACE]:[SPACE]A/10==4[SPACE]-[SPACE]Tx5()[SPACE]:[SPACE]A!=B"
+
+	ePDto.SetEPrefOld(initialStr)
+
+	ePDto.SetCtx("A!=B")
+
+	actualStr := ePDto.String()
+
+	expectedStr1 = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(expectedStr1),
+		true)
+
+	actualStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(actualStr),
+		true)
+
+	if expectedStr1 != actualStr {
+
+		t.Errorf("Error:\n"+
+			"Expected actualStr= '%v'\n"+
+			"Instead, actualStr= '%v'\n",
+			expectedStr1,
+			actualStr)
+		return
+	}
+
+	ePDto.SetCtx("")
+
+	expectedStr2 := "Tx1.AVeryVeryLongMethodNameCalledSomething()\\n" +
+		"[SPACE]:[SPACE][SPACE]A->B\\n" +
+		"Tx2.SomethingElse()[SPACE]:[SPACE]A==B\\n" +
+		"Tx3.DoSomething()[SPACE]:[SPACE]A==10\\n" +
+		"Tx4()[SPACE]:[SPACE]A/10==4[SPACE]-[SPACE]Tx5()"
+
+	actualStr = ePDto.String()
+
+	actualStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(actualStr),
+		true)
+
+	if expectedStr2 != actualStr {
+
+		t.Errorf("Error:\n"+
+			"Expected actualStr= '%v'\n"+
+			"Instead, actualStr= '%v'\n",
+			expectedStr2,
+			actualStr)
+		return
+	}
+}
+
+func TestErrPrefixDto_SetCtxEmpty_000100(t *testing.T) {
+
+	ePDto := ErrPrefixDto{}.New()
+
+	ePDto.SetMaxTextLineLen(40)
+
+	initialStr :=
+		"Tx1.AVeryVeryLongMethodNameCalledSomething() : A->B\nTx2.SomethingElse() : A==B\n" +
+			"Tx3.DoSomething() : A==10\nTx4() : A/10==4 - Tx5()"
+
+	expectedStr := "Tx1.AVeryVeryLongMethodNameCalledSomething()\\n" +
+		"[SPACE]:[SPACE][SPACE]A->B\\n" +
+		"Tx2.SomethingElse()[SPACE]:[SPACE]A==B\\n" +
+		"Tx3.DoSomething()[SPACE]:[SPACE]A==10\\n" +
+		"Tx4()[SPACE]:[SPACE]A/10==4[SPACE]-[SPACE]Tx5()[SPACE]:[SPACE]A!=B"
+
+	ePDto.SetEPrefOld(initialStr)
+
+	ePDto.SetCtx("A!=B")
+
+	actualStr := ePDto.String()
+
+	expectedStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(expectedStr),
+		true)
+
+	actualStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(actualStr),
+		true)
+
+	if expectedStr != actualStr {
+
+		t.Errorf("Error:\n"+
+			"Expected actualStr= '%v'\n"+
+			"Instead, actualStr= '%v'\n",
+			expectedStr,
+			actualStr)
+
+		return
+	}
+
+	expectedStr2 := "Tx1.AVeryVeryLongMethodNameCalledSomething()\\n" +
+		"[SPACE]:[SPACE][SPACE]A->B\\n" +
+		"Tx2.SomethingElse()[SPACE]:[SPACE]A==B\\n" +
+		"Tx3.DoSomething()[SPACE]:[SPACE]A==10\\n" +
+		"Tx4()[SPACE]:[SPACE]A/10==4[SPACE]-[SPACE]Tx5()"
+
+	ePDto.SetCtxEmpty()
+
+	actualStr = ePDto.String()
+
+	expectedStr2 = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(expectedStr2),
+		true)
+
+	actualStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(actualStr),
+		true)
+
+	if expectedStr2 != actualStr {
+
+		t.Errorf("Error:\n"+
+			"Expected actualStr= '%v'\n"+
+			"Instead, actualStr= '%v'\n",
+			expectedStr2,
 			actualStr)
 	}
 
@@ -1023,6 +1189,45 @@ func TestErrPrefixDto_SetEPrefCtx_000400(t *testing.T) {
 			expectedStr,
 			actualStr)
 	}
+}
+
+func TestErrPrefixDto_SetEPrefOld_000100(t *testing.T) {
+
+	ePDto := ErrPrefixDto{}.New()
+
+	ePDto.SetMaxTextLineLen(40)
+
+	initialStr :=
+		"Tx1.AVeryVeryLongMethodNameCalledSomething() : A->B\nTx2.SomethingElse() : A==B\n" +
+			"Tx3.DoSomething() : A==10\nTx4() : A/10==4 - Tx5() : B==999"
+
+	expectedStr := "Tx1.AVeryVeryLongMethodNameCalledSomething()\\n" +
+		"[SPACE]:[SPACE][SPACE]A->B\\n" +
+		"Tx2.SomethingElse()[SPACE]:[SPACE]A==B\\n" +
+		"Tx3.DoSomething()[SPACE]:[SPACE]A==10\\n" +
+		"Tx4()[SPACE]:[SPACE]A/10==4[SPACE]-[SPACE]Tx5()[SPACE]:[SPACE]B==999"
+
+	ePDto.SetEPrefOld(initialStr)
+
+	actualStr := ePDto.String()
+
+	expectedStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(expectedStr),
+		true)
+
+	actualStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(actualStr),
+		true)
+
+	if expectedStr != actualStr {
+
+		t.Errorf("Error:\n"+
+			"Expected actualStr= '%v'\n"+
+			"Instead, actualStr= '%v'\n",
+			expectedStr,
+			actualStr)
+	}
+
 }
 
 func TestErrPrefixDto_SetIsLastLineTermWithNewLine_000100(t *testing.T) {

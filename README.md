@@ -218,13 +218,11 @@ When this error is returned up the function chain and finally printed out, the t
 
 ## Version
 
-The latest version is Version 1.2.0.
-
-Original Release Date: 2021-02-11 16:46:00 USACST
+The latest version is Version 1.3.0.
 
 This Version supports *Go* modules.
 
-[Version 1.2.0 Release Notes](./releasenotes.md)
+[Version 1.3.0 Release Notes](./releasenotes.md)
 
 ## License
 
