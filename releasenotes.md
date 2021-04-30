@@ -1,8 +1,15 @@
-# *errpref* (Error Prefix) Release Notes Version 1.6.0
+# *errpref* (Error Prefix) Release Notes Version 1.6.1
 
 This version of ***errpref*** was compiled and tested using ***Go*** 1.16.3.
 
 This version supports ***Go*** modules.
+
+## Version 1.6.1
+
+#### Changes
+Documentation updates.
+
+## Version 1.6.0
 
 #### Changes
 
@@ -57,7 +64,7 @@ Storage and distribution of the ***errpref*** software package will be processed
        ePrefix string) (ErrPrefixDto, error)
     ```
 
-11. **Variable String Delimiter Feature** - Added methods to control input and output string delimiters. These methods effectively implement the Variable String Delimiter Feature. Users are now able to control the string delimiters used to parse input strings containing error prefix information as will as the string delimiters used to format output error prefix text for presentations and display. 
+11. **Variable String Delimiter Feature** - Added methods to control input and output string delimiters. These methods effectively implement the Variable String Delimiter Feature. Users are now able to control the string delimiters used to parse input strings containing error prefix information as well as the string delimiters used to format output error prefix text for presentations and display. 
 
     ```
     func (ePrefDto *ErrPrefixDto) SetInputStringDelimiters(

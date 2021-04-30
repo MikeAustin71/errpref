@@ -4,9 +4,9 @@
 
 The ***errpref*** software package was written in the [Go](https://golang.org/) programming language, a.k.a. ***Golang***.
 
-***errpref*** supports [Go Modules]([Go Modules Reference - The Go Programming Language (golang.org)](https://golang.org/ref/mod)).
+***errpref*** supports [Go Modules](https://golang.org/ref/mod).
 
-The current version of ***errpref*** is Version 1.6.0. Most notably, this version implements the [Left Margin Feature](#left-margin-feature) in error prefix string formatting and [Customizable String Delimiters](#customizing-input-and-output-string-delimiters) for parsing input and output error prefix strings.
+The current version of ***errpref*** is Version 1.6.1. Most notably, this version implements the [Left Margin Feature](#left-margin-feature) in error prefix string formatting and [Customizable String Delimiters](#customizing-input-and-output-string-delimiters) for parsing input and output error prefix strings.
 
 
 
@@ -823,7 +823,7 @@ Additional code examples can be found in the Error Prefix Examples Application l
 ### Go Get Command
 
 ```go
-go get github.com/MikeAustin71/errpref/@v1.6.0
+go get github.com/MikeAustin71/errpref/@v1.6.1
 ```
 
 ​	-- or --
@@ -881,7 +881,7 @@ Tests are running successfully on Windows 10, Ubuntu 20.04.2.0 LTS, Fedora 34.9.
 
 ## Version
 
-The latest version is Version 1.6.0.
+The latest version is Version 1.6.1.
 
 As with all previous versions, this Version supports [Go Modules](https://golang.org/ref/mod).
 
