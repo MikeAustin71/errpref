@@ -53,6 +53,13 @@ type errPrefQuark struct {
 //       'true', space characters will be converted to "[SPACE]".
 //
 //
+//  ePrefix             string
+//     - This is an error prefix which is included in all returned
+//       error messages. Usually, it contains the names of the calling
+//       method or methods. Note: Be sure to leave a space at the end
+//       of 'ePrefix'. This parameter is optional.
+//
+//
 // ------------------------------------------------------------------------
 //
 // Return Values
@@ -63,7 +70,7 @@ type errPrefQuark struct {
 //       characters are translated into printable characters.
 //
 //
-//  error
+//  err                 error
 //     - If this method completes successfully, the returned error
 //       Type is set equal to 'nil'. If errors are encountered during
 //       processing, the returned error Type will encapsulate an error
@@ -101,6 +108,14 @@ func (ePrefQuark *errPrefQuark) convertNonPrintableChars(
 	ePrefix string) (
 	printableChars string,
 	err error) {
+
+	if ePrefQuark.lock == nil {
+		ePrefQuark.lock = new(sync.Mutex)
+	}
+
+	ePrefQuark.lock.Lock()
+
+	defer ePrefQuark.lock.Unlock()
 
 	if len(ePrefix) > 0 {
 		ePrefix += "\n"
@@ -178,15 +193,82 @@ func (ePrefQuark *errPrefQuark) convertNonPrintableChars(
 	return b.String(), err
 }
 
-// emptyEPrefCollection - Receives a pointer to an ErrPrefixDto
-// object an proceeds to delete all of the existing error prefix
-// and error context information. When completed, the ErrPrefixDto
-// object's collection of ErrorPrefixInfo elements will be set to
-// 'nil'.
+// convertPrintableChars - Converts selected printable characters
+// to their non-printable or native equivalent. For example,
+// instances of '\\n' in a string will be converted to '\n'.
 //
-func (ePrefQuark *errPrefQuark) emptyErrPrefInfoCollection(
-	ePrefixDto *ErrPrefixDto,
-	errPrefStr string) error {
+// Additional examples of converted printable string characters
+// are: "\\n", "\\t" and "[ACK]". These printable characters be
+// converted into their native, non-printable state: '\n', '\t' or
+// 0x06 (Acknowledge).
+//
+//
+// Reference:
+//    https://www.juniper.net/documentation/en_US/idp5.1/topics/reference/general/intrusion-detection-prevention-custom-attack-object-extended-ascii.html
+//
+//
+// ------------------------------------------------------------------------
+//
+// Input Parameters
+//
+//  printableChars      string
+//     - A string which may contain non-printable characters converted
+//       to their printable equivalents. These printable characters will
+//       be converted back to their native, non-printable values.
+//
+//
+//  ePrefix             string
+//     - This is an error prefix which is included in all returned
+//       error messages. Usually, it contains the names of the calling
+//       method or methods. Note: Be sure to leave a space at the end
+//       of 'ePrefix'. This parameter is optional.
+//
+//
+// ------------------------------------------------------------------------
+//
+// Return Values
+//
+//  nonPrintableChars   []rune
+//     - An array of runes containing non-printable characters.
+//       The non-printable characters were be converted from the
+//       printable characters contained in input parameter
+//       'printableChars'.
+//
+//
+//  err                 error
+//     - If this method completes successfully, the returned error
+//       Type is set equal to 'nil'. If errors are encountered during
+//       processing, the returned error Type will encapsulate an error
+//       message. Note that this error message will incorporate the
+//       method chain and text passed by input parameter, 'ePrefix'.
+//       The 'ePrefix' text will be prefixed to the beginning of the
+//       error message.
+//
+//
+// ------------------------------------------------------------------------
+//
+// Example Usage
+//
+//  testStr := "Hello[SPACE]world!\\n"
+//  ePrefix := "theCallingFunction()"
+//
+//  ePrefQuark := errPrefQuark{}
+//
+//  actualRuneArray :=
+//    ePrefQuark.
+//      convertPrintableChars(
+//           testStr,
+//           ePrefix)
+//
+//  ----------------------------------------------------
+//  'actualRuneArray' is now equal to:
+//     "Hello world!\n"
+//
+func (ePrefQuark *errPrefQuark) convertPrintableChars(
+	printableChars string,
+	ePrefix string) (
+	nonPrintableChars []rune,
+	err error) {
 
 	if ePrefQuark.lock == nil {
 		ePrefQuark.lock = new(sync.Mutex)
@@ -196,33 +278,82 @@ func (ePrefQuark *errPrefQuark) emptyErrPrefInfoCollection(
 
 	defer ePrefQuark.lock.Unlock()
 
-	errPrefStr = errPrefStr +
-		"\nerrPrefQuark.emptyErrPrefInfoCollection()"
-
-	if ePrefixDto == nil {
-		return fmt.Errorf("%v\n"+
-			"Error: Input parameter 'ePrefixDto' is invalid!\n"+
-			"'ePrefixDto' is a 'nil' pointer.\n",
-			errPrefStr)
+	if len(ePrefix) > 0 {
+		ePrefix += "\n"
 	}
 
-	if ePrefixDto.ePrefCol == nil {
-		return nil
+	ePrefix += "errPrefQuark.convertPrintableChars() "
+
+	nonPrintableChars = make([]rune, 0)
+
+	lenPrintableChars := len(printableChars)
+
+	if lenPrintableChars == 0 {
+		err = fmt.Errorf("%v\n"+
+			"Error: Input parameter 'printableChars' is invalid!\n"+
+			"'printableChars' is an empty or zero lenght string.\n",
+			ePrefix)
+
+		return nonPrintableChars, err
 	}
 
-	lenEPrefCol := len(ePrefixDto.ePrefCol)
+	printableChars = strings.Replace(
+		printableChars, "[SPACE]", " ", -1)
 
-	if lenEPrefCol == 0 {
-		return nil
-	}
+	printableChars = strings.Replace(
+		printableChars, "[NULL]", string(rune(0x00)), -1) // 0x00 NULL
 
-	for i := 0; i < lenEPrefCol; i++ {
-		ePrefixDto.ePrefCol[i].Empty()
-	}
+	printableChars = strings.Replace(
+		printableChars, "[SOH]", string(rune(0x01)), -1) // 0x01 State of Heading
 
-	ePrefixDto.ePrefCol = nil
+	printableChars = strings.Replace(
+		printableChars, "[STX]", string(rune(0x02)), -1) // 0x02 State of Text
 
-	return nil
+	printableChars = strings.Replace(
+		printableChars, "[ETX]", string(rune(0x03)), -1) // 0x03 End of Text
+
+	printableChars = strings.Replace(
+		printableChars, "[EOT]", string(rune(0x04)), -1) // 0X04 End of Transmission
+
+	printableChars = strings.Replace(
+		printableChars, "[ENQ]", string(rune(0x05)), -1) // 0x05 Enquiry
+
+	printableChars = strings.Replace(
+		printableChars, "[ACK]", string(rune(0x06)), -1) // 0x06 Acknowledge
+
+	printableChars = strings.Replace(
+		printableChars, "\\a", string(rune(0x07)), -1) // U+0007 alert or bell
+
+	printableChars = strings.Replace(
+		printableChars, "\\b", string(rune(0x08)), -1) // U+0008 backspace
+
+	printableChars = strings.Replace(
+		printableChars, "\\t", string(rune(0x09)), -1) // U+0009 horizontal tab
+
+	printableChars = strings.Replace(
+		printableChars, "\\n", string(rune(0x0A)), -1) // U+000A line feed or newline
+
+	printableChars = strings.Replace(
+		printableChars, "\\v", string(rune(0x0B)), -1) // U+000B vertical tab
+
+	printableChars = strings.Replace(
+		printableChars, "\\f", string(rune(0x0C)), -1) // U+000C form feed
+
+	printableChars = strings.Replace(
+		printableChars, "\\r", string(rune(0x0D)), -1) // U+000D carriage return
+
+	printableChars = strings.Replace(
+		printableChars, "[SO]", string(rune(0x0E)), -1) // U+000E Shift Out
+
+	printableChars = strings.Replace(
+		printableChars, "[SI]", string(rune(0x0F)), -1) // U+000F Shift In
+
+	printableChars = strings.Replace(
+		printableChars, "\\", string(rune(0x5c)), -1) // U+005c backslash
+
+	nonPrintableChars = []rune(printableChars)
+
+	return nonPrintableChars, err
 }
 
 // getErrPrefDisplayLineLength - Returns the current value for the

@@ -1,8 +1,14 @@
 # Running Tests
 
+## Test Files Naming Convention
+For this project, source files containing tests are named with a prefix of: **zzzt_**
+
+In addition, test file names always end in: **_test.go**
+
+
 ## Run Basic Tests
 Open a command prompt in this directory:
- *("./MikeAustin71/errprefops/errpref")*
+ ***MikeAustin71/errpref***
 
 and run the following command:
 
@@ -43,6 +49,6 @@ browser. Run this on the command line:
 
   ***go tool cover -html=zzzzz_coverage.out***
 
-## FileNaming Conventions
-The use of *zzzzz_* as a file name prefix for output files ensures
+## Output File Naming Convention
+The use of **zzzzz_** as a file name prefix for output files ensures
 that the output file will be listed last in the directory.

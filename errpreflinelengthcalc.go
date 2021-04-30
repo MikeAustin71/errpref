@@ -193,6 +193,53 @@ func (ePrefixLineLenCalc *EPrefixLineLenCalc) Empty() {
 
 }
 
+// Equal - Returns a boolean flag signaling whether the data values
+// contained in the current EPrefixLineLenCalc instance are equal
+// to those contained in input parameter, 'lineLenCalcTwo'.
+//
+//
+// ------------------------------------------------------------------------
+//
+// Input Parameters
+//
+//  lineLenCalcTwo      *EPrefixLineLenCalc
+//     - A pointer to an instance of EPrefixLineLenCalc. The data
+//       values contained in this instance will be compared to
+//       those contained in the current EPrefixLineLenCalc instance
+//       (ePrefixLineLenCalc) to determine equality.
+//
+//
+// ------------------------------------------------------------------------
+//
+// Return Values
+//
+//  bool
+//     - A boolean flag signaling whether the data values contained
+//       in the current EPrefixLineLenCalc instance are equal to
+//       those contained in input parameter 'lineLenCalcTwo'. If
+//       the data values are equal in all respects, this returned
+//       boolean value will be set to 'true'.
+//
+func (ePrefixLineLenCalc *EPrefixLineLenCalc) Equal(
+	lineLenCalcTwo *EPrefixLineLenCalc) bool {
+
+	if ePrefixLineLenCalc.lock == nil {
+		ePrefixLineLenCalc.lock = new(sync.Mutex)
+	}
+
+	ePrefixLineLenCalc.lock.Lock()
+
+	defer ePrefixLineLenCalc.lock.Unlock()
+
+	areEqual,
+		_ := ePrefixLineLenCalcElectron{}.ptr().equal(
+		ePrefixLineLenCalc,
+		lineLenCalcTwo,
+		"")
+
+	return areEqual
+}
+
 // EPrefWithoutContextExceedsRemainLineLen - Returns 'true' if the
 // length of the in-line of in-line error prefix delimiter plus the
 // length of the error prefix string exceeds the remaining unused
@@ -664,12 +711,11 @@ func (ePrefixLineLenCalc *EPrefixLineLenCalc) IsValidInstance() bool {
 
 	defer ePrefixLineLenCalc.lock.Unlock()
 
-	ePrefLineLenCalcQuark := ePrefixLineLenCalcQuark{}
-
 	isValid,
-		_ := ePrefLineLenCalcQuark.testValidityOfEPrefixLineLenCalc(
-		ePrefixLineLenCalc,
-		"")
+		_ := ePrefixLineLenCalcQuark{}.ptr().
+		testValidityOfEPrefixLineLenCalc(
+			ePrefixLineLenCalc,
+			"")
 
 	return isValid
 }
@@ -722,13 +768,12 @@ func (ePrefixLineLenCalc *EPrefixLineLenCalc) IsValidInstanceError(
 
 	ePrefix += "EPrefixLineLenCalc.IsValidInstanceError() "
 
-	ePrefLineLenCalcQuark := ePrefixLineLenCalcQuark{}
-
 	_,
-		err := ePrefLineLenCalcQuark.testValidityOfEPrefixLineLenCalc(
-		ePrefixLineLenCalc,
-		ePrefix+
-			"ePrefixLineLenCalc\n")
+		err := ePrefixLineLenCalcQuark{}.ptr().
+		testValidityOfEPrefixLineLenCalc(
+			ePrefixLineLenCalc,
+			ePrefix+
+				"ePrefixLineLenCalc\n")
 
 	return err
 }

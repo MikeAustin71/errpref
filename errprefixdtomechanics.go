@@ -10,7 +10,7 @@ type errPrefixDtoMechanics struct {
 	lock *sync.Mutex
 }
 
-// Ptr - Returns a pointer to a new instance of errPrefixDtoMechanics.
+// ptr - Returns a pointer to a new instance of errPrefixDtoMechanics.
 //
 func (ePrefDtoMech errPrefixDtoMechanics) ptr() *errPrefixDtoMechanics {
 
@@ -25,6 +25,65 @@ func (ePrefDtoMech errPrefixDtoMechanics) ptr() *errPrefixDtoMechanics {
 	return &errPrefixDtoMechanics{
 		lock: new(sync.Mutex),
 	}
+}
+
+// getEPrefStrings - Receives a pointer to an instance of
+// ErrPrefixDto and proceeds to convert the internal collection of
+// ErrorPrefixInfo objects to a two dimensional string array
+// which is returned to the caller.
+//
+// The two-dimensional string array contains both error prefix and
+// error context information. The Error Prefix string is always in
+// the [x][0] position. The Error Context string is always in the
+// [x][1] position. The Error Context string is optional and may be
+// an empty string.
+//
+func (ePrefDtoMech *errPrefixDtoMechanics) getEPrefStrings(
+	errPrefDto *ErrPrefixDto,
+	errorPrefStr string) (
+	twoDStrArray [][2]string,
+	err error) {
+
+	if ePrefDtoMech.lock == nil {
+		ePrefDtoMech.lock = new(sync.Mutex)
+	}
+
+	ePrefDtoMech.lock.Lock()
+
+	defer ePrefDtoMech.lock.Unlock()
+
+	methodNames := errorPrefStr + "\n" +
+		"errPrefixDtoMechanics.getEPrefStrings()"
+
+	twoDStrArray = nil
+
+	if errPrefDto == nil {
+		err = fmt.Errorf("%v\n"+
+			"Error: Input Parameter 'errPrefDto' is invalid!\n"+
+			"'errPrefDto' is a 'nil' pointer.\n",
+			methodNames)
+
+		return twoDStrArray, err
+	}
+
+	colLen := len(errPrefDto.ePrefCol)
+
+	if colLen == 0 {
+		return twoDStrArray, err
+	}
+
+	twoDStrArray = make([][2]string, colLen)
+
+	for i := 0; i < colLen; i++ {
+
+		twoDStrArray[i][0] =
+			errPrefDto.ePrefCol[i].errorPrefixStr
+
+		twoDStrArray[i][1] =
+			errPrefDto.ePrefCol[i].errorContextStr
+	}
+
+	return twoDStrArray, err
 }
 
 // setFromIBasicErrorPrefix - Receives an ErrPrefixDto object and
@@ -150,9 +209,27 @@ func (ePrefDtoMech *errPrefixDtoMechanics) setFromEmptyInterface(
 
 	errNanobot := errPrefixDtoNanobot{}
 
-	if iEPref == nil {
+	ePrfAtom := errPrefixDtoAtom{}
 
-		errPrefDto.ePrefCol = nil
+	var backup ErrPrefixDto
+	var err2 error
+	originalDataIsGood := true
+
+	backup,
+		err2 = ePrfAtom.copyOutErrPrefDto(
+		errPrefDto,
+		"")
+
+	if err2 != nil {
+		originalDataIsGood = false
+	}
+
+	_ = errPrefixDtoQuark{}.ptr().
+		emptyErrPrefInfoCollection(
+			errPrefDto,
+			"")
+
+	if iEPref == nil {
 
 		return nil
 	}
@@ -161,10 +238,12 @@ func (ePrefDtoMech *errPrefixDtoMechanics) setFromEmptyInterface(
 
 	var str string
 
+	// string
 	str,
 		ok = iEPref.(string)
 
 	if ok {
+
 		return errNanobot.setFromString(
 			errPrefDto,
 			str,
@@ -173,6 +252,7 @@ func (ePrefDtoMech *errPrefixDtoMechanics) setFromEmptyInterface(
 
 	var strs []string
 
+	// string array
 	strs,
 		ok = iEPref.([]string)
 
@@ -186,6 +266,7 @@ func (ePrefDtoMech *errPrefixDtoMechanics) setFromEmptyInterface(
 
 	var twoDStrArray [][2]string
 
+	// Two Dimensional String Array
 	twoDStrArray,
 		ok = iEPref.([][2]string)
 
@@ -197,14 +278,14 @@ func (ePrefDtoMech *errPrefixDtoMechanics) setFromEmptyInterface(
 			methodNames)
 	}
 
-	ePrfAtom := errPrefAtom{}
-
 	var dto ErrPrefixDto
 
+	// ErrPrefixDto
 	dto,
 		ok = iEPref.(ErrPrefixDto)
 
 	if ok {
+
 		return ePrfAtom.
 			copyInErrPrefDto(
 				errPrefDto,
@@ -214,6 +295,7 @@ func (ePrefDtoMech *errPrefixDtoMechanics) setFromEmptyInterface(
 
 	var dtoPtr *ErrPrefixDto
 
+	// *ErrPrefixDto
 	dtoPtr,
 		ok = iEPref.(*ErrPrefixDto)
 
@@ -228,6 +310,7 @@ func (ePrefDtoMech *errPrefixDtoMechanics) setFromEmptyInterface(
 
 	var strBuildr strings.Builder
 
+	// strings.Builder
 	strBuildr,
 		ok = iEPref.(strings.Builder)
 
@@ -242,6 +325,7 @@ func (ePrefDtoMech *errPrefixDtoMechanics) setFromEmptyInterface(
 
 	var strBuildrPtr *strings.Builder
 
+	// *strings.Builder
 	strBuildrPtr,
 		ok = iEPref.(*strings.Builder)
 
@@ -256,6 +340,7 @@ func (ePrefDtoMech *errPrefixDtoMechanics) setFromEmptyInterface(
 
 	var iBasicEPref IBasicErrorPrefix
 
+	// IBasicErrorPrefix
 	iBasicEPref,
 		ok = iEPref.(IBasicErrorPrefix)
 
@@ -269,6 +354,7 @@ func (ePrefDtoMech *errPrefixDtoMechanics) setFromEmptyInterface(
 
 	var iStr fmt.Stringer
 
+	// fmt.Stringer
 	iStr,
 		ok = iEPref.(fmt.Stringer)
 
@@ -284,20 +370,53 @@ func (ePrefDtoMech *errPrefixDtoMechanics) setFromEmptyInterface(
 			methodNames)
 	}
 
-	return fmt.Errorf("%v\n"+
-		"Error: Could NOT extract error prefix information\n"+
-		"from input parameter 'iEPref'.\n"+
-		"'iEPref' IS NOT convertible to one of the seven\n"+
-		"supported types listed as follows:\n"+
-		"    nil\n"+
-		"    fmt.Stringer\n" +
-		"    string\n"+
-		"    []string\n"+
-		"    [][2]string\n" +
-		"    strings.Builder" +
-		"    *strings.Builder" +
-		"    ErrPrefixDto\n"+
-		"    *ErrPrefixDto\n"+
-		"    IBasicErrorPrefix\n",
-		methodNames)
+	// An Error Occurred!
+	// An Error Condition NOW EXISTS!
+	// Attempt to recover original data
+	//
+	var errMsg string
+
+	errMsg =
+		fmt.Sprintf("%v\n"+
+			"Error: Could NOT extract error prefix information\n"+
+			"from input parameter 'iEPref'.\n"+
+			"'iEPref' IS NOT convertible to one of the seven\n"+
+			"supported types listed as follows:\n"+
+			"    nil\n"+
+			"    fmt.Stringer\n"+
+			"    string\n"+
+			"    []string\n"+
+			"    [][2]string\n"+
+			"    strings.Builder"+
+			"    *strings.Builder"+
+			"    ErrPrefixDto\n"+
+			"    *ErrPrefixDto\n"+
+			"    IBasicErrorPrefix\n",
+			methodNames)
+
+	if originalDataIsGood {
+		err2 = ePrfAtom.copyInErrPrefDto(
+			errPrefDto,
+			&backup,
+			"")
+
+		if err2 != nil {
+			errMsg +=
+				fmt.Sprintf("An additional error occurred while attempting to\n"+
+					"recover original data for the 'errPrefDto' parameter. Therefore,\n"+
+					"'errPrefDto' now contains corrupted data.\n"+
+					"2ndError=\n%v\n",
+					err2.Error())
+		}
+
+	} else {
+
+		errMsg +=
+			"An additional error occurred while attempting to\n" +
+				"recover original data for the 'errPrefDto' parameter. Therefore,\n" +
+				"'errPrefDto' now contains corrupted data.\n"
+	}
+
+	return fmt.Errorf("%v",
+		errMsg)
 }

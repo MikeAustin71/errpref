@@ -19,6 +19,7 @@ type errPrefixDelimitersElectron struct {
 // All of the data fields in the 'targetDelimiters' instance will
 // be overwritten.
 //
+//
 // ----------------------------------------------------------------
 //
 // Input Parameters
@@ -97,14 +98,13 @@ func (ePrefDelimsElectron *errPrefixDelimitersElectron) copyIn(
 			ePrefix)
 	}
 
-	ePrefDelimsQuark := errPrefixDelimitersQuark{}
-
 	// 'incomingDelimiters' line lengths are re-calculated here.
 	_,
-		err := ePrefDelimsQuark.testValidityOfErrPrefixDelimiters(
-		incomingDelimiters,
-		ePrefix+
-			"incomingDelimiters\n")
+		err := errPrefixDelimitersQuark{}.ptr().
+		testValidityOfErrPrefixDelimiters(
+			incomingDelimiters,
+			ePrefix+
+				"incomingDelimiters\n")
 
 	if err != nil {
 		return err
@@ -247,4 +247,164 @@ func (ePrefDelimsElectron *errPrefixDelimitersElectron) copyOut(
 	newDelimiters.lock = new(sync.Mutex)
 
 	return newDelimiters, nil
+}
+
+// equal - Receives pointers to two instances of
+// ErrPrefixDelimiters and proceeds to determine whether the two
+// instances have equal data values.
+//
+//
+// ----------------------------------------------------------------
+//
+// Input Parameters
+//
+//  delimitersOne       *ErrPrefixDelimiters
+//     - A pointer to an instance of ErrPrefixDelimiters. The
+//       internal data values encapsulated by this object will be
+//       compared to those contained in input parameter,
+//       'delimitersTwo'. If the data values are equal, a boolean
+//       flag of 'true' will be returned.
+//
+//
+//  delimitersTwo       *ErrPrefixDelimiters
+//     - A pointer to a second instance of ErrPrefixDelimiters. The
+//       internal data values encapsulated by this object will be
+//       compared to those contained in input parameter,
+//       'delimitersOne'. If the data values are equal, a boolean
+//       flag of 'true' will be returned.
+//
+//
+//  ePrefix             string
+//     - This is an error prefix which is included in all returned
+//       error messages. Usually, it contains the names of the calling
+//       method or methods. Be sure to leave a space at the end of
+//       'ePrefix'.
+//
+//
+// ------------------------------------------------------------------------
+//
+// Return Values
+//
+//  areEqual            bool
+//     - This method will compare the data values encapsulated by
+//       input parameters, 'delimitersOne' and 'delimitersTwo'. If
+//       the data values are equivalent, this boolean flag will be
+//       set to 'true'.
+//
+//       If the data values are NOT equivalent, this parameter will
+//       be set to 'false'.
+//
+//
+//  err                 error
+//     - If this method completes successfully, the returned error Type
+//       is set to 'nil'. If errors are encountered during processing,
+//       the returned error Type will encapsulate an error message.
+//       Note that this error message will incorporate the method
+//       chain and text passed by input parameter, 'ePrefix'.
+//
+func (ePrefDelimsElectron *errPrefixDelimitersElectron) equal(
+	delimitersOne *ErrPrefixDelimiters,
+	delimitersTwo *ErrPrefixDelimiters,
+	ePrefix string) (
+	areEqual bool,
+	err error) {
+
+	if ePrefDelimsElectron.lock == nil {
+		ePrefDelimsElectron.lock = new(sync.Mutex)
+	}
+
+	ePrefDelimsElectron.lock.Lock()
+
+	defer ePrefDelimsElectron.lock.Unlock()
+
+	ePrefix += "errorPrefixInfoElectron.equal() "
+
+	areEqual = false
+
+	if delimitersOne == nil {
+		err = fmt.Errorf("%v\n"+
+			"\nInput parameter 'delimitersOne' is INVALID!\n"+
+			"'delimitersOne' is a nil pointer!\n",
+			ePrefix)
+
+		return areEqual, err
+	}
+
+	if delimitersTwo == nil {
+		err = fmt.Errorf("%v\n"+
+			"\nInput parameter 'delimitersTwo' is INVALID!\n"+
+			"'delimitersTwo' is a nil pointer!\n",
+			ePrefix)
+
+		return areEqual, err
+	}
+
+	if delimitersOne.inLinePrefixDelimiter !=
+		delimitersTwo.inLinePrefixDelimiter {
+
+		return areEqual, err
+	}
+
+	if delimitersOne.lenInLinePrefixDelimiter !=
+		delimitersTwo.lenInLinePrefixDelimiter {
+
+		return areEqual, err
+	}
+
+	if delimitersOne.newLinePrefixDelimiter !=
+		delimitersTwo.newLinePrefixDelimiter {
+
+		return areEqual, err
+	}
+
+	if delimitersOne.lenNewLinePrefixDelimiter !=
+		delimitersTwo.lenNewLinePrefixDelimiter {
+
+		return areEqual, err
+	}
+
+	if delimitersOne.inLineContextDelimiter !=
+		delimitersTwo.inLineContextDelimiter {
+
+		return areEqual, err
+	}
+
+	if delimitersOne.lenInLineContextDelimiter !=
+		delimitersTwo.lenInLineContextDelimiter {
+
+		return areEqual, err
+	}
+
+	if delimitersOne.newLineContextDelimiter !=
+		delimitersTwo.newLineContextDelimiter {
+
+		return areEqual, err
+	}
+
+	if delimitersOne.lenNewLineContextDelimiter !=
+		delimitersTwo.lenNewLineContextDelimiter {
+
+		return areEqual, err
+	}
+
+	areEqual = true
+
+	return areEqual, err
+}
+
+// ptr - Returns a pointer to a new instance of errPrefixDelimitersElectron.
+//
+func (ePrefDelimsElectron errPrefixDelimitersElectron) ptr() *errPrefixDelimitersElectron {
+
+	if ePrefDelimsElectron.lock == nil {
+		ePrefDelimsElectron.lock = new(sync.Mutex)
+	}
+
+	ePrefDelimsElectron.lock.Lock()
+
+	defer ePrefDelimsElectron.lock.Unlock()
+
+	return &errPrefixDelimitersElectron{
+		lock: new(sync.Mutex),
+	}
 }

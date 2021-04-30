@@ -250,6 +250,24 @@ func TestErrPrefixDto_SetCtxEmpty_000100(t *testing.T) {
 
 }
 
+func TestErrPrefixDto_SetCtxEmpty_000200(t *testing.T) {
+
+	ePDto := ErrPrefixDto{}.New()
+
+	ePDto.SetCtxEmpty()
+
+	collectionLen := ePDto.GetEPrefCollectionLen()
+
+	if collectionLen != 0 {
+		t.Errorf("ERROR:\n"+
+			"Expected a zero collection length return from\n"+
+			"ePDto.GetEPrefCollectionLen().\n"+
+			"HOWEVER, COLLECTION LENGTH > 0!\n"+
+			"Collection Length='%v'\n",
+			collectionLen)
+	}
+}
+
 func TestErrPrefixDto_SetEPref_000100(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
@@ -399,7 +417,7 @@ func TestErrPrefixDto_SetEPref_000400(t *testing.T) {
 
 }
 
-func TestErrPrefixDto_SetEPrefCollection000100(t *testing.T) {
+func TestErrPrefixDto_SetEPrefCollection_000100(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
 
@@ -461,7 +479,7 @@ func TestErrPrefixDto_SetEPrefCollection000100(t *testing.T) {
 
 }
 
-func TestErrPrefixDto_SetEPrefCollection000200(t *testing.T) {
+func TestErrPrefixDto_SetEPrefCollection_000200(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
 
@@ -535,6 +553,52 @@ func TestErrPrefixDto_SetEPrefCollection000200(t *testing.T) {
 			"lenDto2Collection='%v'\n",
 			lenDto1Collection,
 			lenDto2Collection)
+	}
+
+}
+
+func TestErrPrefixDto_SetEPrefCollection_000300(t *testing.T) {
+
+	ePDto := ErrPrefixDto{}.New()
+
+	ePDto.SetMaxTextLineLen(40)
+
+	initialStr :=
+		"Tx1.Something() - Tx2.SomethingElse() - Tx3.DoSomething()\n" +
+			"Tx4() - Tx5() - Tx6.DoSomethingElse()\n" +
+			"Tx7.TrySomethingNew() : something->newSomething\n" +
+			"Tx8.TryAnyCombination() - Tx9.TryAHammer() : x->y - Tx10.X()\n" +
+			"Tx11.TryAnything() - Tx12.TryASalad()\n" +
+			"Tx13.SomeFabulousAndComplexStuff()\n" +
+			"Tx14.MoreAwesomeGoodness : A=7 B=8 C=9"
+
+	ePDto.SetEPrefOld(initialStr)
+
+	oldCollectionLen := ePDto.GetEPrefCollectionLen()
+
+	if oldCollectionLen == 0 {
+		t.Error("ERROR:\n" +
+			"Expected oldCollectionLen > 0 because \n" +
+			"ePDto.SetEPrefOld(initialStr)\n was\n" +
+			"called with initialStr containing 14 elements.\n" +
+			"HOWEVER, oldCollectionLen == 0\n")
+		return
+	}
+
+	var ePrefEmptyCol []ErrorPrefixInfo
+
+	ePDto.SetEPrefCollection(ePrefEmptyCol)
+
+	newCollectionLen := ePDto.GetEPrefCollectionLen()
+
+	if newCollectionLen != 0 {
+		t.Errorf("ERROR:\n"+
+			"Expected newCollectionLen==0 because \n"+
+			"ePDto.SetEPrefCollection(ePrefEmptyCol) was\n"+
+			"called with a zero length array.\n"+
+			"HOWEVER, newCollectionLen != 0\n"+
+			"newCollectionLen='%v'\n",
+			newCollectionLen)
 	}
 
 }
@@ -952,6 +1016,151 @@ func TestErrPrefixDto_String_000300(t *testing.T) {
 
 }
 
+func TestErrPrefixDto_String_000400(t *testing.T) {
+
+	ePDto := ErrPrefixDto{}.New()
+
+	ePDto.SetMaxTextLineLen(40)
+
+	initialStr :=
+		"Tx1.Something()\nTx2.SomethingElse()\nTx3.DoSomething()\nTx4() - Tx5()\nTx6.DoSomethingElse()"
+
+	expectedStr := "Tx1.Something() - Tx2.SomethingElse()\nTx3.DoSomething() - Tx4() - Tx5()\nTx6.DoSomethingElse()"
+
+	ePDto.SetEPrefOld(initialStr)
+
+	actualStr := ePDto.String()
+
+	expectedStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(expectedStr),
+		true)
+
+	actualStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(actualStr),
+		true)
+
+	if expectedStr != actualStr {
+
+		t.Errorf("Error Series #1:"+
+			"Expected actualStr= '%v'\n"+
+			"Instead, actualStr= '%v'\n",
+			expectedStr,
+			actualStr)
+
+		return
+	}
+
+	expectedStr = "Tx1.Something() - Tx2.SomethingElse()\n" +
+		"Tx3.DoSomething() - Tx4() - Tx5()\n" +
+		"Tx6.DoSomethingElse() : A+B=C"
+
+	actualStr = ePDto.XCtx("A+B=C").String()
+
+	expectedStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(expectedStr),
+		true)
+
+	actualStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(actualStr),
+		true)
+
+	if expectedStr != actualStr {
+
+		t.Errorf("Error Series #1:"+
+			"Expected actualStr= '%v'\n"+
+			"Instead, actualStr= '%v'\n",
+			expectedStr,
+			actualStr)
+		return
+	}
+
+	ePDto.SetTurnOffTextDisplay(true)
+
+	expectedStr = ePDto.String()
+
+	if expectedStr != "" {
+		t.Errorf("ERROR:\n"+
+			"Expected String should be an empty zero length string.\n"+
+			"HOWEVER, 'expectedStr' IS NOT EMPTY!\n"+
+			"expectedStr='%v'\n",
+			expectedStr)
+	}
+
+}
+
+func TestErrPrefixDto_String_000500(t *testing.T) {
+
+	ePDto := ErrPrefixDto{}.New()
+
+	ePDto.SetMaxTextLineLen(40)
+
+	initialStr :=
+		"Tx1.Something()\nTx2.SomethingElse()\nTx3.DoSomething()\nTx4() - Tx5()\nTx6.DoSomethingElse()"
+
+	expectedStr := "Tx1.Something() - Tx2.SomethingElse()\nTx3.DoSomething() - Tx4() - Tx5()\nTx6.DoSomethingElse()"
+
+	ePDto.SetEPrefOld(initialStr)
+
+	actualStr := ePDto.String()
+
+	expectedStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(expectedStr),
+		true)
+
+	actualStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(actualStr),
+		true)
+
+	if expectedStr != actualStr {
+
+		t.Errorf("Error Series #1:"+
+			"Expected actualStr= '%v'\n"+
+			"Instead, actualStr= '%v'\n",
+			expectedStr,
+			actualStr)
+
+		return
+	}
+
+	expectedStr = "Tx1.Something() - Tx2.SomethingElse()\n" +
+		"Tx3.DoSomething() - Tx4() - Tx5()\n" +
+		"Tx6.DoSomethingElse() : A+B=C"
+
+	actualStr = ePDto.XCtx("A+B=C").String()
+
+	expectedStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(expectedStr),
+		true)
+
+	actualStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(actualStr),
+		true)
+
+	if expectedStr != actualStr {
+
+		t.Errorf("Error Series #1:"+
+			"Expected actualStr= '%v'\n"+
+			"Instead, actualStr= '%v'\n",
+			expectedStr,
+			actualStr)
+		return
+	}
+
+	ePDto.Empty()
+
+	expectedStr = ePDto.String()
+
+	if expectedStr != "" {
+		t.Errorf("ERROR:\n"+
+			"Expected String should be an empty zero length string"+
+			"because ePDto has an empty error prefix collection.\n"+
+			"HOWEVER, 'expectedStr' IS NOT EMPTY!\n"+
+			"expectedStr='%v'\n",
+			expectedStr)
+	}
+
+}
+
 func TestErrPrefixDto_StrMaxLineLen_000200(t *testing.T) {
 
 	initialStr := "Tx1.Something()\nTx2.SomethingElse()\nTx3.DoSomething()\nTx4() - Tx5()\nTx6.DoSomethingElse()\n"
@@ -1013,5 +1222,15 @@ func TestErrPrefixDto_StrMaxLineLen_000200(t *testing.T) {
 			actualStr)
 	}
 
-	ePDto.SetMaxTextLineLenToDefault()
+	currentMaxLineLen := ePDto.GetMaxTextLineLen()
+
+	if currentMaxLineLen != 60 {
+		t.Errorf("ERROR:\n"+
+			"Expected final Maximum Text Line Length Limit='60'.\n"+
+			"HOWEVER, final Maximum Text Line Length Limit\n"+
+			"IS NOT EQUAL TO 60!!!\n"+
+			"final Maximum Text Line Length Limit='%v'\n",
+			currentMaxLineLen)
+	}
+
 }

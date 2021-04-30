@@ -1,5 +1,9 @@
 === RUN   TestErrPrefixDto_AddEPrefStrings_000100
 --- PASS: TestErrPrefixDto_AddEPrefStrings_000100 (0.00s)
+=== RUN   TestErrPref_ConvertNonPrintableChars_000100
+--- PASS: TestErrPref_ConvertNonPrintableChars_000100 (0.00s)
+=== RUN   TestErrPref_ConvertPrintableChars_000100
+--- PASS: TestErrPref_ConvertPrintableChars_000100 (0.00s)
 === RUN   TestErrPref_FmtStr_000100
 --- PASS: TestErrPref_FmtStr_000100 (0.00s)
 === RUN   TestErrPref_FmtStr_000200
@@ -52,26 +56,122 @@
 --- PASS: TestNewErrPref_Multiple_000300 (0.00s)
 === RUN   TestErrPrefixDto_SetEPrefStrings_000100
 --- PASS: TestErrPrefixDto_SetEPrefStrings_000100 (0.00s)
-=== RUN   TestErrPrefixDto_Copy_000100
---- PASS: TestErrPrefixDto_Copy_000100 (0.00s)
+=== RUN   TestErrPrefixDto_SetEPrefStrings_000200
+--- PASS: TestErrPrefixDto_SetEPrefStrings_000200 (0.00s)
+=== RUN   TestErrorPrefixInfo_CopyIn_000100
+--- PASS: TestErrorPrefixInfo_CopyIn_000100 (0.00s)
+=== RUN   TestErrorPrefixInfo_CopyOut_000100
+--- PASS: TestErrorPrefixInfo_CopyOut_000100 (0.00s)
+=== RUN   TestErrorPrefixInfo_IsValidInstanceError_000100
+--- PASS: TestErrorPrefixInfo_IsValidInstanceError_000100 (0.00s)
+=== RUN   TestEPrefixLineLenCalc_CopyIn_000100
+--- PASS: TestEPrefixLineLenCalc_CopyIn_000100 (0.00s)
+=== RUN   TestEPrefixLineLenCalc_CopyOut_000100
+--- PASS: TestEPrefixLineLenCalc_CopyOut_000100 (0.00s)
+=== RUN   TestErrPrefixDelimiters_CopyIn_000100
+--- PASS: TestErrPrefixDelimiters_CopyIn_000100 (0.00s)
+=== RUN   TestErrPrefixDelimiters_CopyIn_000200
+--- PASS: TestErrPrefixDelimiters_CopyIn_000200 (0.00s)
+=== RUN   TestErrPrefixDelimiters_CopyIn_000300
+--- PASS: TestErrPrefixDelimiters_CopyIn_000300 (0.00s)
+=== RUN   TestErrPrefixDelimiters_CopyOut_000100
+--- PASS: TestErrPrefixDelimiters_CopyOut_000100 (0.00s)
+=== RUN   TestErrPrefixDelimiters_CopyOut_000200
+--- PASS: TestErrPrefixDelimiters_CopyOut_000200 (0.00s)
+=== RUN   TestErrPrefixDelimiters_Empty_000100
+--- PASS: TestErrPrefixDelimiters_Empty_000100 (0.00s)
+=== RUN   TestErrPrefixDelimiters_Empty_000200
+--- PASS: TestErrPrefixDelimiters_Empty_000200 (0.00s)
+=== RUN   TestErrPrefixDelimiters_SetLineLengthValues_000100
+--- PASS: TestErrPrefixDelimiters_SetLineLengthValues_000100 (0.00s)
+=== RUN   TestErrPrefixDelimiters_SetDelimiters_000100
+--- PASS: TestErrPrefixDelimiters_SetDelimiters_000100 (0.00s)
+=== RUN   TestErrPrefixDelimiters_SetToDefault_000100
+--- PASS: TestErrPrefixDelimiters_SetToDefault_000100 (0.00s)
+=== RUN   TestErrPrefixDto_AddEPrefCollectionStr_000100
+--- PASS: TestErrPrefixDto_AddEPrefCollectionStr_000100 (0.00s)
+=== RUN   TestErrPrefixDto_CopyPtr_000100
+--- PASS: TestErrPrefixDto_CopyPtr_000100 (0.00s)
 === RUN   TestErrPrefixDto_CopyIn_000100
 --- PASS: TestErrPrefixDto_CopyIn_000100 (0.00s)
+=== RUN   TestErrPrefixDto_CopyIn_000200
+--- PASS: TestErrPrefixDto_CopyIn_000200 (0.00s)
+=== RUN   TestErrPrefixDto_CopyIn_000300
+--- PASS: TestErrPrefixDto_CopyIn_000300 (0.00s)
+=== RUN   TestErrPrefixDto_CopyIn_000400
+--- PASS: TestErrPrefixDto_CopyIn_000400 (0.00s)
 === RUN   TestErrPrefixDto_CopyOut_000100
 --- PASS: TestErrPrefixDto_CopyOut_000100 (0.00s)
+=== RUN   TestErrPrefixDto_CopyOut_000200
+--- PASS: TestErrPrefixDto_CopyOut_000200 (0.00s)
+=== RUN   TestErrPrefixDto_Empty_000100
+--- PASS: TestErrPrefixDto_Empty_000100 (0.00s)
+=== RUN   TestErrPrefixDto_EmptyEPrefCollection_000100
+--- PASS: TestErrPrefixDto_EmptyEPrefCollection_000100 (0.00s)
 === RUN   TestErrPrefixDto_Equal_000100
 --- PASS: TestErrPrefixDto_Equal_000100 (0.00s)
+=== RUN   TestErrPrefixDto_GetDelimiters_000100
+--- PASS: TestErrPrefixDto_GetDelimiters_000100 (0.00s)
+=== RUN   TestErrPrefixDto_GetEPrefCollection
+--- PASS: TestErrPrefixDto_GetEPrefCollection (0.00s)
+=== RUN   TestErrPrefixDto_GetEPrefStrings_000100
+--- PASS: TestErrPrefixDto_GetEPrefStrings_000100 (0.00s)
+=== RUN   TestErrPrefixDto_GetMaxTextLineLen_000100
+--- PASS: TestErrPrefixDto_GetMaxTextLineLen_000100 (0.00s)
+=== RUN   TestErrPrefixDto_IsValidInstance_000100
+--- PASS: TestErrPrefixDto_IsValidInstance_000100 (0.00s)
+=== RUN   TestErrPrefixDto_IsValidInstance_000200
+--- PASS: TestErrPrefixDto_IsValidInstance_000200 (0.00s)
+=== RUN   TestErrPrefixDto_IsValidInstanceError_000100
+--- PASS: TestErrPrefixDto_IsValidInstanceError_000100 (0.00s)
+=== RUN   TestErrPrefixDto_IsValidInstanceError_000200
+--- PASS: TestErrPrefixDto_IsValidInstanceError_000200 (0.00s)
+=== RUN   TestErrPrefixDto_MergeErrPrefixDto_000100
+--- PASS: TestErrPrefixDto_MergeErrPrefixDto_000100 (0.00s)
+=== RUN   TestErrPrefixDto_MergeErrPrefixDto_000200
+--- PASS: TestErrPrefixDto_MergeErrPrefixDto_000200 (0.00s)
+=== RUN   TestErrPrefixDto_MergeErrPrefixDto_000300
+--- PASS: TestErrPrefixDto_MergeErrPrefixDto_000300 (0.00s)
 === RUN   TestErrPrefixDto_Multiple_000100
 --- PASS: TestErrPrefixDto_Multiple_000100 (0.00s)
 === RUN   TestErrPrefixDto_Multiple_000200
 --- PASS: TestErrPrefixDto_Multiple_000200 (0.00s)
 === RUN   TestErrPrefixDto_Multiple_000300
 --- PASS: TestErrPrefixDto_Multiple_000300 (0.00s)
+=== RUN   TestErrPrefixDto_NewIBasicErrorPrefix_000100
+--- PASS: TestErrPrefixDto_NewIBasicErrorPrefix_000100 (0.00s)
+=== RUN   TestErrPrefixDto_NewIBasicErrorPrefix_000200
+--- PASS: TestErrPrefixDto_NewIBasicErrorPrefix_000200 (0.00s)
+=== RUN   TestErrPrefixDto_NewIBasicErrorPrefix_000300
+--- PASS: TestErrPrefixDto_NewIBasicErrorPrefix_000300 (0.00s)
+=== RUN   TestErrPrefixDto_NewIBasicErrorPrefix_000400
+--- PASS: TestErrPrefixDto_NewIBasicErrorPrefix_000400 (0.00s)
+=== RUN   TestErrPrefixDto_NewEPrefCollection_000100
+--- PASS: TestErrPrefixDto_NewEPrefCollection_000100 (0.00s)
+=== RUN   TestErrPrefixDto_NewEPrefCtx_000100
+--- PASS: TestErrPrefixDto_NewEPrefCtx_000100 (0.00s)
+=== RUN   TestErrPrefixDto_NewEPrefCtx_000200
+--- PASS: TestErrPrefixDto_NewEPrefCtx_000200 (0.00s)
+=== RUN   TestErrPrefixDto_NewEPrefCtx_000300
+--- PASS: TestErrPrefixDto_NewEPrefCtx_000300 (0.00s)
 === RUN   TestErrPrefixDto_NewEPrefOld_000100
 --- PASS: TestErrPrefixDto_NewEPrefOld_000100 (0.00s)
 === RUN   TestErrPrefixDto_NewEPrefOld_000200
 --- PASS: TestErrPrefixDto_NewEPrefOld_000200 (0.00s)
 === RUN   TestErrPrefixDto_NewFromIErrorPrefix_000100
 --- PASS: TestErrPrefixDto_NewFromIErrorPrefix_000100 (0.00s)
+=== RUN   TestErrPrefixDto_NewFromIErrorPrefix_000200
+--- PASS: TestErrPrefixDto_NewFromIErrorPrefix_000200 (0.00s)
+=== RUN   TestErrPrefixDto_NewFromStrings_000100
+--- PASS: TestErrPrefixDto_NewFromStrings_000100 (0.00s)
+=== RUN   TestErrPrefixDto_NewFromStrings_000200
+--- PASS: TestErrPrefixDto_NewFromStrings_000200 (0.00s)
+=== RUN   TestErrPrefixDto_NewFromStrings_000300
+--- PASS: TestErrPrefixDto_NewFromStrings_000300 (0.00s)
+=== RUN   TestErrPrefixDto_NewFromStrings_000400
+--- PASS: TestErrPrefixDto_NewFromStrings_000400 (0.00s)
+=== RUN   TestErrPrefixDto_NewFromStrings_000500
+--- PASS: TestErrPrefixDto_NewFromStrings_000500 (0.00s)
 === RUN   TestErrPrefixDto_NewIEmpty_000100
 --- PASS: TestErrPrefixDto_NewIEmpty_000100 (0.00s)
 === RUN   TestErrPrefixDto_NewIEmpty_000200
@@ -104,6 +204,64 @@
 --- PASS: TestErrPrefixDto_NewIEmpty_001500 (0.00s)
 === RUN   TestErrPrefixDto_NewIEmpty_001600
 --- PASS: TestErrPrefixDto_NewIEmpty_001600 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmptyWithDelimiters_000100
+--- PASS: TestErrPrefixDto_NewIEmptyWithDelimiters_000100 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmptyWithDelimiters_000200
+--- PASS: TestErrPrefixDto_NewIEmptyWithDelimiters_000200 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmptyWithDelimiters_000300
+--- PASS: TestErrPrefixDto_NewIEmptyWithDelimiters_000300 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmptyWithDelimiters_000400
+--- PASS: TestErrPrefixDto_NewIEmptyWithDelimiters_000400 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmptyWithDelimiters_000500
+--- PASS: TestErrPrefixDto_NewIEmptyWithDelimiters_000500 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmptyWithDelimiters_000600
+--- PASS: TestErrPrefixDto_NewIEmptyWithDelimiters_000600 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmptyWithDelimiters_000700
+--- PASS: TestErrPrefixDto_NewIEmptyWithDelimiters_000700 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmptyWithDelimiters_000800
+--- PASS: TestErrPrefixDto_NewIEmptyWithDelimiters_000800 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmptyWithDelimiters_000900
+--- PASS: TestErrPrefixDto_NewIEmptyWithDelimiters_000900 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmptyWithDelimiters_001000
+--- PASS: TestErrPrefixDto_NewIEmptyWithDelimiters_001000 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmptyWithDelimiters_001100
+--- PASS: TestErrPrefixDto_NewIEmptyWithDelimiters_001100 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmptyWithDelimiters_001200
+--- PASS: TestErrPrefixDto_NewIEmptyWithDelimiters_001200 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmptyWithDelimiters_001300
+--- PASS: TestErrPrefixDto_NewIEmptyWithDelimiters_001300 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmptyWithDelimiters_001400
+--- PASS: TestErrPrefixDto_NewIEmptyWithDelimiters_001400 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmptyWithDelimiters_001500
+--- PASS: TestErrPrefixDto_NewIEmptyWithDelimiters_001500 (0.00s)
+=== RUN   TestErrPrefixDto_CopyInFromIBuilder_000100
+--- PASS: TestErrPrefixDto_CopyInFromIBuilder_000100 (0.00s)
+=== RUN   TestErrPrefixDto_CopyOutToIBuilder_000100
+--- PASS: TestErrPrefixDto_CopyOutToIBuilder_000100 (0.00s)
+=== RUN   TestErrPrefixDto_SetIBasic_000100
+--- PASS: TestErrPrefixDto_SetIBasic_000100 (0.00s)
+=== RUN   TestErrPrefixDto_SetIBasic_000200
+--- PASS: TestErrPrefixDto_SetIBasic_000200 (0.00s)
+=== RUN   TestErrPrefixDto_SetIBuilder_000100
+--- PASS: TestErrPrefixDto_SetIBuilder_000100 (0.00s)
+=== RUN   TestErrPrefixDto_SetIBuilder_000200
+--- PASS: TestErrPrefixDto_SetIBuilder_000200 (0.00s)
+=== RUN   TestErrPrefixDto_SetIBuilder_000300
+--- PASS: TestErrPrefixDto_SetIBuilder_000300 (0.00s)
+=== RUN   TestErrPrefixDto_GetInputStringDelimiters_000100
+--- PASS: TestErrPrefixDto_GetInputStringDelimiters_000100 (0.00s)
+=== RUN   TestErrPrefixDto_GetOutputStringDelimiters_000100
+--- PASS: TestErrPrefixDto_GetOutputStringDelimiters_000100 (0.00s)
+=== RUN   TestErrPrefixDto_GetStrDelimiters_0100
+--- PASS: TestErrPrefixDto_GetStrDelimiters_0100 (0.00s)
+=== RUN   TestErrPrefixDto_SetOutputStringDelimiters_000100
+--- PASS: TestErrPrefixDto_SetOutputStringDelimiters_000100 (0.00s)
+=== RUN   TestErrPrefixDto_SetOutputStringDelimiters_000200
+--- PASS: TestErrPrefixDto_SetOutputStringDelimiters_000200 (0.00s)
+=== RUN   TestErrPrefixDto_SetInputStringDelimiters_000100
+--- PASS: TestErrPrefixDto_SetInputStringDelimiters_000100 (0.00s)
+=== RUN   TestErrPrefixDto_SetStrDelimitersToDefault_000100
+--- PASS: TestErrPrefixDto_SetStrDelimitersToDefault_000100 (0.00s)
 === RUN   TestErrPrefixDto_SetCtx_000100
 --- PASS: TestErrPrefixDto_SetCtx_000100 (0.00s)
 === RUN   TestErrPrefixDto_SetCtx_000200
@@ -114,6 +272,8 @@
 --- PASS: TestErrPrefixDto_SetCtx_000400 (0.00s)
 === RUN   TestErrPrefixDto_SetCtxEmpty_000100
 --- PASS: TestErrPrefixDto_SetCtxEmpty_000100 (0.00s)
+=== RUN   TestErrPrefixDto_SetCtxEmpty_000200
+--- PASS: TestErrPrefixDto_SetCtxEmpty_000200 (0.00s)
 === RUN   TestErrPrefixDto_SetEPref_000100
 --- PASS: TestErrPrefixDto_SetEPref_000100 (0.00s)
 === RUN   TestErrPrefixDto_SetEPref_000200
@@ -122,10 +282,12 @@
 --- PASS: TestErrPrefixDto_SetEPref_000300 (0.00s)
 === RUN   TestErrPrefixDto_SetEPref_000400
 --- PASS: TestErrPrefixDto_SetEPref_000400 (0.00s)
-=== RUN   TestErrPrefixDto_SetEPrefCollection000100
---- PASS: TestErrPrefixDto_SetEPrefCollection000100 (0.00s)
-=== RUN   TestErrPrefixDto_SetEPrefCollection000200
---- PASS: TestErrPrefixDto_SetEPrefCollection000200 (0.00s)
+=== RUN   TestErrPrefixDto_SetEPrefCollection_000100
+--- PASS: TestErrPrefixDto_SetEPrefCollection_000100 (0.00s)
+=== RUN   TestErrPrefixDto_SetEPrefCollection_000200
+--- PASS: TestErrPrefixDto_SetEPrefCollection_000200 (0.00s)
+=== RUN   TestErrPrefixDto_SetEPrefCollection_000300
+--- PASS: TestErrPrefixDto_SetEPrefCollection_000300 (0.00s)
 === RUN   TestErrPrefixDto_SetEPrefCtx_000100
 --- PASS: TestErrPrefixDto_SetEPrefCtx_000100 (0.00s)
 === RUN   TestErrPrefixDto_SetEPrefCtx_000200
@@ -146,8 +308,36 @@
 --- PASS: TestErrPrefixDto_String_000200 (0.00s)
 === RUN   TestErrPrefixDto_String_000300
 --- PASS: TestErrPrefixDto_String_000300 (0.00s)
+=== RUN   TestErrPrefixDto_String_000400
+--- PASS: TestErrPrefixDto_String_000400 (0.00s)
+=== RUN   TestErrPrefixDto_String_000500
+--- PASS: TestErrPrefixDto_String_000500 (0.00s)
 === RUN   TestErrPrefixDto_StrMaxLineLen_000200
 --- PASS: TestErrPrefixDto_StrMaxLineLen_000200 (0.00s)
+=== RUN   TestErrPrefixDto_SetIEmpty_000100
+--- PASS: TestErrPrefixDto_SetIEmpty_000100 (0.00s)
+=== RUN   TestErrPrefixDto_SetIEmpty_000200
+--- PASS: TestErrPrefixDto_SetIEmpty_000200 (0.00s)
+=== RUN   TestErrPrefixDto_SetIEmpty_000300
+--- PASS: TestErrPrefixDto_SetIEmpty_000300 (0.00s)
+=== RUN   TestErrPrefixDto_SetIEmpty_000400
+--- PASS: TestErrPrefixDto_SetIEmpty_000400 (0.00s)
+=== RUN   TestErrPrefixDto_SetIEmpty_000500
+--- PASS: TestErrPrefixDto_SetIEmpty_000500 (0.00s)
+=== RUN   TestErrPrefixDto_SetIEmpty_000600
+--- PASS: TestErrPrefixDto_SetIEmpty_000600 (0.00s)
+=== RUN   TestErrPrefixDto_SetIEmpty_000700
+--- PASS: TestErrPrefixDto_SetIEmpty_000700 (0.00s)
+=== RUN   TestErrPrefixDto_SetIEmpty_000800
+--- PASS: TestErrPrefixDto_SetIEmpty_000800 (0.00s)
+=== RUN   TestErrPrefixDto_SetIEmpty_000900
+--- PASS: TestErrPrefixDto_SetIEmpty_000900 (0.00s)
+=== RUN   TestErrPrefixDto_SetIEmpty_001000
+--- PASS: TestErrPrefixDto_SetIEmpty_001000 (0.00s)
+=== RUN   TestErrPrefixDto_SetIEmpty_001100
+--- PASS: TestErrPrefixDto_SetIEmpty_001100 (0.00s)
+=== RUN   TestErrPrefixDto_SetIEmpty_001200
+--- PASS: TestErrPrefixDto_SetIEmpty_001200 (0.00s)
 === RUN   TestErrPrefixDto_XCtx_000100
 --- PASS: TestErrPrefixDto_XCtx_000100 (0.00s)
 === RUN   TestErrPrefixDto_XCtx_000200
@@ -166,12 +356,20 @@
 --- PASS: TestErrPrefixDto_XEPrefCtx_000100 (0.00s)
 === RUN   TestErrPrefixDto_XEPrefOld_000100
 --- PASS: TestErrPrefixDto_XEPrefOld_000100 (0.00s)
+=== RUN   TestErrPrefixDto_XSetFromStrings_000100
+--- PASS: TestErrPrefixDto_XSetFromStrings_000100 (0.00s)
+=== RUN   TestErrPrefixDto_XSetFromStrings_000200
+--- PASS: TestErrPrefixDto_XSetFromStrings_000200 (0.00s)
+=== RUN   TestErrPrefixDto_XSetFromStrings_000300
+--- PASS: TestErrPrefixDto_XSetFromStrings_000300 (0.00s)
 === RUN   TestErrPrefixDto_ZCtx_000100
 --- PASS: TestErrPrefixDto_ZCtx_000100 (0.00s)
 === RUN   TestErrPrefixDto_ZCtx_000200
 --- PASS: TestErrPrefixDto_ZCtx_000200 (0.00s)
 === RUN   TestErrPrefixDto_ZCtx_000300
 --- PASS: TestErrPrefixDto_ZCtx_000300 (0.00s)
+=== RUN   TestErrPrefixDto_ZCtx_000400
+--- PASS: TestErrPrefixDto_ZCtx_000400 (0.00s)
 === RUN   TestErrPrefixDto_ZCtxEmpty_000100
 --- PASS: TestErrPrefixDto_ZCtxEmpty_000100 (0.00s)
 === RUN   TestErrPrefixDto_ZCtxEmpty_000200
@@ -194,7 +392,24 @@
 --- PASS: TestErrPrefixDto_XMethods_000100 (0.00s)
 === RUN   TestErrPrefixDto_YMethods_000200
 --- PASS: TestErrPrefixDto_YMethods_000200 (0.00s)
-=== RUN   TestErrPrefixDto_CallSeries01_000100
---- PASS: TestErrPrefixDto_CallSeries01_000100 (0.00s)
+=== RUN   TestErrPrefixDto_CallSeries_000100
+--- PASS: TestErrPrefixDto_CallSeries_000100 (0.00s)
+=== RUN   TestErrPrefixDto_CallSeries_000200
+--- PASS: TestErrPrefixDto_CallSeries_000200 (0.00s)
+=== RUN   TestErrPrefixDto_CallSeries_000300
+--- PASS: TestErrPrefixDto_CallSeries_000300 (0.00s)
+=== RUN   TestErrPrefixDto_SetLeftMarginLength_000100
+--- PASS: TestErrPrefixDto_SetLeftMarginLength_000100 (0.00s)
+=== RUN   TestErrPrefixDto_SetLeftMarginLength_000200
+--- PASS: TestErrPrefixDto_SetLeftMarginLength_000200 (0.00s)
+=== RUN   TestErrPrefixDto_SetLeftMarginChar_000100
+--- PASS: TestErrPrefixDto_SetLeftMarginChar_000100 (0.00s)
+=== RUN   TestErrPrefixDto_SetLeftMarginChar_000200
+--- PASS: TestErrPrefixDto_SetLeftMarginChar_000200 (0.00s)
+=== RUN   TestErrPrefixDto_SetMaxTextLineLen_000100
+--- PASS: TestErrPrefixDto_SetMaxTextLineLen_000100 (0.00s)
+=== RUN   TestErrorPrefixInfo_SetErrPrefixStr
+--- PASS: TestErrorPrefixInfo_SetErrPrefixStr (0.00s)
 PASS
-ok  	github.com/MikeAustin71/errpref	3.532s
+coverage: 87.5% of statements
+ok  	github.com/MikeAustin71/errprefops/errpref	2.009s

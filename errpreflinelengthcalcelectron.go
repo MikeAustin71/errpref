@@ -97,13 +97,12 @@ func (ePrefLineLenCalcElectron *ePrefixLineLenCalcElectron) copyIn(
 			ePrefix)
 	}
 
-	ePrefLineLenCalcQuark := ePrefixLineLenCalcQuark{}
-
 	_,
-		err := ePrefLineLenCalcQuark.testValidityOfEPrefixLineLenCalc(
-		incomingLineLenCalc,
-		ePrefix+
-			"Testing validity of 'incomingLineLenCalc'\n")
+		err := ePrefixLineLenCalcQuark{}.ptr().
+		testValidityOfEPrefixLineLenCalc(
+			incomingLineLenCalc,
+			ePrefix+
+				"Testing validity of 'incomingLineLenCalc'\n")
 
 	if err != nil {
 		return err
@@ -211,13 +210,12 @@ func (ePrefLineLenCalcElectron *ePrefixLineLenCalcElectron) copyOut(
 
 	}
 
-	ePrefLineLenCalcQuark := ePrefixLineLenCalcQuark{}
-
 	_,
-		err := ePrefLineLenCalcQuark.testValidityOfEPrefixLineLenCalc(
-		lineLenCalc,
-		ePrefix+
-			"Testing validity of 'lineLenCalc'\n")
+		err := ePrefixLineLenCalcQuark{}.ptr().
+		testValidityOfEPrefixLineLenCalc(
+			lineLenCalc,
+			ePrefix+
+				"Testing validity of 'lineLenCalc'\n")
 
 	if err != nil {
 		return newLineLenCalc, err
@@ -253,4 +251,92 @@ func (ePrefLineLenCalcElectron *ePrefixLineLenCalcElectron) copyOut(
 		lineLenCalc.maxErrStringLength
 
 	return newLineLenCalc, nil
+}
+
+// equal - Receives pointers to two EPrefixLineLenCalc objects and
+// proceeds to compare the internal data values. If the
+// EPrefixLineLenCalc objects contain data values which ARE EQUAL
+// in all respects, this method returns 'true'.
+//
+// If the data values for the two EPrefixLineLenCalc objects ARE
+// NOT EQUAL, this method will return 'false'.
+//
+func (ePrefLineLenCalcElectron *ePrefixLineLenCalcElectron) equal(
+	lineLenCalcOne *EPrefixLineLenCalc,
+	lineLenCalcTwo *EPrefixLineLenCalc,
+	ePrefix string) (
+	areEqual bool,
+	err error) {
+
+	if ePrefLineLenCalcElectron.lock == nil {
+		ePrefLineLenCalcElectron.lock = new(sync.Mutex)
+	}
+
+	ePrefLineLenCalcElectron.lock.Lock()
+
+	defer ePrefLineLenCalcElectron.lock.Unlock()
+
+	ePrefix += "ePrefixLineLenCalcElectron.copyIn() "
+
+	areEqual = false
+
+	if lineLenCalcOne == nil {
+		err = fmt.Errorf("%v\n"+
+			"\nInput parameter 'lineLenCalcOne' is INVALID!\n"+
+			"'lineLenCalcOne' is a nil pointer!\n",
+			ePrefix)
+
+		return areEqual, err
+	}
+
+	if lineLenCalcTwo == nil {
+		err = fmt.Errorf("%v\n"+
+			"\nInput parameter 'lineLenCalcTwo' is INVALID!\n"+
+			"'lineLenCalcTwo' is a nil pointer!\n",
+			ePrefix)
+
+		return areEqual, err
+	}
+
+	if !lineLenCalcOne.ePrefDelimiters.Equal(
+		&lineLenCalcTwo.ePrefDelimiters) {
+		return areEqual, err
+	}
+
+	if !lineLenCalcOne.errorPrefixInfo.Equal(
+		lineLenCalcTwo.errorPrefixInfo) {
+		return areEqual, err
+	}
+
+	if lineLenCalcOne.currentLineStr !=
+		lineLenCalcTwo.currentLineStr {
+		return areEqual, err
+	}
+
+	if lineLenCalcOne.maxErrStringLength !=
+		lineLenCalcTwo.maxErrStringLength {
+		return areEqual, err
+	}
+
+	areEqual = true
+
+	return areEqual, err
+}
+
+// ptr() - Returns a pointer to a new instance of
+// ePrefixLineLenCalcElectron.
+//
+func (ePrefLineLenCalcElectron ePrefixLineLenCalcElectron) ptr() *ePrefixLineLenCalcElectron {
+
+	if ePrefLineLenCalcElectron.lock == nil {
+		ePrefLineLenCalcElectron.lock = new(sync.Mutex)
+	}
+
+	ePrefLineLenCalcElectron.lock.Lock()
+
+	defer ePrefLineLenCalcElectron.lock.Unlock()
+
+	return &ePrefixLineLenCalcElectron{
+		lock: new(sync.Mutex),
+	}
 }

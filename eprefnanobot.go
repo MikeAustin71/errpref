@@ -95,59 +95,12 @@ func (ePrefNanobot *errPrefNanobot) addEPrefInfo(
 	return
 }
 
-// XCtxEmpty - Deletes the Last Context for the
-// last error prefix in the sequence.
+// extractLastErrPrfInfo - Extracts the last error prefix element
+// from a string comprised of a series of error prefix elements.
 //
+// This method applies system default string delimiters when
+// parsing error prefix strings.
 //
-// ----------------------------------------------------------------
-//
-// Input Parameters
-//
-//  ePrefixDto          *ErrPrefixDto
-//     - A pointer to an instance of ErrPrefixDto. The last error
-//       context for the last error prefix contained in this
-//       ErrPrefixDto object will be deleted.
-//
-//
-// -----------------------------------------------------------------
-//
-// Return Values
-//
-//  --- NONE ---
-//
-func (ePrefNanobot *errPrefNanobot) deleteLastErrContext(
-	ePrefixDto *ErrPrefixDto) {
-
-	if ePrefNanobot.lock == nil {
-		ePrefNanobot.lock = new(sync.Mutex)
-	}
-
-	ePrefNanobot.lock.Lock()
-
-	defer ePrefNanobot.lock.Unlock()
-
-	if ePrefixDto == nil {
-		return
-	}
-
-	if ePrefixDto.ePrefCol == nil {
-		ePrefixDto.ePrefCol = make([]ErrorPrefixInfo, 0)
-	}
-
-	collectionIdx := len(ePrefixDto.ePrefCol)
-
-	if collectionIdx == 0 {
-		return
-	}
-
-	collectionIdx--
-
-	ePrefixDto.ePrefCol[collectionIdx].
-		SetErrContextStr("")
-
-	return
-}
-
 func (ePrefNanobot *errPrefNanobot) extractLastErrPrfInfo(
 	errPref string) ErrorPrefixInfo {
 
@@ -161,9 +114,12 @@ func (ePrefNanobot *errPrefNanobot) extractLastErrPrfInfo(
 
 	prefixContextCol := make([]ErrorPrefixInfo, 0)
 
-	errPrefAtom{}.
+	delimiters := ErrPrefixDelimiters{}.NewDefaults()
+
+	errPrefixDtoAtom{}.
 		ptr().getEPrefContextArray(
 		errPref,
+		delimiters,
 		&prefixContextCol)
 
 	lenCollection := len(prefixContextCol)
@@ -178,168 +134,6 @@ func (ePrefNanobot *errPrefNanobot) extractLastErrPrfInfo(
 	lastEPref.SetIsFirstIndex(false)
 
 	return lastEPref
-}
-
-// extractLastErrPrefInStringSeries - Receives a string containing error
-// prefixes and proceeds to extract and return the last error
-// prefix in the series along with the last error context and the
-// modified error prefix series.
-//
-//
-// ----------------------------------------------------------------
-//
-// Input Parameters
-//
-//  errPref             string
-//     - A string containing error prefixes in series. This method
-//       will extract the last error prefix and error context from
-//       this string.
-//
-//
-// -----------------------------------------------------------------
-//
-// Return Values
-//
-//  oldErrPref          string
-//     - This string holds the modified series of error prefixes.
-//       It is identical to input parameter, 'errPref', except that
-//       the last error prefix and error context have been removed.
-//
-//
-//  newErrPref          string
-//     - A string containing the last error prefix extracted from
-//       input parameter, 'errPref'.
-//
-//
-//  newErrContext       string
-//     - A string containing the last error context description
-//       extracted from input parameter, 'errPref'.
-//
-func (ePrefNanobot *errPrefNanobot) extractLastErrPrefInStringSeries(
-	errPref string) (
-	oldErrPref string,
-	newErrPref string,
-	newErrContext string) {
-
-	if ePrefNanobot.lock == nil {
-		ePrefNanobot.lock = new(sync.Mutex)
-	}
-
-	ePrefNanobot.lock.Lock()
-
-	defer ePrefNanobot.lock.Unlock()
-
-	ePrefElectron := errPrefElectron{}
-	var lenCleanStr int
-
-	errPref,
-		lenCleanStr =
-		ePrefElectron.cleanErrorPrefixStr(errPref)
-
-	if lenCleanStr == 0 {
-		return oldErrPref, newErrPref, newErrContext
-	}
-
-	delimiters := ePrefElectron.getDelimiters()
-
-	var lastIdxDashPref, lastIdxNewLinePref,
-		lastPrefixIdx int
-
-	lastIdxDashPref =
-		strings.LastIndex(
-			errPref,
-			delimiters.GetInLinePrefixDelimiter())
-
-	lastIdxNewLinePref =
-		strings.LastIndex(
-			errPref,
-			delimiters.GetNewLinePrefixDelimiter())
-
-	if lastIdxDashPref > lastIdxNewLinePref {
-
-		lastPrefixIdx = lastIdxDashPref
-
-	} else if lastIdxNewLinePref > lastIdxDashPref {
-
-		lastPrefixIdx = lastIdxNewLinePref
-
-	} else {
-		// lastIdxNewLinePref == lastIdxDashPref
-		// This signals that there is only one
-		// error prefix in the series.
-
-		lastPrefixIdx = 0
-	}
-
-	if lastPrefixIdx > 0 {
-		oldErrPref = errPref[0:lastPrefixIdx]
-
-		oldErrPref,
-			lenCleanStr =
-			ePrefElectron.cleanErrorPrefixStr(oldErrPref)
-
-	}
-
-	tempNewErrPref := errPref[lastPrefixIdx:]
-
-	tempNewErrPref,
-		lenCleanStr =
-		ePrefElectron.cleanErrorPrefixStr(tempNewErrPref)
-
-	if lenCleanStr == 0 {
-		return oldErrPref, newErrPref, newErrContext
-	}
-
-	var (
-		lastIdxColonContext, lastIdxNewLineContext,
-		lastContextIdx int
-	)
-
-	lastIdxNewLineContext =
-		strings.LastIndex(
-			tempNewErrPref,
-			delimiters.GetNewLineContextDelimiter())
-
-	lastIdxColonContext =
-		strings.LastIndex(
-			tempNewErrPref,
-			delimiters.GetInLineContextDelimiter())
-
-	if lastIdxNewLineContext > lastIdxColonContext {
-
-		lastContextIdx = lastIdxNewLineContext
-
-	} else if lastIdxNewLineContext < lastIdxColonContext {
-
-		lastContextIdx = lastIdxColonContext
-
-	} else {
-		//  lastIdxNewLineContext == lastIdxColonContext
-		// This signals that there is no context
-		// present in tempNewErrPref
-		lastContextIdx = -1
-	}
-
-	if lastContextIdx > -1 {
-		newErrPref = tempNewErrPref[0:lastContextIdx]
-		newErrContext = tempNewErrPref[lastContextIdx:]
-
-		newErrPref,
-			_ =
-			ePrefElectron.cleanErrorPrefixStr(newErrPref)
-
-		newErrContext,
-			_ =
-			ePrefElectron.cleanErrorContextStr(newErrContext)
-
-	} else {
-		// lastContextIdx = -1
-		// This signals that there is no context
-		// present in tempNewErrPref
-		newErrPref = tempNewErrPref
-	}
-
-	return oldErrPref, newErrPref, newErrContext
 }
 
 // formatErrPrefixComponents - Returns a string of formatted error
@@ -372,6 +166,19 @@ func (ePrefNanobot *errPrefNanobot) extractLastErrPrefInStringSeries(
 //       terminated with a new line character ('\n').
 //
 //
+//  delimiters                    ErrPrefixDelimiters
+//     - An instance of ErrPrefixDelimiters containing string
+//       delimiters used to join error prefix and error context
+//       elements.
+//
+//       The key components of an ErrPrefixDelimiters object are
+//       listed as follows:
+//         New Line Error Prefix Delimiter
+//         In-Line Error Prefix Delimiter
+//         New Line Error Context Delimiter
+//         In-Line Error Context Delimiter
+//
+//
 //  prefixContextCol                   []ErrorPrefixInfo
 //     - An array of ErrorPrefixInfo objects containing the error
 //       prefix and error context information which will be
@@ -388,6 +195,7 @@ func (ePrefNanobot *errPrefNanobot) extractLastErrPrefInStringSeries(
 func (ePrefNanobot *errPrefNanobot) formatErrPrefixComponents(
 	maxErrPrefixTextLineLength uint,
 	isLastLineTerminatedWithNewLine bool,
+	delimiters ErrPrefixDelimiters,
 	prefixContextCol []ErrorPrefixInfo) string {
 
 	if ePrefNanobot.lock == nil {
@@ -407,18 +215,22 @@ func (ePrefNanobot *errPrefNanobot) formatErrPrefixComponents(
 			"len(prefixContextCol)==0\n"
 	}
 
+	err := delimiters.IsValidInstanceError(
+		localErrPrefix)
+
+	if err != nil {
+		return err.Error()
+	}
+
 	if maxErrPrefixTextLineLength == 0 {
 		maxErrPrefixTextLineLength =
 			errPrefQuark{}.ptr().
 				getErrPrefDisplayLineLength()
 	}
 
-	delimiters := errPrefElectron{}.
-		ptr().getDelimiters()
-
 	lineLenCalculator := EPrefixLineLenCalc{}
 
-	err :=
+	err =
 		lineLenCalculator.SetEPrefDelimiters(
 			delimiters,
 			localErrPrefix)

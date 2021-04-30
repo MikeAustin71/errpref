@@ -22,7 +22,9 @@ func (ePrefLineLenCalcQuark ePrefixLineLenCalcQuark) ptr() *ePrefixLineLenCalcQu
 
 	defer ePrefLineLenCalcQuark.lock.Unlock()
 
-	return &ePrefixLineLenCalcQuark{}
+	return &ePrefixLineLenCalcQuark{
+		lock: new(sync.Mutex),
+	}
 }
 
 // testValidityOfEPrefixLineLenCalc - Performs a diagnostic review of

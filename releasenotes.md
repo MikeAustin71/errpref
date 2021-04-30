@@ -1,14 +1,136 @@
-# ErrPref Release Notes Version 1.5.2
+# *errpref* (Error Prefix) Release Notes Version 1.6.0
 
-This version of ***ErrPref*** was compiled and tested using Go 1.16.3.
+This version of ***errpref*** was compiled and tested using ***Go*** 1.16.3.
 
 This version supports ***Go*** modules.
+
+#### Changes
+
+##### Directory Structure: Development Environment and Package Distribution
+
+This version marks a paradigm change in organization of the ***errpref*** project. 
+
+Moving forward, all development and testing will be conducted in the development environment ***errprefops*** located in software repository https://github.com/MikeAustin71/errprefops .  
+
+Storage and distribution of the ***errpref*** software package will be processed through software repository https://github.com/MikeAustin71/errpref
+
+##### ErrPrefixDto
+
+1. Added new method ErrPrefixDto.SetIEmpty() - Sets the data values for the current ErrPrefixDto instance based on any one of 10-valid types passed through an empty interface. See [source code documentation](https://pkg.go.dev/github.com/MikeAustin71/errpref#ErrPrefixDto).
+
+   ```go
+   func (ePrefDto *ErrPrefixDto) SetIEmpty(
+   	iEPref interface{},
+   	callingMethodName string) error
+   ```
+
+2. Added new method ErrPrefixDto.Empty() - Reinitializes all member variables for the current ErrPrefixDto instance to their native zero values.
+
+3. Added Left Margin Feature for error prefix strings. Users can now set both the left margin length, and the left margin character used to generate the left margin in error prefix strings returned by method ErrPrefixDto.String().
+
+   - ErrPrefixDto.GetLeftMarginChar() rune
+   - ErrPrefixDto.GetLeftMarginLength() int
+   - ErrPrefixDto.SetLeftMarginChar(leftMarginCharacter rune)
+   - ErrPrefixDto.SetLeftMarginLength(leftMarginLength int)
+
+4. Added new method ErrPrefixDto.GetDelimiters(). This method returns the input and output string delimiters used to delimit error prefix and error context strings.
+
+5. Added new method ErrPrefixDto.CopyOutToIBuilder(). This method takes an object implementing the IBuilderErrorPrefix interface and populates than object with error prefix and context information contained in the current instance of ErrPrefixDto. This method is used to facilitate the exchange of error prefix information with custom user developed types.
+
+6. Added new method ErrPrefixDto.CopyInFromIBuilder(). This method takes an object implementing the IBuilderErrorPrefix interface and copies its error prefix and context information into the current instance of ErrPrefixDto.  This method is used to facilitate the exchange of error prefix information with custom user developed types. This method is used to facilitate the exchange of error prefix information with custom user developed types.
+
+7. Added new method ErrPrefixDto.SetIBuilder(). Like ErrPrefixDto.CopyInFromIBuilder(), this method takes an object implementing the IBuilderErrorPrefix interface and copies its error prefix and context information into the current instance of ErrPrefixDto.  This method is used to facilitate the exchange of error prefix information with custom user developed types. This method is used to facilitate the exchange of error prefix information with custom user developed types.
+
+8. Added new method ErrPrefixDto.IsValidInstanceError(). Returns an error if the current ErrPrefixDto instance is invalid.
+
+9. Added new method ErrPrefixDto.IsValidInstance(). Returns a Boolean flag indicating whether the current ErrPrefixDto instance is valid.
+
+10. Added new method ErrPrefixDto.NewFromStrings(). This method returns a new instance of ErrPrefixDto while allowing the user to set the input and output string delimiters:
+
+    ```go
+    func (ePrefDto ErrPrefixDto) NewFromStrings(
+       oldErrPrefix string,
+       newErrPrefix string,
+       newErrContext string,
+       inputStrDelimiters ErrPrefixDelimiters,
+       outputStrDelimiters ErrPrefixDelimiters,
+       ePrefix string) (ErrPrefixDto, error)
+    ```
+
+11. **Variable String Delimiter Feature** - Added methods to control input and output string delimiters. These methods effectively implement the Variable String Delimiter Feature. Users are now able to control the string delimiters used to parse input strings containing error prefix information as will as the string delimiters used to format output error prefix text for presentations and display. 
+
+    ```
+    func (ePrefDto *ErrPrefixDto) SetInputStringDelimiters(
+    	inputStrDelimiters ErrPrefixDelimiters,
+    	ePrefix string) error
+    	
+    func (ePrefDto *ErrPrefixDto) SetOutputStringDelimiters(
+    	outputStrDelimiters ErrPrefixDelimiters,
+    	ePrefix string) error
+    
+    func (ePrefDto *ErrPrefixDto) GetStrDelimiters() (
+    	inputStrDelimiters ErrPrefixDelimiters,
+    	outputStrDelimiters ErrPrefixDelimiters)
+    	
+    func (ePrefDto *ErrPrefixDto) GetInputStringDelimiters() ErrPrefixDelimiters
+    
+    func (ePrefDto *ErrPrefixDto) GetOutputStringDelimiters() ErrPrefixDelimiters
+    
+    func (ePrefDto ErrPrefixDto) NewFromStrings(
+    	oldErrPrefix string,
+    	newErrPrefix string,
+    	newErrContext string,
+    	inputStrDelimiters ErrPrefixDelimiters,
+    	outputStrDelimiters ErrPrefixDelimiters,
+    	ePrefix string) (ErrPrefixDto, error)
+    
+    func (ePrefDto ErrPrefixDto) NewIEmptyWithDelimiters(
+    	iEPref interface{},
+    	newErrPrefix string,
+    	newErrContext string,
+    	inputStrDelimiters ErrPrefixDelimiters,
+    	outputStrDelimiters ErrPrefixDelimiters,
+    	ePrefix string) (
+    	*ErrPrefixDto,
+    	error)
+    ```
+    
+    
+    
+12. Additional ***IBuilderErrorPrefix*** Interface Support
+
+    ```go
+    func (ePrefDto *ErrPrefixDto) CopyInFromIBuilder(
+    	inComingIBuilder IBuilderErrorPrefix,
+    	eMsg string) error
+    	
+    func (ePrefDto *ErrPrefixDto) CopyOutToIBuilder(
+    	inComingIBuilder IBuilderErrorPrefix)
+    	
+    func (ePrefDto *ErrPrefixDto) SetIBuilder(
+    	inComingIBuilder IBuilderErrorPrefix,
+    	callingMethodName string) error
+    ```
+    
+    
+    
+    
+
+##### ErrPref
+
+Added new method ErrPref.GetDelimiters(). This method returns the string delimiters used to delimit error prefix and error context strings.
+
+
 
 ## Version 1.5.2
 
 Original Release Date: 2021-04-09 02:05:00 USA CST
 
 Compiled and Tested: Go 1.16.3
+
+This version supports ***Go*** modules.
+
+#### Changes
 
 1. Fixed link to source code documentation.
 2. Added documentation providing more usage examples.
@@ -20,6 +142,10 @@ Original Release Date: 2021-04-07 21:39:00 USA CST
 
 Compiled and Tested: Go 1.16.3
 
+This version supports ***Go*** modules.
+
+#### Changes
+
 1. Fixed Go Mod File to assign correct version.
 
 ## Version 1.5.0
@@ -27,6 +153,10 @@ Compiled and Tested: Go 1.16.3
 Original Release Date: 2021-04-07 17:34:00 USA CST
 
 Compiled and Tested: Go 1.16.3
+
+This version supports ***Go*** modules.
+
+#### Changes
 
 1. Modified interface IErrorPrefix. Added Methods:
    - GetEPrefStrings() [][2]string
@@ -49,6 +179,10 @@ Original Release Date: 2021-02-16 16:59:00 USA CST
 
 Compiled and Tested: Go 1.15.8
 
+This version supports ***Go*** modules.
+
+#### Changes
+
 1. Modified the interface IErrorPrefix. Removed references to ErrorPrefixInfo.
 
 2. Added 'Z' methods which return an ErrPrefixDto by value.
@@ -65,6 +199,10 @@ Compiled and Tested: Go 1.15.8
 Original Release Date: 2021-02-14 23:38:00 USA CST
 
 Compiled and Tested: Go 1.15.8
+
+This version supports ***Go*** modules.
+
+#### Changes
 
 1. Added IErrorPrefix interface. 
 
@@ -83,6 +221,10 @@ Compiled and Tested: Go 1.15.8
 Original Release Date: 2021-02-11 16:46:00 USA CST
 
 Compiled and Tested: Go 1.15.8
+
+This version supports ***Go*** modules.
+
+#### Changes
 
 1. Removed Maximum Line Length operation from ErrPrefixDto.String()
 2. Added Ptr() method to ErrPrefixDto.

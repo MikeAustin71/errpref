@@ -6,25 +6,27 @@ import (
 	"sync"
 )
 
-type errPrefAtom struct {
+type errPrefixDtoAtom struct {
 	lock *sync.Mutex
 }
 
-func (ePrefAtom *errPrefAtom) addTwoDimensionalStringArray(
+// addTwoDimensionalStringArray - Adds error prefix info contained
+// in a 2-Dimensional string array.
+func (ePrefixDtoAtom *errPrefixDtoAtom) addTwoDimensionalStringArray(
 	errPrefixDto *ErrPrefixDto,
 	twoDStrArray [][2]string,
 	errPrefStr string) error {
 
-	if ePrefAtom.lock == nil {
-		ePrefAtom.lock = new(sync.Mutex)
+	if ePrefixDtoAtom.lock == nil {
+		ePrefixDtoAtom.lock = new(sync.Mutex)
 	}
 
-	ePrefAtom.lock.Lock()
+	ePrefixDtoAtom.lock.Lock()
 
-	defer ePrefAtom.lock.Unlock()
+	defer ePrefixDtoAtom.lock.Unlock()
 
 	errPrefStr = errPrefStr +
-		"\nerrPrefAtom." +
+		"\nerrPrefixDtoAtom." +
 		"addTwoDimensionalStringArray()"
 
 	if errPrefixDto == nil {
@@ -33,6 +35,10 @@ func (ePrefAtom *errPrefAtom) addTwoDimensionalStringArray(
 			"'' is a 'nil' pointer.\n",
 			errPrefStr)
 	}
+
+	errPrefixDto.inputStrDelimiters.SetToDefaultIfEmpty()
+
+	errPrefixDto.outputStrDelimiters.SetToDefaultIfEmpty()
 
 	if twoDStrArray == nil {
 		return nil
@@ -65,6 +71,9 @@ func (ePrefAtom *errPrefAtom) addTwoDimensionalStringArray(
 				ePrefInfo)
 	}
 
+	errPrefixDtoAtom{}.ptr().setFlagsErrorPrefixInfoArray(
+		errPrefixDto.ePrefCol)
+
 	return nil
 }
 
@@ -76,29 +85,39 @@ func (ePrefAtom *errPrefAtom) addTwoDimensionalStringArray(
 // If the data values for the two ErrPrefixDto objects ARE NOT
 // EQUAL, this method will return 'false'.
 //
-func (ePrefAtom *errPrefAtom) areEqualErrPrefDtos(
+func (ePrefixDtoAtom *errPrefixDtoAtom) areEqualErrPrefDtos(
 	errPrefixDto1 *ErrPrefixDto,
 	errPrefixDto2 *ErrPrefixDto) bool {
 
-	if ePrefAtom.lock == nil {
-		ePrefAtom.lock = new(sync.Mutex)
+	if ePrefixDtoAtom.lock == nil {
+		ePrefixDtoAtom.lock = new(sync.Mutex)
 	}
 
-	ePrefAtom.lock.Lock()
+	ePrefixDtoAtom.lock.Lock()
 
-	defer ePrefAtom.lock.Unlock()
+	defer ePrefixDtoAtom.lock.Unlock()
 
 	if errPrefixDto1 == nil ||
 		errPrefixDto2 == nil {
 		return false
 	}
 
-	if errPrefixDto1.lock == nil {
-		errPrefixDto1.lock = new(sync.Mutex)
+	errPrefixDto1.inputStrDelimiters.SetToDefaultIfEmpty()
+
+	errPrefixDto1.outputStrDelimiters.SetToDefaultIfEmpty()
+
+	errPrefixDto2.inputStrDelimiters.SetToDefaultIfEmpty()
+
+	errPrefixDto2.outputStrDelimiters.SetToDefaultIfEmpty()
+
+	if errPrefixDto1.leftMarginLength !=
+		errPrefixDto2.leftMarginLength {
+		return false
 	}
 
-	if errPrefixDto2.lock == nil {
-		errPrefixDto2.lock = new(sync.Mutex)
+	if errPrefixDto1.leftMarginChar !=
+		errPrefixDto2.leftMarginChar {
+		return false
 	}
 
 	if errPrefixDto1.isLastLineTerminatedWithNewLine !=
@@ -106,8 +125,18 @@ func (ePrefAtom *errPrefAtom) areEqualErrPrefDtos(
 		return false
 	}
 
-	if errPrefixDto1.isLastLineTerminatedWithNewLine !=
-		errPrefixDto2.isLastLineTerminatedWithNewLine {
+	if errPrefixDto1.turnOffTextDisplay !=
+		errPrefixDto2.turnOffTextDisplay {
+		return false
+	}
+
+	if !errPrefixDto1.inputStrDelimiters.Equal(
+		&errPrefixDto2.inputStrDelimiters) {
+		return false
+	}
+
+	if !errPrefixDto1.outputStrDelimiters.Equal(
+		&errPrefixDto2.outputStrDelimiters) {
 		return false
 	}
 
@@ -201,33 +230,25 @@ func (ePrefAtom *errPrefAtom) areEqualErrPrefDtos(
 //       Note that this error message will incorporate the method
 //       chain and text passed by input parameter, 'eMsg'.
 //
-func (ePrefAtom *errPrefAtom) copyInErrPrefDto(
+func (ePrefixDtoAtom *errPrefixDtoAtom) copyInErrPrefDto(
 	targetErrPrefixDto *ErrPrefixDto,
 	inComingErrPrefixDto *ErrPrefixDto,
 	eMsg string) error {
 
-	if ePrefAtom.lock == nil {
-		ePrefAtom.lock = new(sync.Mutex)
+	if ePrefixDtoAtom.lock == nil {
+		ePrefixDtoAtom.lock = new(sync.Mutex)
 	}
 
-	ePrefAtom.lock.Lock()
+	ePrefixDtoAtom.lock.Lock()
 
-	defer ePrefAtom.lock.Unlock()
+	defer ePrefixDtoAtom.lock.Unlock()
 
-	eMsg += "errPrefAtom.copyInErrPrefDto() "
+	eMsg += "errPrefixDtoAtom.copyInErrPrefDto() "
 
 	if targetErrPrefixDto == nil {
 		return fmt.Errorf("%v\n"+
 			"\nInput parameter 'targetErrPrefixDto' is INVALID!\n"+
 			"'targetErrPrefixDto' is a nil pointer!\n",
-			eMsg)
-
-	}
-
-	if (*ErrPrefixDto)(nil) == targetErrPrefixDto {
-		return fmt.Errorf("%v\n"+
-			"\nInput parameter 'targetErrPrefixDto' is INVALID!\n"+
-			"The pointer 'targetErrPrefixDto' points to a 'nil' object.\n",
 			eMsg)
 
 	}
@@ -239,37 +260,58 @@ func (ePrefAtom *errPrefAtom) copyInErrPrefDto(
 			eMsg)
 	}
 
-	if (*ErrPrefixDto)(nil) == inComingErrPrefixDto {
-		return fmt.Errorf("%v\n"+
-			"\nInput parameter 'inComingErrPrefixDto' is INVALID!\n"+
-			"The pointer 'inComingErrPrefixDto' points to a 'nil' object.\n",
-			eMsg)
-	}
+	inComingErrPrefixDto.inputStrDelimiters.SetToDefaultIfEmpty()
 
-	if targetErrPrefixDto.lock == nil {
-		targetErrPrefixDto.lock = new(sync.Mutex)
-	}
+	inComingErrPrefixDto.outputStrDelimiters.SetToDefaultIfEmpty()
 
-	if inComingErrPrefixDto.lock == nil {
-		inComingErrPrefixDto.lock = new(sync.Mutex)
+	_,
+		err := errPrefixDtoQuark{}.ptr().
+		testValidityOfErrPrefixDto(
+			inComingErrPrefixDto,
+			eMsg+"Testing validity of inComingErrPrefixDto ")
+
+	if err != nil {
+		return err
 	}
 
 	targetErrPrefixDto.isLastLineTerminatedWithNewLine =
 		inComingErrPrefixDto.isLastLineTerminatedWithNewLine
 
-	if inComingErrPrefixDto.maxErrPrefixTextLineLength < 10 {
+	targetErrPrefixDto.turnOffTextDisplay =
+		inComingErrPrefixDto.turnOffTextDisplay
 
-		inComingErrPrefixDto.maxErrPrefixTextLineLength =
-			errPrefQuark{}.ptr().getMasterErrPrefDisplayLineLength()
+	err = targetErrPrefixDto.inputStrDelimiters.CopyIn(
+		&inComingErrPrefixDto.inputStrDelimiters,
+		eMsg+
+			"inComingErrPrefixDto.inputStrDelimiters->"+
+			"targetErrPrefixDto.inputStrDelimiters ")
 
+	if err != nil {
+		return err
+	}
+
+	err = targetErrPrefixDto.outputStrDelimiters.CopyIn(
+		&inComingErrPrefixDto.outputStrDelimiters,
+		eMsg+
+			"inComingErrPrefixDto.outputStrDelimiters->"+
+			"targetErrPrefixDto.outputStrDelimiters ")
+
+	if err != nil {
+		return err
 	}
 
 	targetErrPrefixDto.maxErrPrefixTextLineLength =
 		inComingErrPrefixDto.maxErrPrefixTextLineLength
 
+	targetErrPrefixDto.leftMarginLength =
+		inComingErrPrefixDto.leftMarginLength
+
+	targetErrPrefixDto.leftMarginChar =
+		inComingErrPrefixDto.leftMarginChar
+
 	if inComingErrPrefixDto.ePrefCol == nil {
-		inComingErrPrefixDto.ePrefCol =
-			make([]ErrorPrefixInfo, 0)
+		targetErrPrefixDto.ePrefCol = nil
+		return nil
 	}
 
 	lenIncomingEPrefCol :=
@@ -335,21 +377,21 @@ func (ePrefAtom *errPrefAtom) copyInErrPrefDto(
 //       'eMsg' text will be prefixed to the beginning of the returned
 //       error message.
 //
-func (ePrefAtom *errPrefAtom) copyOutErrPrefDto(
+func (ePrefixDtoAtom *errPrefixDtoAtom) copyOutErrPrefDto(
 	ePrefixDto *ErrPrefixDto,
 	eMsg string) (
 	newEPrefixDto ErrPrefixDto,
 	err error) {
 
-	if ePrefAtom.lock == nil {
-		ePrefAtom.lock = new(sync.Mutex)
+	if ePrefixDtoAtom.lock == nil {
+		ePrefixDtoAtom.lock = new(sync.Mutex)
 	}
 
-	ePrefAtom.lock.Lock()
+	ePrefixDtoAtom.lock.Lock()
 
-	defer ePrefAtom.lock.Unlock()
+	defer ePrefixDtoAtom.lock.Unlock()
 
-	eMsg += "errPrefAtom.copyOutErrPrefDto() "
+	eMsg += "errPrefixDtoAtom.copyOutErrPrefDto() "
 
 	newEPrefixDto = ErrPrefixDto{}
 
@@ -363,14 +405,17 @@ func (ePrefAtom *errPrefAtom) copyOutErrPrefDto(
 		return newEPrefixDto, err
 	}
 
-	if ePrefixDto.lock == nil {
-		ePrefixDto.lock = new(sync.Mutex)
-	}
+	ePrefixDto.inputStrDelimiters.SetToDefaultIfEmpty()
+
+	ePrefixDto.outputStrDelimiters.SetToDefaultIfEmpty()
 
 	newEPrefixDto.lock = new(sync.Mutex)
 
 	newEPrefixDto.isLastLineTerminatedWithNewLine =
 		ePrefixDto.isLastLineTerminatedWithNewLine
+
+	newEPrefixDto.turnOffTextDisplay =
+		ePrefixDto.turnOffTextDisplay
 
 	if ePrefixDto.maxErrPrefixTextLineLength < 10 {
 
@@ -379,12 +424,40 @@ func (ePrefAtom *errPrefAtom) copyOutErrPrefDto(
 
 	}
 
+	err =
+		newEPrefixDto.inputStrDelimiters.CopyIn(
+			&ePrefixDto.inputStrDelimiters,
+			eMsg+"ePrefixDto.inputStrDelimiters->"+
+				"newEPrefixDto.inputStrDelimiters ")
+
+	if err != nil {
+		return newEPrefixDto, err
+	}
+
+	err =
+		newEPrefixDto.outputStrDelimiters.CopyIn(
+			&ePrefixDto.outputStrDelimiters,
+			eMsg+"ePrefixDto.outputStrDelimiters->"+
+				"newEPrefixDto.outputStrDelimiters ")
+
+	if err != nil {
+		return newEPrefixDto, err
+	}
+
 	newEPrefixDto.maxErrPrefixTextLineLength =
 		ePrefixDto.maxErrPrefixTextLineLength
 
+	newEPrefixDto.leftMarginLength =
+		ePrefixDto.leftMarginLength
+
+	newEPrefixDto.leftMarginChar =
+		ePrefixDto.leftMarginChar
+
 	if ePrefixDto.ePrefCol == nil {
-		ePrefixDto.ePrefCol =
-			make([]ErrorPrefixInfo, 0)
+
+		newEPrefixDto.ePrefCol = nil
+
+		return newEPrefixDto, err
 	}
 
 	lenIncomingEPrefCol :=
@@ -451,17 +524,18 @@ func (ePrefAtom *errPrefAtom) copyOutErrPrefDto(
 //
 //  --- NONE ---
 //
-func (ePrefAtom *errPrefAtom) getEPrefContextArray(
+func (ePrefixDtoAtom *errPrefixDtoAtom) getEPrefContextArray(
 	errPrefix string,
+	delimiters ErrPrefixDelimiters,
 	prefixContextCol *[]ErrorPrefixInfo) {
 
-	if ePrefAtom.lock == nil {
-		ePrefAtom.lock = new(sync.Mutex)
+	if ePrefixDtoAtom.lock == nil {
+		ePrefixDtoAtom.lock = new(sync.Mutex)
 	}
 
-	ePrefAtom.lock.Lock()
+	ePrefixDtoAtom.lock.Lock()
 
-	defer ePrefAtom.lock.Unlock()
+	defer ePrefixDtoAtom.lock.Unlock()
 
 	if *prefixContextCol == nil {
 		*prefixContextCol = make([]ErrorPrefixInfo, 0)
@@ -472,8 +546,6 @@ func (ePrefAtom *errPrefAtom) getEPrefContextArray(
 	}
 
 	ePrefElectron := errPrefElectron{}
-
-	delimiters := ePrefElectron.getDelimiters()
 
 	var lenCleanPrefixStr int
 
@@ -562,19 +634,35 @@ func (ePrefAtom *errPrefAtom) getEPrefContextArray(
 	return
 }
 
+// ptr() - Returns a pointer to a new instance of
+// errPrefixDtoAtom.
+//
+func (ePrefixDtoAtom errPrefixDtoAtom) ptr() *errPrefixDtoAtom {
+
+	if ePrefixDtoAtom.lock == nil {
+		ePrefixDtoAtom.lock = new(sync.Mutex)
+	}
+
+	ePrefixDtoAtom.lock.Lock()
+
+	defer ePrefixDtoAtom.lock.Unlock()
+
+	return &errPrefixDtoAtom{}
+}
+
 // setFlagsErrorPrefixInfoArray - Sets internal flags in an array
 // of ErrorPrefixInfo objects
 //
-func (ePrefAtom *errPrefAtom) setFlagsErrorPrefixInfoArray(
+func (ePrefixDtoAtom *errPrefixDtoAtom) setFlagsErrorPrefixInfoArray(
 	prefixContextCol []ErrorPrefixInfo) {
 
-	if ePrefAtom.lock == nil {
-		ePrefAtom.lock = new(sync.Mutex)
+	if ePrefixDtoAtom.lock == nil {
+		ePrefixDtoAtom.lock = new(sync.Mutex)
 	}
 
-	ePrefAtom.lock.Lock()
+	ePrefixDtoAtom.lock.Lock()
 
-	defer ePrefAtom.lock.Unlock()
+	defer ePrefixDtoAtom.lock.Unlock()
 
 	if prefixContextCol == nil {
 		prefixContextCol = make([]ErrorPrefixInfo, 0)
@@ -606,20 +694,4 @@ func (ePrefAtom *errPrefAtom) setFlagsErrorPrefixInfoArray(
 	}
 
 	return
-}
-
-// ptr() - Returns a pointer to a new instance of
-// errPrefAtom.
-//
-func (ePrefAtom errPrefAtom) ptr() *errPrefAtom {
-
-	if ePrefAtom.lock == nil {
-		ePrefAtom.lock = new(sync.Mutex)
-	}
-
-	ePrefAtom.lock.Lock()
-
-	defer ePrefAtom.lock.Unlock()
-
-	return &errPrefAtom{}
 }

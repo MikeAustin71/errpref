@@ -1,18 +1,23 @@
 package errpref
 
 import (
+	"fmt"
 	"sync"
 )
 
+// ErrPrefixDelimiters - This type is used to store and transport
+// the string delimiters used in parsing error prefix and error
+// context strings.
+//
 type ErrPrefixDelimiters struct {
-	inLinePrefixDelimiter      string
-	lenInLinePrefixDelimiter   uint
-	newLinePrefixDelimiter     string
-	lenNewLinePrefixDelimiter  uint
-	inLineContextDelimiter     string
-	lenInLineContextDelimiter  uint
-	newLineContextDelimiter    string
-	lenNewLineContextDelimiter uint
+	inLinePrefixDelimiter      string // Error Prefix in-line string delimiters
+	lenInLinePrefixDelimiter   uint   // Length of Error Prefix in-line string delimiter
+	newLinePrefixDelimiter     string // Error Prefix new Line string delimiters
+	lenNewLinePrefixDelimiter  uint   // Length of Error Prefix new Line string delimiters
+	inLineContextDelimiter     string // Error Context in-line string delimiters
+	lenInLineContextDelimiter  uint   // Length of Error Context in-line string delimiters
+	newLineContextDelimiter    string // Error Context new line string delimiters
+	lenNewLineContextDelimiter uint   // Length of Error Context new line string delimiters
 	lock                       *sync.Mutex
 }
 
@@ -137,6 +142,79 @@ func (ePrefDelims *ErrPrefixDelimiters) CopyOut(
 		ePrefDelims,
 		ePrefix+
 			"ePrefDelims\n")
+}
+
+// Empty - This method will overwrite and reset all internal
+// member variables to their zero values.
+//
+func (ePrefDelims *ErrPrefixDelimiters) Empty() {
+
+	if ePrefDelims.lock == nil {
+		ePrefDelims.lock = new(sync.Mutex)
+	}
+
+	ePrefDelims.lock.Lock()
+
+	_ = errPrefixDelimitersQuark{}.ptr().empty(
+		ePrefDelims,
+		"")
+
+	ePrefDelims.lock.Unlock()
+
+	ePrefDelims.lock = nil
+}
+
+// Equal - Receives a pointer to an instance of ErrPrefixDelimiters
+// and proceeds to determine whether the data values encapsulated in
+// that instance are equal to those in the current
+// ErrPrefixDelimiters instance.
+//
+//
+// ----------------------------------------------------------------
+//
+// Input Parameters
+//
+//
+//  incomingDelimiters  *ErrPrefixDelimiters
+//     - A pointer to an instance of ErrPrefixDelimiters. The
+//       internal data values encapsulated by this object will be
+//       compared to those contained in the current
+//       ErrPrefixDelimiters instance. If the data values are
+//       equal, a boolean flag of 'true' will be returned.
+//
+//
+// ------------------------------------------------------------------------
+//
+// Return Values
+//
+//  areEqual            bool
+//     - This method will compare the data values encapsulated by
+//       the input parameter, 'incomingDelimiters' and the current
+//       ErrPrefixDelimiters instance. If the data values are
+//       equivalent, this boolean flag will be set to 'true'.
+//
+//       If the data values are NOT equivalent, this parameter will
+//       be set to 'false'.
+//
+func (ePrefDelims *ErrPrefixDelimiters) Equal(
+	incomingDelimiters *ErrPrefixDelimiters) (
+	areEqual bool) {
+
+	if ePrefDelims.lock == nil {
+		ePrefDelims.lock = new(sync.Mutex)
+	}
+
+	ePrefDelims.lock.Lock()
+
+	defer ePrefDelims.lock.Unlock()
+
+	areEqual,
+		_ = errPrefixDelimitersElectron{}.ptr().equal(
+		ePrefDelims,
+		incomingDelimiters,
+		"")
+
+	return areEqual
 }
 
 // GetInLineContextDelimiter - Returns ePrefDelims.inLineContextDelimiter
@@ -324,8 +402,7 @@ func (ePrefDelims *ErrPrefixDelimiters) GetNewLinePrefixDelimiter() string {
 //       the current ErrPrefixDelimiters instance is valid in all
 //       respects.
 //
-func (ePrefDelims *ErrPrefixDelimiters) IsValidInstance(
-	ePrefix string) bool {
+func (ePrefDelims *ErrPrefixDelimiters) IsValidInstance() bool {
 
 	if ePrefDelims.lock == nil {
 		ePrefDelims.lock = new(sync.Mutex)
@@ -335,14 +412,11 @@ func (ePrefDelims *ErrPrefixDelimiters) IsValidInstance(
 
 	defer ePrefDelims.lock.Unlock()
 
-	ePrefix += "ErrPrefixDelimiters.IsValidInstance() "
-
-	ePrefDelimsQuark := errPrefixDelimitersQuark{}
-
 	isValid,
-		_ := ePrefDelimsQuark.testValidityOfErrPrefixDelimiters(
-		ePrefDelims,
-		ePrefix)
+		_ := errPrefixDelimitersQuark{}.ptr().
+		testValidityOfErrPrefixDelimiters(
+			ePrefDelims,
+			"")
 
 	return isValid
 }
@@ -395,14 +469,261 @@ func (ePrefDelims *ErrPrefixDelimiters) IsValidInstanceError(
 
 	ePrefix += "ErrPrefixDelimiters.IsValidInstanceError() "
 
-	ePrefDelimsQuark := errPrefixDelimitersQuark{}
-
 	_,
-		err := ePrefDelimsQuark.testValidityOfErrPrefixDelimiters(
-		ePrefDelims,
-		ePrefix)
+		err := errPrefixDelimitersQuark{}.ptr().
+		testValidityOfErrPrefixDelimiters(
+			ePrefDelims,
+			ePrefix)
 
 	return err
+}
+
+// New - Returns a new instance of ErrPrefixDelimiters generated
+// from the string values passed as input parameters.
+//
+//
+// ----------------------------------------------------------------
+//
+// Input Parameters
+//
+//  newLinePrefixDelimiters    string
+//     - The contents of this string will be used to parse error
+//       prefix strings on separate lines of text.
+//
+//       If an empty string (string length zero) is passed for this
+//       parameter, an error will be returned.
+//
+//
+//  inLinePrefixDelimiters     string
+//     - The contents of this string will be used to separate
+//       multiple error prefix elements within a single line of
+//       text.
+//
+//       If an empty string (string length zero) is passed for this
+//       parameter, an error will be returned.
+//
+//
+//  newLineContextDelimiters   string
+//     - The contents of this string will be used to parse error
+//       context elements on separate lines of text.
+//
+//       If an empty string (string length zero) is passed for this
+//       parameter, an error will be returned.
+//
+//
+//  inLineContextDelimiters    string
+//     - The contents of this string will be used to separate
+//       multiple error context elements within a single line of
+//       text.
+//
+//       If an empty string (string length zero) is passed for this
+//       parameter, an error will be returned.
+//
+//
+//  ePrefix                    string
+//     - A string containing the name of the function which called
+//       this method. If an error occurs this string will be
+//       prefixed to the beginning of the returned error message.
+//
+//       This parameter is optional. If an error prefix is not
+//       required, submit an empty string for this parameter ("").
+//
+//       If an empty string (string length zero) is passed for this
+//       parameter, an error will be returned.
+//
+//
+// -----------------------------------------------------------------
+//
+// Return Values
+//
+//  ErrPrefixDelimiters
+//     - If this method completes successfully, this parameter will
+//       return a new fully populated instance of
+//       ErrPrefixDelimiters.
+//
+//
+//  error
+//     - If this method completes successfully, the returned error
+//       Type is set equal to 'nil'.
+//
+//       If errors are encountered during processing, the returned
+//       error Type will encapsulate an error message.
+//
+//       In the event of an error, the value of parameter
+//       'ePrefix' will be prefixed and attached to the beginning
+//       of the error message.
+//
+func (ePrefDelims ErrPrefixDelimiters) New(
+	newLinePrefixDelimiters string,
+	inLinePrefixDelimiters string,
+	newLineContextDelimiters string,
+	inLineContextDelimiters string,
+	ePrefix string) (
+	ErrPrefixDelimiters,
+	error) {
+
+	if ePrefDelims.lock == nil {
+		ePrefDelims.lock = new(sync.Mutex)
+	}
+
+	ePrefDelims.lock.Lock()
+
+	defer ePrefDelims.lock.Unlock()
+
+	ePrefix += " ErrPrefixDelimiters.New()"
+
+	newEPrefDelimiters := ErrPrefixDelimiters{
+		lock: new(sync.Mutex),
+	}
+
+	err := errPrefixDelimitersMechanics{}.ptr().
+		setErrPrefDelimiters(
+			&newEPrefDelimiters,
+			newLinePrefixDelimiters,
+			inLinePrefixDelimiters,
+			newLineContextDelimiters,
+			inLineContextDelimiters,
+			ePrefix)
+
+	return newEPrefDelimiters, err
+}
+
+// NewDefaults - Returns a new instance of ErrPrefixDelimiters
+// populated with system default values for string delimiters.
+//
+// The system default string delimiters are listed as follows:
+//
+//    New Line Error Prefix Delimiter = "\n"
+//    In-Line Error Prefix Delimiter  = " - "
+//    New Line Error Context Delimiter = "\n :  "
+//    In-Line Error Context Delimiter = " : "
+//
+// String delimiters are used to parse raw input strings and
+// separate error prefix and error context elements. In addition,
+// string delimiters are used to join error prefix and error
+// context elements for output or presentation text.
+//
+func (ePrefDelims ErrPrefixDelimiters) NewDefaults() ErrPrefixDelimiters {
+
+	if ePrefDelims.lock == nil {
+		ePrefDelims.lock = new(sync.Mutex)
+	}
+
+	ePrefDelims.lock.Lock()
+
+	defer ePrefDelims.lock.Unlock()
+
+	newEPrefDelimiters := ErrPrefixDelimiters{
+		lock: new(sync.Mutex),
+	}
+
+	_ = errPrefixDelimitersMechanics{}.ptr().
+		setToDefault(
+			&newEPrefDelimiters,
+			"")
+
+	return newEPrefDelimiters
+}
+
+// SetDelimiters - Overwrites and replaces the data values for all
+// internal member variables in the current ErrPrefixDelimiters
+// instance.
+//
+// The new data values are generated from string values submitted
+// as input parameters.
+//
+// IMPORTANT
+// All existing delimiter information in this ErrPrefixDelimiters
+// instance will be overwritten, deleted and replaced.
+//
+//
+// ----------------------------------------------------------------
+//
+// Input Parameters
+//
+//  newLinePrefixDelimiters    string
+//     - The contents of this string will be used to parse error
+//       prefix strings on separate lines of text.
+//
+//       If an empty string (string length zero) is passed for this
+//       parameter, an error will be returned.
+//
+//
+//  inLinePrefixDelimiters     string
+//     - The contents of this string will be used to separate
+//       multiple error prefix elements within a single line of
+//       text.
+//
+//       If an empty string (string length zero) is passed for this
+//       parameter, an error will be returned.
+//
+//
+//  newLineContextDelimiters   string
+//     - The contents of this string will be used to parse error
+//       context elements on separate lines of text.
+//
+//       If an empty string (string length zero) is passed for this
+//       parameter, an error will be returned.
+//
+//
+//  inLineContextDelimiters    string
+//     - The contents of this string will be used to separate
+//       multiple error context elements within a single line of
+//       text.
+//
+//       If an empty string (string length zero) is passed for this
+//       parameter, an error will be returned.
+//
+//
+//  ePrefix                    string
+//     - A string containing the name of the function which called
+//       this method. If an error occurs this string will be
+//       prefixed to the beginning of the returned error message.
+//
+//       This parameter is optional. If an error prefix is not
+//       required, submit an empty string for this parameter ("").
+//
+//
+// -----------------------------------------------------------------
+//
+// Return Values
+//
+//  error
+//     - If this method completes successfully, the returned error
+//       Type is set equal to 'nil'.
+//
+//       If errors are encountered during processing, the returned
+//       error Type will encapsulate an error message.
+//
+//       In the event of an error, the value of parameter
+//       'ePrefix' will be prefixed and attached to the beginning
+//       of the error message.
+//
+func (ePrefDelims *ErrPrefixDelimiters) SetDelimiters(
+	newLinePrefixDelimiters string,
+	inLinePrefixDelimiters string,
+	newLineContextDelimiters string,
+	inLineContextDelimiters string,
+	ePrefix string) error {
+
+	if ePrefDelims.lock == nil {
+		ePrefDelims.lock = new(sync.Mutex)
+	}
+
+	ePrefDelims.lock.Lock()
+
+	defer ePrefDelims.lock.Unlock()
+
+	ePrefix += " ErrPrefixDelimiters.SetDelimiters()"
+
+	return errPrefixDelimitersMechanics{}.ptr().
+		setErrPrefDelimiters(
+			ePrefDelims,
+			newLinePrefixDelimiters,
+			inLinePrefixDelimiters,
+			newLineContextDelimiters,
+			inLineContextDelimiters,
+			ePrefix)
 }
 
 // SetInLineContextDelimiter - Sets ePrefDelims.inLineContextDelimiter
@@ -533,4 +854,124 @@ func (ePrefDelims *ErrPrefixDelimiters) SetLineLengthValues() {
 		uint(len(ePrefDelims.newLineContextDelimiter))
 
 	return
+}
+
+// String - Returns a string listing the values of the member
+// variables for the current ErrPrefixDelimiters instance.
+//
+func (ePrefDelims ErrPrefixDelimiters) String() string {
+
+	if ePrefDelims.lock == nil {
+		ePrefDelims.lock = new(sync.Mutex)
+	}
+
+	ePrefDelims.lock.Lock()
+
+	defer ePrefDelims.lock.Unlock()
+
+	ep := ErrPref{}
+
+	inLinePrefixDelimiter :=
+		ep.ConvertNonPrintableChars(
+			[]rune(ePrefDelims.inLinePrefixDelimiter),
+			true)
+
+	newLinePrefixDelimiter :=
+		ep.ConvertNonPrintableChars(
+			[]rune(ePrefDelims.newLinePrefixDelimiter),
+			true)
+
+	inLineContextDelimiter :=
+		ep.ConvertNonPrintableChars(
+			[]rune(ePrefDelims.inLineContextDelimiter),
+			true)
+
+	newLineContextDelimiter :=
+		ep.ConvertNonPrintableChars(
+			[]rune(ePrefDelims.newLineContextDelimiter),
+			true)
+
+	str := fmt.Sprintf(
+		"inLinePrefixDelimiter: %v\n"+
+			"lenInLinePrefixDelimiter: %v\n"+
+			"newLinePrefixDelimiter: %v\n"+
+			"lenNewLinePrefixDelimiter: %v\n"+
+			"inLineContextDelimiter: %v\n"+
+			"lenInLineContextDelimiter: %v\n"+
+			"newLineContextDelimiter: %v\n"+
+			"lenNewLineContextDelimiter: %v\n",
+		inLinePrefixDelimiter,
+		ePrefDelims.lenInLinePrefixDelimiter,
+		newLinePrefixDelimiter,
+		ePrefDelims.lenNewLinePrefixDelimiter,
+		inLineContextDelimiter,
+		ePrefDelims.lenInLineContextDelimiter,
+		newLineContextDelimiter,
+		ePrefDelims.lenNewLineContextDelimiter)
+
+	return str
+}
+
+// SetToDefault - Sets the values of the current
+// ErrPrefixDelimiters instance to those of the system defaults.
+//
+// The system default string delimiters are listed as follows:
+//
+//    New Line Error Prefix Delimiter = "\n"
+//    In-Line Error Prefix Delimiter  = " - "
+//    New Line Error Context Delimiter = "\n :  "
+//    In-Line Error Context Delimiter = " : "
+//
+func (ePrefDelims *ErrPrefixDelimiters) SetToDefault() {
+
+	if ePrefDelims.lock == nil {
+		ePrefDelims.lock = new(sync.Mutex)
+	}
+
+	ePrefDelims.lock.Lock()
+
+	defer ePrefDelims.lock.Unlock()
+
+	_ = errPrefixDelimitersMechanics{}.ptr().
+		setToDefault(
+			ePrefDelims,
+			"")
+}
+
+// SetToDefaultIfEmpty - Sets the values of the current
+// ErrPrefixDelimiters instance to those of the system defaults if
+// the current instance is empty or invalid.
+//
+// The system default string delimiters are listed as follows:
+//
+//    New Line Error Prefix Delimiter = "\n"
+//    In-Line Error Prefix Delimiter  = " - "
+//    New Line Error Context Delimiter = "\n :  "
+//    In-Line Error Context Delimiter = " : "
+//
+func (ePrefDelims *ErrPrefixDelimiters) SetToDefaultIfEmpty() {
+
+	if ePrefDelims.lock == nil {
+		ePrefDelims.lock = new(sync.Mutex)
+	}
+
+	ePrefDelims.lock.Lock()
+
+	defer ePrefDelims.lock.Unlock()
+
+	isValid,
+		_ := errPrefixDelimitersQuark{}.ptr().
+		testValidityOfErrPrefixDelimiters(
+			ePrefDelims,
+			"")
+
+	if isValid {
+		return
+	}
+
+	_ = errPrefixDelimitersMechanics{}.ptr().
+		setToDefault(
+			ePrefDelims,
+			"")
+
 }

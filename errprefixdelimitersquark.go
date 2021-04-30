@@ -9,6 +9,63 @@ type errPrefixDelimitersQuark struct {
 	lock *sync.Mutex
 }
 
+// empty - Receives a pointer to an instance of ErrPrefixDelimiters
+// and proceeds to reset all internal member variables to their
+// zero values.
+//
+func (ePrefDelimsQuark *errPrefixDelimitersQuark) empty(
+	delimiters *ErrPrefixDelimiters,
+	ePrefix string) (
+	err error) {
+
+	if ePrefDelimsQuark.lock == nil {
+		ePrefDelimsQuark.lock = new(sync.Mutex)
+	}
+
+	ePrefDelimsQuark.lock.Lock()
+
+	defer ePrefDelimsQuark.lock.Unlock()
+
+	ePrefix += "errPrefixDelimitersQuark.empty() "
+
+	if delimiters == nil {
+		err = fmt.Errorf("%v\n"+
+			"Input parameter 'delimiters' is INVALID!\n"+
+			"'delimiters' is a nil pointer!\n",
+			ePrefix)
+
+		return err
+	}
+
+	delimiters.inLinePrefixDelimiter = ""
+	delimiters.lenInLinePrefixDelimiter = 0
+	delimiters.newLinePrefixDelimiter = ""
+	delimiters.lenNewLinePrefixDelimiter = 0
+	delimiters.inLineContextDelimiter = ""
+	delimiters.lenInLineContextDelimiter = 0
+	delimiters.newLineContextDelimiter = ""
+	delimiters.lenNewLineContextDelimiter = 0
+
+	return err
+}
+
+// ptr - Returns a pointer to a new instance of errPrefixDelimitersQuark.
+//
+func (ePrefDelimsQuark errPrefixDelimitersQuark) ptr() *errPrefixDelimitersQuark {
+
+	if ePrefDelimsQuark.lock == nil {
+		ePrefDelimsQuark.lock = new(sync.Mutex)
+	}
+
+	ePrefDelimsQuark.lock.Lock()
+
+	defer ePrefDelimsQuark.lock.Unlock()
+
+	return &errPrefixDelimitersQuark{
+		lock: new(sync.Mutex),
+	}
+}
+
 // testValidityOfErrorPrefixInfo - Performs a diagnostic review of
 // the input parameter 'delimiters', an instance of
 // ErrPrefixDelimiters. The purpose of this diagnostic review is to

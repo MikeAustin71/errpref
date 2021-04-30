@@ -124,8 +124,9 @@ func (ePrefElectron *errPrefElectron) cleanErrorContextStr(
 	return cleanStr, lenCleanStr
 }
 
-// getDelimiters - Returns the four delimiter strings used to
-// delimit error prefix and error context strings.
+// getDelimiters - Returns the default string delimiters. These are
+// four delimiter strings used to parse error prefix and error
+// context strings.
 //
 //
 // ----------------------------------------------------------------
