@@ -6,7 +6,12 @@ The ***errpref*** software package was written in the [Go](https://golang.org/) 
 
 ***errpref*** supports [Go Modules](https://golang.org/ref/mod).
 
-The current version of ***errpref*** is Version 1.6.1. Most notably, this version implements the [Left Margin Feature](#left-margin-feature) in error prefix string formatting and [Customizable String Delimiters](#customizing-input-and-output-string-delimiters) for parsing input and output error prefix strings.
+The current version of ***errpref*** is Version 1.7.0 which includes two important upgrades:
+
+- The [Leading and Trailing Text Feature](#leading-and-trailing-text-strings)
+-  The new new method ***ErrPrefixDto{}.NewFromErrPrefDto()*** which reduces the lines of code required to configure error prefix information in [Internal or Private Methods](#internal-or-private-methods). 
+
+For more details, see the [Release Notes](./releasenotes.md).
 
 
 
@@ -27,6 +32,7 @@ The current version of ***errpref*** is Version 1.6.1. Most notably, this versio
      - [Customizing Input and Output String Delimiters](#customizing-input-and-output-string-delimiters)
      - [Maximum Text Line Length](#maximum-text-line-length)
      - [Left Margin Feature](#left-margin-feature)
+     - [Leading And Trailing Text Strings](#leading-and-trailing-text-strings)
      - [Text Display On/Off Switch](#text-display-onoff-switch)
      - [Is Last Text Line Terminated With New Line](#is-last-text-line-terminated-with-new-line)
    - [ErrPref - Quick And Simple Solution](#errpref---quick-and-simple-solution)
@@ -48,6 +54,7 @@ The current version of ***errpref*** is Version 1.6.1. Most notably, this versio
  - [Tests](#tests)
  - [OS Support](#os-support)
  - [Version](#version)
+ - [Release Notes](#release-notes)
  - [License](#license)
  - [Comments And Questions](#comments-and-questions)
 
@@ -250,18 +257,18 @@ In the **Public Facing Methods** example, above, method ***GetCountryFormatters(
 func (nStrBasicQuark numStrBasicQuark) getCountryFormatters(
 	fmtCollection *FormatterCollection,
 	countryCulture CountryCultureId,
-	ePrefix *ErrPrefixDto) (
+	errPrefix *ErrPrefixDto) (
 	err error) {
+	
+    ePrefix,
+	err := ErrPrefixDto{}.NewFromErrPrefDto(
+		errPrefix,
+		"numStrBasicQuark.getCountryFormatters()",
+		"")
 
-	if ePrefix == nil {
-		ePrefix = ErrPrefixDto{}.Ptr()
-	} else {
-		ePrefix = ePrefix.CopyPtr()
+	if err != nil {
+		return err
 	}
-
-	ePrefix.SetEPref(
-		"numStrBasicQuark." +
-			"getCountryFormatters()")
 
 	if fmtCollection == nil {
 		err = fmt.Errorf("%v\n"+
@@ -278,23 +285,35 @@ func (nStrBasicQuark numStrBasicQuark) getCountryFormatters(
 Notice how the function name is added to the error prefix chain:
 
 ``` go
-ePrefix.SetEPref(
-		"numStrBasicQuark." +
-			"getCountryFormatters()")
+	ePrefix,
+	err := ErrPrefixDto{}.NewFromErrPrefDto(
+		errPrefix,
+		"numStrBasicQuark.getCountryFormatters()",
+		"")
 ```
 
+This is the method signature for ***NewFromErrPrefDto()***:
 
+```
+func (ePrefDto ErrPrefixDto) NewFromErrPrefDto(
+	dto *ErrPrefixDto,
+	newErrPrefix string,
+	newErrContext string) (
+	newErrPrefDto *ErrPrefixDto,
+	err error)
+```
 
-Notice that this pattern also allows for use of the **nil** value for parameter, ***ePrefix***. If no error prefix information is present or required, just pass a **nil** parameter value.
+This method makes provision for the inclusion of an optional error context string.
 
-This pattern provides a separate function chain string for each method. This architecture allows for multiple calls from parent methods without adding unnecessary and irrelevant text to the function chain. If an error occurs, only the relevant error prefix and error context information will be returned.
+Also, notice that this pattern allows for use of the **nil** value for parameter, ***dto***. If no error prefix information is present or required, just pass a **nil** parameter value.
+
+This pattern provides a separate function chain string for each method. This architecture allows for multiple calls from parent methods without adding unnecessary and irrelevant text to the function chain. If an error occurs, only the relevant error prefix and error context information will be returned in the formatted error message.
 
 
 
 #### Error Context Example
 
-Recall that **Error Context** strings are designed to provide additional information about the function or method identified by the
-associated **Error Prefix** text. Typical context information might include variable names, variable values and additional details on function execution.
+Recall that **Error Context** strings are designed to provide additional information about the function or method identified by the associated **Error Prefix** text. Typical context information might include variable names, variable values and additional details on function execution.
 
 In this example, a function chain is built by calls to multiple levels of the code hierarchy.  The final call to method **Tx3.DoSomething()** triggers an error thereby returning the names of all methods in the call chain plus error context information associated with those methods.
 
@@ -307,7 +326,7 @@ func(tx1 *Tx1) Something() {
 
   tx2 := Tx2{}
 
-  err := Tx2.SomethingElse(&ePrefDto)
+  err := tx2.SomethingElse(&ePrefDto)
 
   if err !=nil {
     fmt.Printf("%v\n",
@@ -319,17 +338,19 @@ func(tx1 *Tx1) Something() {
 
 func(tx2 *Tx2) SomethingElse(ePrefDto *ErrPrefixDto) error {
 
-	if ePrefDto == nil {
-		ePrefDto = ErrPrefixDto{}.Ptr()
-	} else {
-		ePrefDto = ePrefDto.CopyPtr()
-	}
+	ePrefix,
+		err := ErrPrefixDto{}.NewFromErrPrefDto(
+		ePrefDto,
+		"Tx2.SomethingElse()",
+		"")
 
-  	ePrefDto.SetEPref("Tx2.SomethingElse()")
+	if err != nil {
+		return err
+	}
 
   	tx3 := Tx3{}
 
-  	err := Tx3.DoSomething(ePrefDto)
+  	err := tx3.DoSomething(ePrefix)
 
   	if err !=nil {
     	return err
@@ -338,24 +359,24 @@ func(tx2 *Tx2) SomethingElse(ePrefDto *ErrPrefixDto) error {
 
 func(tx3 *Tx3) DoSomething(ePrefDto *ErrPrefixDto) error {
 
-	if ePrefDto == nil {
-		ePrefDto = ErrPrefixDto{}.Ptr()
-	} else {
-		ePrefDto = ePrefDto.CopyPtr()
-	}
-
-    // Add error prefix and error context
+   // Add error prefix and error context
     // information.
-    ePrefDto.SetEPrefCtx(
-       "Tx3.DoSomething()",
-       "A=B/C C== 0.0")
+	ePrefix,
+		err := ErrPrefixDto{}.NewFromErrPrefDto(
+		ePrefDto,
+		"Tx3.DoSomething()",
+		"A=B/C C= 0")
+
+	if err != nil {
+		return err
+	}
 
     .... bad code ....
 
     if isDivideByZero {
       return fmt.Errorf("%v\n" +
       "I divided by zero and got this error.\n",
-      ePrefDto.String())
+      ePrefix.String())
     }
 }
 
@@ -366,7 +387,7 @@ When this error is returned up the function chain and finally printed out, the t
 
 ``` text
  Tx1.Something() - Tx2.SomethingElse()
- Tx3.DoSomething() : A=B/C C== 0.0
+ Tx3.DoSomething() : A=B/C C= 0
  I divided by zero and got this error.
 
 ```
@@ -444,7 +465,9 @@ The current settings for String Delimiters can be monitored using methods:
 
 #### Maximum Text Line Length
 
-Users have the option of setting the Maximum Text Line Length for error prefix strings. The default Maximum Text Line Length is 40-characters. The following error prefix text display demonstrates the default 40-character maximum line length.
+Users have the option of setting the Maximum Text Line Length for error prefix strings. The default Maximum Text Line Length is 40-characters. The Minimum Text Line Length is 10-characters.
+
+The following error prefix text display demonstrates the default 40-character maximum line length.
 
 ```tex
 main()-mainTest004()
@@ -482,6 +505,7 @@ The Maximum Text Line Length is monitored and controlled using methods:
 
 -  ***ErrPrefixDto.SetMaxTextLineLen()***
 -  ***ErrPrefixDto.GetMaxTextLineLen()***
+-  ***ErrPrefixDto.SetMaxTextLineLenToDefault()*** 
 
 Be advised that the minimum text line Length is 10-characters. Any attempt to set the Maximum Text Line Length to a value less than 10-characters will result in reinstatement of the default Maximum Text Line Length.
 
@@ -548,6 +572,119 @@ In the final example, the left margin length is set to three (3), and the left m
 ***Tx13.SomeFabulousAndComplexStuff()
 ***Tx14.MoreAwesomeGoodness()
 *** :  A=7 B=8 C=9
+```
+
+
+
+#### Leading And Trailing Text Strings
+
+Users have the option of adding leading or trailing text strings to the error prefix display. Leading Text Strings will be added to the beginning of the text display while Trailing Text Strings will be added to the end of the text display. 
+
+Leading and Trailing Text Strings may be comprised of any valid string of characters including new lines ('\n'), tabs ('\t') and line separators.
+
+The addition of Leading and Trailing Text Strings is controlled through the following methods:
+
+- ***ErrPrefixDto.SetLeadingTextStr(***)
+- ***ErrPrefixDto.SetTrailingTextStr()***
+- ***ErrPrefixDto.GetLeadingTextStr()***
+- ***ErrPrefixDto.GetTrailingTextStr()***
+- ***ErrPrefixDto.ClearLeadingTextStr()***
+- ***ErrPrefixDto.ClearTrailingTextStr()***
+
+
+
+Consider the following example:
+
+```go
+	ePDto := errpref.ErrPrefixDto{}.New()
+
+	maxLineLen := 50
+
+	ePDto.SetMaxTextLineLen(maxLineLen)
+
+	var twoDSlice [][2]string
+
+	twoDSlice = make([][2]string, 14)
+
+	twoDSlice[0][0] = "Tx1.Something()"
+	twoDSlice[0][1] = ""
+
+	twoDSlice[1][0] = "Tx2.SomethingElse()"
+	twoDSlice[1][1] = ""
+
+	twoDSlice[2][0] = "Tx3.DoSomething()"
+	twoDSlice[2][1] = ""
+
+	twoDSlice[3][0] = "Tx4()"
+	twoDSlice[3][1] = ""
+
+	twoDSlice[4][0] = "Tx5()"
+	twoDSlice[4][1] = ""
+
+	twoDSlice[5][0] = "Tx6.DoSomethingElse()"
+	twoDSlice[5][1] = ""
+
+	twoDSlice[6][0] = "Tx7.TrySomethingNew()"
+	twoDSlice[6][1] = "something->newSomething"
+
+	twoDSlice[7][0] = "Tx8.TryAnyCombination()"
+	twoDSlice[7][1] = ""
+
+	twoDSlice[8][0] = "Tx9.TryAHammer()"
+	twoDSlice[8][1] = "x->y"
+
+	twoDSlice[9][0] = "Tx10.X()"
+	twoDSlice[9][1] = ""
+
+	twoDSlice[10][0] = "Tx11.TryAnything()"
+	twoDSlice[10][1] = ""
+
+	twoDSlice[11][0] = "Tx12.TryASalad()"
+	twoDSlice[11][1] = ""
+
+	twoDSlice[12][0] = "Tx13.SomeFabulousAndComplexStuff()"
+	twoDSlice[12][1] = ""
+
+	twoDSlice[13][0] = "Tx14.MoreAwesomeGoodness()"
+	twoDSlice[13][1] = "A=7 B=8 C=9"
+
+	ePDto.SetEPrefStrings(twoDSlice)
+
+	leadingText := "\n" +
+		strings.Repeat("-", maxLineLen)
+
+	trailingText := strings.Repeat("-", maxLineLen) +
+		"\n"
+
+	ePDto.SetLeadingTextStr(leadingText)
+	ePDto.SetTrailingTextStr(trailingText)
+	ePDto.SetIsLastLineTermWithNewLine(true)
+
+	outputStr := fmt.Sprintf("%v"+
+		"Error: Divide by Zero!",
+		ePDto.String())
+
+	fmt.Printf(outputStr)
+
+```
+
+
+
+The the example above the final ***outputStr*** will be formatted as:
+
+```tex
+ --------------------------------------------------
+ Tx1.Something() - Tx2.SomethingElse()
+ Tx3.DoSomething() - Tx4() - Tx5()
+ Tx6.DoSomethingElse()
+ Tx7.TrySomethingNew() : something->newSomething
+ Tx8.TryAnyCombination() - Tx9.TryAHammer() : x->y
+ Tx10.X() - Tx11.TryAnything() - Tx12.TryASalad()
+ Tx13.SomeFabulousAndComplexStuff()
+ Tx14.MoreAwesomeGoodness() : A=7 B=8 C=9
+ --------------------------------------------------
+ Error: Divide by Zero!
+
 ```
 
 
@@ -823,7 +960,7 @@ Additional code examples can be found in the Error Prefix Examples Application l
 ### Go Get Command
 
 ```go
-go get github.com/MikeAustin71/errpref/@v1.6.1
+go get github.com/MikeAustin71/errpref/@v1.7.0
 ```
 
 ​	-- or --
@@ -865,7 +1002,7 @@ None. This software package is not dependent on any external module or package.
 
 Source code tests are located in the **errpref** directory of the source code repository. All files beginning with the letters "**zzzt_**" and ending with "**_test.go**" contain test code. The **errpref** directory is located here: [Test Code](https://github.com/MikeAustin71/errpref)
 
-Currently, tests show code coverage at 87%.
+Currently, tests show code coverage at 96%.
 
 To run the test code, first review the command syntax in [zzzzHowToRunTests](https://github.com/MikeAustin71/errpref/blob/main/zzzzHowToRunTests.md).
 
@@ -875,17 +1012,25 @@ Test results are stored in the text file, [zzzzz_tests.txt](https://github.com/M
 
 ## OS Support
 
-Tests are running successfully on Windows 10, Ubuntu 20.04.2.0 LTS, Fedora 34.9.2 and Mint 20.1 Cinnamon.
+Tests are running successfully on Windows 10 and Ubuntu 20.04 LTS.
 
 
 
 ## Version
 
-The latest version is Version 1.6.1.
+The latest version is Version 1.7.0.
 
 As with all previous versions, this Version supports [Go Modules](https://golang.org/ref/mod).
 
+This version was compiled and tested using using ***Go*** Version 1.16.4.
+
 For more details, see the [Release Notes](./releasenotes.md).
+
+
+
+## Release Notes
+
+ [Release Notes](./releasenotes.md)
 
 
 
@@ -905,3 +1050,4 @@ Send questions or comments to:
 ``` text
     mike.go@paladinacs.net
 ```
+

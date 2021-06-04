@@ -66,7 +66,31 @@ func (ePrefDtoElectron errPrefixDtoElectron) emptyErrorPrefixDto(
 
 	ePrefixDto.outputStrDelimiters.Empty()
 
+	ePrefixDto.leadingTextStr = ""
+
+	ePrefixDto.trailingTextStr = ""
+
 	return errPrefixDtoQuark{}.ptr().emptyErrPrefInfoCollection(
 		ePrefixDto,
 		errPrefStr)
+}
+
+// newZeroErrPrefixDto - Returns a pointer to a new instance of
+// ErrPrefixDto with all internal member variables set to their
+// initial or zero values.
+//
+func (ePrefDtoElectron *errPrefixDtoElectron) newPtrZeroErrPrefixDto() *ErrPrefixDto {
+
+	if ePrefDtoElectron.lock == nil {
+		ePrefDtoElectron.lock = new(sync.Mutex)
+	}
+
+	ePrefDtoElectron.lock.Lock()
+
+	defer ePrefDtoElectron.lock.Unlock()
+
+	newErrPrefixDto :=
+		errPrefixDtoQuark{}.ptr().newZeroErrPrefixDto()
+
+	return &newErrPrefixDto
 }

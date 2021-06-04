@@ -9,9 +9,23 @@ type errPrefixDtoQuark struct {
 	lock *sync.Mutex
 }
 
-// ptr - Returns a pointer to a new instance of errPrefixDtoQuark.
+// deleteLastErrPrefixInfo - Deletes the last Error Prefix
+// Information object in the collection maintained by the input
+// parameter 'ePrefixDto', an instance of ErrPrefixDto.
 //
-func (ePrefDtoQuark errPrefixDtoQuark) ptr() *errPrefixDtoQuark {
+// After the deletion operation is completed, this method returns a
+// boolean value indicating whether the remaining collection of
+// Error Prefix Information objects is empty.
+//
+// Note: After completing the deletion operation, this method will
+// set the appropriate flags on the last Error Prefix Information
+// object in the modified collection.
+//
+func (ePrefDtoQuark *errPrefixDtoQuark) deleteLastErrPrefixInfo(
+	ePrefixDto *ErrPrefixDto,
+	errPrefStr string) (
+	isEmpty bool,
+	err error) {
 
 	if ePrefDtoQuark.lock == nil {
 		ePrefDtoQuark.lock = new(sync.Mutex)
@@ -21,9 +35,59 @@ func (ePrefDtoQuark errPrefixDtoQuark) ptr() *errPrefixDtoQuark {
 
 	defer ePrefDtoQuark.lock.Unlock()
 
-	return &errPrefixDtoQuark{
-		lock: new(sync.Mutex),
+	errPrefStr = errPrefStr +
+		"\nerrPrefixDtoQuark.deleteLastErrPrefixInfo()"
+
+	isEmpty = false
+
+	if ePrefixDto == nil {
+		err = fmt.Errorf("%v\n"+
+			"Error: Input parameter 'ePrefixDto' is invalid!\n"+
+			"'ePrefixDto' is a 'nil' pointer.\n",
+			errPrefStr)
+
+		return isEmpty, err
 	}
+
+	lenEPrefCol := len(ePrefixDto.ePrefCol)
+
+	if lenEPrefCol == 0 {
+
+		ePrefixDto.ePrefCol = nil
+
+		isEmpty = true
+
+		return isEmpty, err
+	}
+
+	if lenEPrefCol == 1 {
+
+		ePrefixDto.ePrefCol[0].Empty()
+
+		ePrefixDto.ePrefCol = nil
+
+		isEmpty = true
+
+		return isEmpty, err
+	}
+
+	ePrefixDto.ePrefCol[lenEPrefCol-1].Empty()
+
+	lenEPrefCol--
+
+	tempCol := make([]ErrorPrefixInfo, lenEPrefCol)
+
+	copy(tempCol, ePrefixDto.ePrefCol[:lenEPrefCol])
+
+	ePrefixDto.ePrefCol = make([]ErrorPrefixInfo, lenEPrefCol)
+
+	copy(ePrefixDto.ePrefCol, tempCol)
+
+	ePrefixDto.ePrefCol[lenEPrefCol-1].SetIsLastIndex(true)
+
+	isEmpty = false
+
+	return isEmpty, err
 }
 
 // emptyEPrefCollection - Receives a pointer to an ErrPrefixDto
@@ -54,10 +118,6 @@ func (ePrefDtoQuark *errPrefixDtoQuark) emptyErrPrefInfoCollection(
 			errPrefStr)
 	}
 
-	if ePrefixDto.ePrefCol == nil {
-		return nil
-	}
-
 	lenEPrefCol := len(ePrefixDto.ePrefCol)
 
 	if lenEPrefCol == 0 {
@@ -71,6 +131,92 @@ func (ePrefDtoQuark *errPrefixDtoQuark) emptyErrPrefInfoCollection(
 	ePrefixDto.ePrefCol = nil
 
 	return nil
+}
+
+// newZeroErrPrefixDto - Returns a new instance of ErrPrefixDto
+// with all internal member variables set to their initial or zero
+// values.
+//
+func (ePrefDtoQuark *errPrefixDtoQuark) newZeroErrPrefixDto() ErrPrefixDto {
+
+	if ePrefDtoQuark.lock == nil {
+		ePrefDtoQuark.lock = new(sync.Mutex)
+	}
+
+	ePrefDtoQuark.lock.Lock()
+
+	defer ePrefDtoQuark.lock.Unlock()
+
+	newErrPrefixDto := ErrPrefixDto{}
+
+	newErrPrefixDto.lock = new(sync.Mutex)
+
+	newErrPrefixDto.ePrefCol = nil
+
+	newErrPrefixDto.leadingTextStr = ""
+
+	newErrPrefixDto.trailingTextStr = ""
+
+	newErrPrefixDto.maxErrPrefixTextLineLength =
+		errPrefPreon{}.ptr().getDefaultErrPrefLineLength()
+
+	newErrPrefixDto.inputStrDelimiters.SetToDefault()
+
+	newErrPrefixDto.outputStrDelimiters.SetToDefault()
+
+	return newErrPrefixDto
+}
+
+// normalizeErrPrefixDto - Receives a pointer to an instance of
+// ErrPrefixDto and proceeds to set any uninitialized member variables
+// to their zero values.
+//
+func (ePrefDtoQuark *errPrefixDtoQuark) normalizeErrPrefixDto(
+	ePrefixDto *ErrPrefixDto) {
+
+	if ePrefDtoQuark.lock == nil {
+		ePrefDtoQuark.lock = new(sync.Mutex)
+	}
+
+	ePrefDtoQuark.lock.Lock()
+
+	defer ePrefDtoQuark.lock.Unlock()
+
+	if ePrefixDto == nil {
+		return
+	}
+
+	ePrefixDto.inputStrDelimiters.SetToDefaultIfEmpty()
+
+	ePrefixDto.outputStrDelimiters.SetToDefaultIfEmpty()
+
+	ePrefPreon := errPrefPreon{}
+
+	minimumTextLineLen := ePrefPreon.getMinErrPrefLineLength()
+
+	if ePrefixDto.maxErrPrefixTextLineLength < minimumTextLineLen {
+		ePrefixDto.maxErrPrefixTextLineLength =
+			ePrefPreon.getDefaultErrPrefLineLength()
+	}
+
+	return
+}
+
+// ptr - Returns a pointer to a new instance of errPrefixDtoQuark.
+//
+func (ePrefDtoQuark errPrefixDtoQuark) ptr() *errPrefixDtoQuark {
+
+	if ePrefDtoQuark.lock == nil {
+		ePrefDtoQuark.lock = new(sync.Mutex)
+	}
+
+	ePrefDtoQuark.lock.Lock()
+
+	defer ePrefDtoQuark.lock.Unlock()
+
+	return &errPrefixDtoQuark{
+		lock: new(sync.Mutex),
+	}
 }
 
 // testValidityOfErrorPrefixInfo - Performs a diagnostic review of

@@ -141,6 +141,8 @@ func (ePrefMech *errPrefMechanics) assembleErrPrefix(
 	}
 
 	return errPrefNanobot{}.ptr().formatErrPrefixComponents(
+		"", // Leading Text String
+		"", // Trailing Text String
 		maxErrStringLength,
 		false,
 		delimiters,
@@ -231,6 +233,8 @@ func (ePrefMech *errPrefMechanics) formatErrPrefix(
 
 	return errPrefNanobot{}.ptr().
 		formatErrPrefixComponents(
+			"", // Leading Text String
+			"", // Trailing Text String
 			maxErrStringLength,
 			false,
 			delimiters,
@@ -310,6 +314,8 @@ func (ePrefMech *errPrefMechanics) extractLastErrPrefCtxPair(
 
 	return errPrefNanobot{}.ptr().
 		formatErrPrefixComponents(
+			"", // Leading Text String
+			"", // Trailing Text String
 			maxErrStringLength,
 			false,
 			delimiters,
@@ -420,6 +426,8 @@ func (ePrefMech *errPrefMechanics) setErrorContext(
 		SetErrContextStr(newErrContext)
 
 	return errPrefNanobot{}.ptr().formatErrPrefixComponents(
+		"", // Leading Text String
+		"", // Trailing Text String
 		maxErrStringLength,
 		false,
 		delimiters,

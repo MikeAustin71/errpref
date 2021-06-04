@@ -10,6 +10,78 @@ type errPrefixDtoNanobot struct {
 	lock *sync.Mutex
 }
 
+// copyOutErrPrefDtoPtr - Duplicates functionality of method
+// errPrefixDtoAtom.copyOutErrPrefDto() with one important
+// distinction. This wrapper method returns a pointer to the copied
+// ErrPrefixDto object.
+//
+//
+// ------------------------------------------------------------------------
+//
+// Input Parameters
+//
+//  ePrefixDto          *ErrPrefixDto
+//     - A pointer to an instance of ErrPrefixDto. This method
+//       will NOT change the values of internal member variables
+//       contained in this object.
+//
+//       If this ErrPrefixDto instance proves to be invalid, an
+//       error will be returned.
+//
+//
+//  eMsg                string
+//     - This is an error prefix which is included in all returned
+//       error messages. Usually, it contains the names of the calling
+//       method or methods. Note: Be sure to leave a space at the end
+//       of 'eMsg'.
+//
+//
+// ------------------------------------------------------------------------
+//
+// Return Values
+//
+//  *ErrPrefixDto
+//     - If this method completes successfully, a deep copy of
+//       input parameter 'ePrefixDto' will be returned as a pointer
+//       to a new instance of ErrPrefixDto
+//
+//
+//  error
+//     - If this method completes successfully, the returned error Type
+//       is set to 'nil'. If errors are encountered during processing,
+//       the returned error Type will encapsulate an error message.
+//       Note that this error message will incorporate the method
+//       chain and text passed by input parameter, 'eMsg'. The
+//       'eMsg' text will be prefixed to the beginning of the returned
+//       error message.
+//
+func (ePrefixDtoNanobot *errPrefixDtoNanobot) copyOutErrPrefDtoPtr(
+	ePrefixDto *ErrPrefixDto,
+	eMsg string) (
+	*ErrPrefixDto,
+	error) {
+
+	if ePrefixDtoNanobot.lock == nil {
+		ePrefixDtoNanobot.lock = new(sync.Mutex)
+	}
+
+	ePrefixDtoNanobot.lock.Lock()
+
+	defer ePrefixDtoNanobot.lock.Unlock()
+
+	eMsg += "errPrefixDtoNanobot.copyOutErrPrefDtoPtr()\n"
+
+	var newEPrefixDto ErrPrefixDto
+	var err error
+
+	newEPrefixDto,
+		err = errPrefixDtoAtom{}.ptr().copyOutErrPrefDto(
+		ePrefixDto,
+		eMsg)
+
+	return &newEPrefixDto, err
+}
+
 // deleteLastErrContext - Deletes the Last Context for the
 // last error prefix in the sequence.
 //
@@ -164,6 +236,10 @@ func (ePrefixDtoNanobot *errPrefixDtoNanobot) setFromIBuilder(
 			methodName)
 	}
 
+	ePrefDtoQuark := errPrefixDtoQuark{}
+
+	ePrefDtoQuark.normalizeErrPrefixDto(errPrefDto)
+
 	if iEPref == nil {
 		return fmt.Errorf("%v\n"+
 			"Error: Input parameter 'iEPref' is invalid!\n"+
@@ -178,7 +254,7 @@ func (ePrefixDtoNanobot *errPrefixDtoNanobot) setFromIBuilder(
 			methodName)
 	}
 
-	err := errPrefixDtoQuark{}.ptr().emptyErrPrefInfoCollection(
+	err := ePrefDtoQuark.emptyErrPrefInfoCollection(
 		errPrefDto,
 		methodName)
 
@@ -296,9 +372,8 @@ func (ePrefixDtoNanobot *errPrefixDtoNanobot) setFromIBasicErrorPrefix(
 			methodName)
 	}
 
-	errPrefDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	errPrefDto.outputStrDelimiters.SetToDefaultIfEmpty()
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(errPrefDto)
 
 	twoDSlice := iEPref.GetEPrefStrings()
 
@@ -422,11 +497,10 @@ func (ePrefixDtoNanobot *errPrefixDtoNanobot) setFromString(
 		return nil
 	}
 
+	errPrefixDtoQuark{}.ptr().normalizeErrPrefixDto(
+		errPrefDto)
+
 	ePrefAtom := errPrefixDtoAtom{}
-
-	errPrefDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	errPrefDto.outputStrDelimiters.SetToDefaultIfEmpty()
 
 	ePrefAtom.getEPrefContextArray(
 		iEPref,
@@ -517,6 +591,8 @@ func (ePrefixDtoNanobot *errPrefixDtoNanobot) setFromStringBuilder(
 			methodName)
 	}
 
+	errPrefixDtoQuark{}.ptr().normalizeErrPrefixDto(errPrefDto)
+
 	if iEPref == nil {
 		return fmt.Errorf("%v\n"+
 			"Error: Input parameter 'iEPref' is invalid!\n"+
@@ -542,10 +618,6 @@ func (ePrefixDtoNanobot *errPrefixDtoNanobot) setFromStringBuilder(
 	}
 
 	ePrefAtom := errPrefixDtoAtom{}
-
-	errPrefDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	errPrefDto.outputStrDelimiters.SetToDefaultIfEmpty()
 
 	ePrefAtom.getEPrefContextArray(
 		strVal,
@@ -634,9 +706,7 @@ func (ePrefixDtoNanobot *errPrefixDtoNanobot) setFromStringArray(
 			methodName)
 	}
 
-	errPrefDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	errPrefDto.outputStrDelimiters.SetToDefaultIfEmpty()
+	errPrefixDtoQuark{}.ptr().normalizeErrPrefixDto(errPrefDto)
 
 	lenEPrefStrs := len(iEPref)
 
@@ -752,9 +822,7 @@ func (ePrefixDtoNanobot *errPrefixDtoNanobot) setFromTwoDStrArray(
 			methodName)
 	}
 
-	errPrefDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	errPrefDto.outputStrDelimiters.SetToDefaultIfEmpty()
+	errPrefixDtoQuark{}.ptr().normalizeErrPrefixDto(errPrefDto)
 
 	if iEPref == nil {
 		errPrefDto.ePrefCol = nil

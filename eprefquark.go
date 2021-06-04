@@ -6,11 +6,6 @@ import (
 	"sync"
 )
 
-// constDefaultErrPrefLineLength - Do NOT access
-// constDefaultErrPrefLineLength without first locking
-// 'defaultErrPrefLineLenLock'
-const constDefaultErrPrefLineLength = uint(40)
-
 // defaultErrorPrefixDisplayLineLength - Do NOT access
 // defaultErrorPrefixDisplayLineLength without first locking
 // 'defaultErrPrefLineLenLock'
@@ -397,10 +392,15 @@ func (ePrefQuark *errPrefQuark) getErrPrefDisplayLineLength() uint {
 
 	defer defaultErrPrefLineLenLock.Unlock()
 
-	if defaultErrorPrefixDisplayLineLength == 0 {
+	erPrfPreon := errPrefPreon{}
+
+	minimumErrPrefLineLen := erPrfPreon.getMinErrPrefLineLength()
+
+	if defaultErrorPrefixDisplayLineLength <
+		minimumErrPrefLineLen {
 
 		defaultErrorPrefixDisplayLineLength =
-			constDefaultErrPrefLineLength
+			erPrfPreon.getDefaultErrPrefLineLength()
 
 	}
 
@@ -432,12 +432,7 @@ func (ePrefQuark *errPrefQuark) getMasterErrPrefDisplayLineLength() uint {
 
 	defer defaultErrPrefLineLenLock.Unlock()
 
-	var maxErrPrefixStringLength uint
-
-	maxErrPrefixStringLength =
-		constDefaultErrPrefLineLength
-
-	return maxErrPrefixStringLength
+	return errPrefPreon{}.ptr().getDefaultErrPrefLineLength()
 }
 
 // isEmptyOrWhiteSpace - Analyzes the incoming string and returns
@@ -502,7 +497,7 @@ func (ePrefQuark *errPrefQuark) resetErrPrefDisplayLineLengthToDefault() {
 	defer defaultErrPrefLineLenLock.Unlock()
 
 	defaultErrorPrefixDisplayLineLength =
-		constDefaultErrPrefLineLength
+		errPrefPreon{}.ptr().getDefaultErrPrefLineLength()
 
 }
 
@@ -526,8 +521,9 @@ func (ePrefQuark *errPrefQuark) resetErrPrefDisplayLineLengthToDefault() {
 //       maximum number of characters allowed in a text display
 //       line for error prefix information.
 //
-//       If 'maxErrPrefixTextLineLength' is set to a value of zero
-//       (0), this method will take no action and return.
+//       If 'maxErrPrefixTextLineLength' is set to a value less
+//       than the minimum Error Prefix Line Length, this method
+//       will take no action and return.
 //
 //
 // -----------------------------------------------------------------
@@ -556,7 +552,9 @@ func (ePrefQuark *errPrefQuark) setErrPrefDisplayLineLength(
 
 	defer defaultErrPrefLineLenLock.Unlock()
 
-	if maxErrPrefixStringLength == 0 {
+	minimum := errPrefPreon{}.ptr().getMinErrPrefLineLength()
+
+	if maxErrPrefixStringLength < minimum {
 		return
 	}
 

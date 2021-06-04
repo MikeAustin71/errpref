@@ -720,6 +720,310 @@ func TestErrPrefixDto_NewEPrefOld_000200(t *testing.T) {
 
 }
 
+func TestErrPrefixDto_NewFromErrPrefDto_000100(t *testing.T) {
+
+	callingMethod := "TestErrPrefixDto_NewFromErrPrefDto_000100()"
+
+	ePDto := ErrPrefixDto{}.New()
+	maxTextLineLen := 50
+
+	ePDto.SetMaxTextLineLen(maxTextLineLen)
+
+	initialStr :=
+		"Tx1.Something() - Tx2.SomethingElse() - Tx3.DoSomething()\n" +
+			"Tx4() - Tx5() - Tx6.DoSomethingElse()\n" +
+			"Tx7.TrySomethingNew() : something->newSomething\n" +
+			"Tx8.TryAnyCombination() - Tx9.TryAHammer() : x->y - Tx10.X()\n" +
+			"Tx11.TryAnything() - Tx12.TryASalad()\n" +
+			"Tx13.SomeFabulousAndComplexStuff()\n" +
+			"Tx14.MoreAwesomeGoodness() : A=7 B=8 C=9"
+
+	ePDto.SetEPrefOld(initialStr)
+
+	ePDtoCpy,
+		err := ePDto.CopyOut(callingMethod)
+
+	if err != nil {
+		t.Errorf("Error from ePDto.CopyOut(callingMethod)\n"+
+			"%v\n", err.Error())
+		return
+	}
+
+	var ePDto2 *ErrPrefixDto
+
+	newErrPref := "Tx15.SomeBrilliantStuff()"
+	newErrCtx := "X=5;Y=9"
+
+	ePDto2,
+		err = ErrPrefixDto{}.NewFromErrPrefDto(
+		&ePDtoCpy,
+		newErrPref,
+		newErrCtx)
+
+	if err != nil {
+		t.Errorf("Error from ErrPrefixDto{}.NewFromErrPrefDto()\n"+
+			"%v\n", err.Error())
+		return
+	}
+
+	ePDto2.SetMaxTextLineLen(maxTextLineLen)
+
+	ePDto3 := ePDto.XEPrefCtx(
+		newErrPref,
+		newErrCtx)
+
+	expectedOutputStr :=
+		ErrPref{}.ConvertNonPrintableChars(
+			[]rune(ePDto3.String()),
+			false)
+
+	ePDto2Str := ErrPref{}.ConvertNonPrintableChars(
+		[]rune(ePDto2.String()),
+		false)
+
+	if expectedOutputStr != ePDto2Str {
+		t.Errorf("ERROR:\n"+
+			"Expected expectedOutputStr == ePDto2Str\n"+
+			"HOWEVER, THEY ARE NOT EQUAL!\n"+
+			"expectedOutputStr = '%v'\n"+
+			"        ePDto2Str = '%v'\n",
+			expectedOutputStr,
+			ePDto2Str)
+		return
+	}
+
+	if !ePDto3.Equal(ePDto2) {
+		t.Error("Error: Expected ePDto3 and ePDto2 would be equal!\n" +
+			"THEY ARE NOT EQUAL!\n")
+	}
+
+}
+
+func TestErrPrefixDto_NewFromErrPrefDto_000200(t *testing.T) {
+
+	callingMethod := "TestErrPrefixDto_NewFromErrPrefDto_000200()"
+
+	ePDto := ErrPrefixDto{}.New()
+	maxTextLineLen := 50
+
+	ePDto.SetMaxTextLineLen(maxTextLineLen)
+
+	initialStr :=
+		"Tx1.Something() - Tx2.SomethingElse() - Tx3.DoSomething()\n" +
+			"Tx4() - Tx5() - Tx6.DoSomethingElse()\n" +
+			"Tx7.TrySomethingNew() : something->newSomething\n" +
+			"Tx8.TryAnyCombination() - Tx9.TryAHammer() : x->y - Tx10.X()\n" +
+			"Tx11.TryAnything() - Tx12.TryASalad()\n" +
+			"Tx13.SomeFabulousAndComplexStuff()\n" +
+			"Tx14.MoreAwesomeGoodness() : A=7 B=8 C=9"
+
+	ePDto.SetEPrefOld(initialStr)
+
+	ePDtoCpy,
+		err := ePDto.CopyOut(callingMethod)
+
+	if err != nil {
+		t.Errorf("Error from ePDto.CopyOut(callingMethod)\n"+
+			"%v\n", err.Error())
+		return
+	}
+
+	var ePDto2 *ErrPrefixDto
+
+	newErrPref := ""
+	newErrCtx := ""
+
+	ePDto2,
+		err = ErrPrefixDto{}.NewFromErrPrefDto(
+		&ePDtoCpy,
+		newErrPref,
+		newErrCtx)
+
+	if err != nil {
+		t.Errorf("Error from ErrPrefixDto{}.NewFromErrPrefDto()\n"+
+			"%v\n", err.Error())
+		return
+	}
+
+	ePDto2.SetMaxTextLineLen(maxTextLineLen)
+
+	expectedOutputStr :=
+		ErrPref{}.ConvertNonPrintableChars(
+			[]rune(ePDto.String()),
+			false)
+
+	ePDto2Str := ErrPref{}.ConvertNonPrintableChars(
+		[]rune(ePDto2.String()),
+		false)
+
+	if expectedOutputStr != ePDto2Str {
+		t.Errorf("ERROR:\n"+
+			"Expected expectedOutputStr == ePDto2Str\n"+
+			"HOWEVER, THEY ARE NOT EQUAL!\n"+
+			"expectedOutputStr = '%v'\n"+
+			"        ePDto2Str = '%v'\n",
+			expectedOutputStr,
+			ePDto2Str)
+		return
+	}
+
+	if !ePDto.Equal(ePDto2) {
+		t.Error("Error: Expected ePDto and ePDto2 would be equal!\n" +
+			"THEY ARE NOT EQUAL!\n")
+	}
+
+}
+
+func TestErrPrefixDto_NewFromErrPrefDto_000300(t *testing.T) {
+
+	callingMethod := "TestErrPrefixDto_NewFromErrPrefDto_000300()"
+
+	ePDto := ErrPrefixDto{}.New()
+	maxTextLineLen := 50
+
+	ePDto.SetMaxTextLineLen(maxTextLineLen)
+
+	initialStr :=
+		"Tx1.Something() - Tx2.SomethingElse() - Tx3.DoSomething()\n" +
+			"Tx4() - Tx5() - Tx6.DoSomethingElse()\n" +
+			"Tx7.TrySomethingNew() : something->newSomething\n" +
+			"Tx8.TryAnyCombination() - Tx9.TryAHammer() : x->y - Tx10.X()\n" +
+			"Tx11.TryAnything() - Tx12.TryASalad()\n" +
+			"Tx13.SomeFabulousAndComplexStuff()\n" +
+			"Tx14.MoreAwesomeGoodness() : A=7 B=8 C=9"
+
+	ePDto.SetEPrefOld(initialStr)
+
+	ePDtoCpy,
+		err := ePDto.CopyOut(callingMethod)
+
+	if err != nil {
+		t.Errorf("Error from ePDto.CopyOut(callingMethod)\n"+
+			"%v\n", err.Error())
+		return
+	}
+
+	var ePDto2 *ErrPrefixDto
+
+	newErrPref := "Tx15.SomeBrilliantStuff()"
+	newErrCtx := ""
+
+	ePDto2,
+		err = ErrPrefixDto{}.NewFromErrPrefDto(
+		&ePDtoCpy,
+		newErrPref,
+		newErrCtx)
+
+	if err != nil {
+		t.Errorf("Error from ErrPrefixDto{}.NewFromErrPrefDto()\n"+
+			"%v\n", err.Error())
+		return
+	}
+
+	ePDto2.SetMaxTextLineLen(maxTextLineLen)
+
+	ePDto3 := ePDto.XEPrefCtx(
+		newErrPref,
+		newErrCtx)
+
+	expectedOutputStr :=
+		ErrPref{}.ConvertNonPrintableChars(
+			[]rune(ePDto3.String()),
+			false)
+
+	ePDto2Str := ErrPref{}.ConvertNonPrintableChars(
+		[]rune(ePDto2.String()),
+		false)
+
+	if expectedOutputStr != ePDto2Str {
+		t.Errorf("ERROR:\n"+
+			"Expected expectedOutputStr == ePDto2Str\n"+
+			"HOWEVER, THEY ARE NOT EQUAL!\n"+
+			"expectedOutputStr = '%v'\n"+
+			"        ePDto2Str = '%v'\n",
+			expectedOutputStr,
+			ePDto2Str)
+		return
+	}
+
+	if !ePDto3.Equal(ePDto2) {
+		t.Error("Error: Expected ePDto3 and ePDto2 would be equal!\n" +
+			"THEY ARE NOT EQUAL!\n")
+	}
+
+}
+
+func TestErrPrefixDto_NewFromErrPrefDto_000400(t *testing.T) {
+
+	ePDto := ErrPrefixDto{}.New()
+	maxTextLineLen := 50
+
+	ePDto.SetMaxTextLineLen(maxTextLineLen)
+
+	newErrPref := "Tx15.SomeBrilliantStuff()"
+	newErrCtx := "X=5;Y=9"
+
+	ePDto.SetEPrefOld(newErrPref + " : " +
+		newErrCtx)
+
+	ePDto2,
+		err := ErrPrefixDto{}.NewFromErrPrefDto(
+		nil,
+		newErrPref,
+		newErrCtx)
+
+	if err != nil {
+		t.Errorf("Error from ErrPrefixDto{}.NewFromErrPrefDto()\n"+
+			"%v\n", err.Error())
+		return
+	}
+
+	ePDto2.SetMaxTextLineLen(maxTextLineLen)
+
+	expectedOutputStr :=
+		ErrPref{}.ConvertNonPrintableChars(
+			[]rune(ePDto.String()),
+			false)
+
+	ePDto2Str := ErrPref{}.ConvertNonPrintableChars(
+		[]rune(ePDto2.String()),
+		false)
+
+	if expectedOutputStr != ePDto2Str {
+		t.Errorf("ERROR:\n"+
+			"Expected expectedOutputStr == ePDto2Str\n"+
+			"HOWEVER, THEY ARE NOT EQUAL!\n"+
+			"expectedOutputStr = '%v'\n"+
+			"        ePDto2Str = '%v'\n",
+			expectedOutputStr,
+			ePDto2Str)
+		return
+	}
+
+	if !ePDto.Equal(ePDto2) {
+		t.Error("Error: Expected ePDto and ePDto2 would be equal!\n" +
+			"THEY ARE NOT EQUAL!\n")
+	}
+
+}
+
+func TestErrPrefixDto_NewFromErrPrefDto_000500(t *testing.T) {
+
+	_,
+		err := ErrPrefixDto{}.NewFromErrPrefDto(
+		nil,
+		"",
+		"")
+
+	if err == nil {
+		t.Error("Expected an error return from ErrPrefixDto{}.NewFromErrPrefDto()\n" +
+			"because dto is nil and new error prefix is an empty string.\n" +
+			"HOWEVER, NO ERROR WAS RETURNED!")
+		return
+	}
+
+}
+
 func TestErrPrefixDto_NewFromIErrorPrefix_000100(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
@@ -915,7 +1219,7 @@ func TestErrPrefixDto_NewFromStrings_000100(t *testing.T) {
 
 	if expectedOutputStr != ePDto2Str {
 		t.Errorf("ERROR:\n"+
-			"Expected expectedOutputStr == ePDto1St\n"+
+			"Expected expectedOutputStr == ePDto1Str\n"+
 			"HOWEVER, THEY ARE NOT EQUAL!\n"+
 			"expectedOutputStr = '%v'\n"+
 			"        ePDto2Str = '%v'\n",
@@ -2587,6 +2891,61 @@ func TestErrPrefixDto_NewIEmpty_001600(t *testing.T) {
 		t.Error("Expected an error return from ErrPrefixDto{}.NewIEmpty(sbPtr)\n" +
 			"HOWEVER, NO ERROR WAS RETURNED!!\n")
 		return
+	}
+
+}
+
+func TestErrPrefixDto_NewIEmpty_001700(t *testing.T) {
+
+	ePDto := ErrPrefixDto{}.New()
+
+	calledMethod := "Tx14.MoreAwesomeGoodness"
+	calledMethodCtx := "A=7 B=8 C=9"
+
+	maxTextLineLen := 50
+
+	ePDto.SetMaxTextLineLen(maxTextLineLen)
+
+	ePDto.SetEPrefCtx(calledMethod,
+		calledMethodCtx)
+
+	ePDto2,
+		err := ErrPrefixDto{}.NewIEmpty(
+		nil,
+		calledMethod,
+		calledMethodCtx)
+
+	if err != nil {
+		t.Errorf("Error from  ErrPrefixDto{}.NewIEmpty()\n"+
+			"%v\n", err.Error())
+		return
+	}
+
+	ePDto2.SetMaxTextLineLen(maxTextLineLen)
+
+	ePDtoStr := ErrPref{}.ConvertNonPrintableChars(
+		[]rune(ePDto.String()),
+		false)
+
+	ePDto2Str := ErrPref{}.ConvertNonPrintableChars(
+		[]rune(ePDto2.String()),
+		false)
+
+	if !ePDto.Equal(ePDto2) {
+		t.Errorf("Error: Expected ePDto==ePDto2.\n"+
+			"However, THEY ARE NOT EQUAL!\n"+
+			"ePDto=\n%v\n\nePDto2=\n%v\n\n",
+			ePDtoStr,
+			ePDto2Str)
+		return
+	}
+
+	if ePDtoStr != ePDto2Str {
+		t.Errorf("Error: Expected ePDtoStr==ePDto2Str.\n"+
+			"However, THEY ARE NOT EQUAL!\n"+
+			"ePDto=\n%v\n\nePDto2=\n%v\n\n",
+			ePDtoStr,
+			ePDto2Str)
 	}
 
 }

@@ -36,9 +36,7 @@ func (ePrefixDtoAtom *errPrefixDtoAtom) addTwoDimensionalStringArray(
 			errPrefStr)
 	}
 
-	errPrefixDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	errPrefixDto.outputStrDelimiters.SetToDefaultIfEmpty()
+	errPrefixDtoQuark{}.ptr().normalizeErrPrefixDto(errPrefixDto)
 
 	if twoDStrArray == nil {
 		return nil
@@ -53,6 +51,10 @@ func (ePrefixDtoAtom *errPrefixDtoAtom) addTwoDimensionalStringArray(
 	var ePrefInfo ErrorPrefixInfo
 
 	for i := 0; i < lenTwoDStrAry; i++ {
+
+		if len(twoDStrArray[i][0]) == 0 {
+			continue
+		}
 
 		ePrefInfo = ErrorPrefixInfo{
 			isFirstIdx:             false,
@@ -102,13 +104,11 @@ func (ePrefixDtoAtom *errPrefixDtoAtom) areEqualErrPrefDtos(
 		return false
 	}
 
-	errPrefixDto1.inputStrDelimiters.SetToDefaultIfEmpty()
+	errPrefDtoQuark := errPrefixDtoQuark{}
 
-	errPrefixDto1.outputStrDelimiters.SetToDefaultIfEmpty()
+	errPrefDtoQuark.normalizeErrPrefixDto(errPrefixDto1)
 
-	errPrefixDto2.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	errPrefixDto2.outputStrDelimiters.SetToDefaultIfEmpty()
+	errPrefDtoQuark.normalizeErrPrefixDto(errPrefixDto2)
 
 	if errPrefixDto1.leftMarginLength !=
 		errPrefixDto2.leftMarginLength {
@@ -142,6 +142,16 @@ func (ePrefixDtoAtom *errPrefixDtoAtom) areEqualErrPrefDtos(
 
 	if errPrefixDto1.maxErrPrefixTextLineLength !=
 		errPrefixDto2.maxErrPrefixTextLineLength {
+		return false
+	}
+
+	if errPrefixDto1.leadingTextStr !=
+		errPrefixDto2.leadingTextStr {
+		return false
+	}
+
+	if errPrefixDto1.trailingTextStr !=
+		errPrefixDto2.trailingTextStr {
 		return false
 	}
 
@@ -260,12 +270,14 @@ func (ePrefixDtoAtom *errPrefixDtoAtom) copyInErrPrefDto(
 			eMsg)
 	}
 
-	inComingErrPrefixDto.inputStrDelimiters.SetToDefaultIfEmpty()
+	ePrefDtoQuark := errPrefixDtoQuark{}
 
-	inComingErrPrefixDto.outputStrDelimiters.SetToDefaultIfEmpty()
+	ePrefDtoQuark.normalizeErrPrefixDto(inComingErrPrefixDto)
+
+	ePrefDtoQuark.normalizeErrPrefixDto(targetErrPrefixDto)
 
 	_,
-		err := errPrefixDtoQuark{}.ptr().
+		err := ePrefDtoQuark.
 		testValidityOfErrPrefixDto(
 			inComingErrPrefixDto,
 			eMsg+"Testing validity of inComingErrPrefixDto ")
@@ -309,22 +321,24 @@ func (ePrefixDtoAtom *errPrefixDtoAtom) copyInErrPrefDto(
 	targetErrPrefixDto.leftMarginChar =
 		inComingErrPrefixDto.leftMarginChar
 
-	if inComingErrPrefixDto.ePrefCol == nil {
-		targetErrPrefixDto.ePrefCol = nil
-		return nil
-	}
+	targetErrPrefixDto.leadingTextStr =
+		inComingErrPrefixDto.leadingTextStr
+
+	targetErrPrefixDto.trailingTextStr =
+		inComingErrPrefixDto.trailingTextStr
 
 	lenIncomingEPrefCol :=
 		len(inComingErrPrefixDto.ePrefCol)
+
+	if lenIncomingEPrefCol == 0 {
+		targetErrPrefixDto.ePrefCol = nil
+		return nil
+	}
 
 	targetErrPrefixDto.ePrefCol =
 		make(
 			[]ErrorPrefixInfo,
 			lenIncomingEPrefCol)
-
-	if lenIncomingEPrefCol == 0 {
-		return nil
-	}
 
 	copy(
 		targetErrPrefixDto.ePrefCol,
@@ -368,7 +382,7 @@ func (ePrefixDtoAtom *errPrefixDtoAtom) copyInErrPrefDto(
 //       instance of ErrPrefixDto
 //
 //
-//  error
+//  err                 error
 //     - If this method completes successfully, the returned error Type
 //       is set to 'nil'. If errors are encountered during processing,
 //       the returned error Type will encapsulate an error message.
@@ -393,7 +407,10 @@ func (ePrefixDtoAtom *errPrefixDtoAtom) copyOutErrPrefDto(
 
 	eMsg += "errPrefixDtoAtom.copyOutErrPrefDto() "
 
-	newEPrefixDto = ErrPrefixDto{}
+	ePrefDtoQuark := errPrefixDtoQuark{}
+
+	newEPrefixDto = ePrefDtoQuark.
+		newZeroErrPrefixDto()
 
 	if ePrefixDto == nil {
 		err =
@@ -405,24 +422,13 @@ func (ePrefixDtoAtom *errPrefixDtoAtom) copyOutErrPrefDto(
 		return newEPrefixDto, err
 	}
 
-	ePrefixDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	ePrefixDto.outputStrDelimiters.SetToDefaultIfEmpty()
-
-	newEPrefixDto.lock = new(sync.Mutex)
+	ePrefDtoQuark.normalizeErrPrefixDto(ePrefixDto)
 
 	newEPrefixDto.isLastLineTerminatedWithNewLine =
 		ePrefixDto.isLastLineTerminatedWithNewLine
 
 	newEPrefixDto.turnOffTextDisplay =
 		ePrefixDto.turnOffTextDisplay
-
-	if ePrefixDto.maxErrPrefixTextLineLength < 10 {
-
-		ePrefixDto.maxErrPrefixTextLineLength =
-			errPrefQuark{}.ptr().getMasterErrPrefDisplayLineLength()
-
-	}
 
 	err =
 		newEPrefixDto.inputStrDelimiters.CopyIn(
@@ -453,24 +459,26 @@ func (ePrefixDtoAtom *errPrefixDtoAtom) copyOutErrPrefDto(
 	newEPrefixDto.leftMarginChar =
 		ePrefixDto.leftMarginChar
 
-	if ePrefixDto.ePrefCol == nil {
+	newEPrefixDto.leadingTextStr =
+		ePrefixDto.leadingTextStr
+
+	newEPrefixDto.trailingTextStr =
+		ePrefixDto.trailingTextStr
+
+	lenIncomingEPrefCol :=
+		len(ePrefixDto.ePrefCol)
+
+	if lenIncomingEPrefCol == 0 {
 
 		newEPrefixDto.ePrefCol = nil
 
 		return newEPrefixDto, err
 	}
 
-	lenIncomingEPrefCol :=
-		len(ePrefixDto.ePrefCol)
-
 	newEPrefixDto.ePrefCol =
 		make(
 			[]ErrorPrefixInfo,
 			lenIncomingEPrefCol)
-
-	if lenIncomingEPrefCol == 0 {
-		return newEPrefixDto, err
-	}
 
 	copy(
 		newEPrefixDto.ePrefCol,
@@ -671,6 +679,12 @@ func (ePrefixDtoAtom *errPrefixDtoAtom) setFlagsErrorPrefixInfoArray(
 	lenCollection := len(prefixContextCol)
 
 	if lenCollection == 0 {
+		return
+	}
+
+	if lenCollection == 1 {
+		prefixContextCol[0].SetIsFirstIndex(true)
+		prefixContextCol[0].SetIsLastIndex(true)
 		return
 	}
 

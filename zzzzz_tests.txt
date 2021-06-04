@@ -90,6 +90,12 @@
 --- PASS: TestErrPrefixDelimiters_SetToDefault_000100 (0.00s)
 === RUN   TestErrPrefixDto_AddEPrefCollectionStr_000100
 --- PASS: TestErrPrefixDto_AddEPrefCollectionStr_000100 (0.00s)
+=== RUN   TestErrPrefixDto_DeleteLastErrPrefix_000100
+--- PASS: TestErrPrefixDto_DeleteLastErrPrefix_000100 (0.00s)
+=== RUN   TestErrPrefixDto_DeleteLastErrPrefix_000200
+--- PASS: TestErrPrefixDto_DeleteLastErrPrefix_000200 (0.00s)
+=== RUN   TestErrPrefixDto_DeleteLastErrPrefix_000300
+--- PASS: TestErrPrefixDto_DeleteLastErrPrefix_000300 (0.00s)
 === RUN   TestErrPrefixDto_CopyPtr_000100
 --- PASS: TestErrPrefixDto_CopyPtr_000100 (0.00s)
 === RUN   TestErrPrefixDto_CopyIn_000100
@@ -158,6 +164,16 @@
 --- PASS: TestErrPrefixDto_NewEPrefOld_000100 (0.00s)
 === RUN   TestErrPrefixDto_NewEPrefOld_000200
 --- PASS: TestErrPrefixDto_NewEPrefOld_000200 (0.00s)
+=== RUN   TestErrPrefixDto_NewFromErrPrefDto_000100
+--- PASS: TestErrPrefixDto_NewFromErrPrefDto_000100 (0.00s)
+=== RUN   TestErrPrefixDto_NewFromErrPrefDto_000200
+--- PASS: TestErrPrefixDto_NewFromErrPrefDto_000200 (0.00s)
+=== RUN   TestErrPrefixDto_NewFromErrPrefDto_000300
+--- PASS: TestErrPrefixDto_NewFromErrPrefDto_000300 (0.00s)
+=== RUN   TestErrPrefixDto_NewFromErrPrefDto_000400
+--- PASS: TestErrPrefixDto_NewFromErrPrefDto_000400 (0.00s)
+=== RUN   TestErrPrefixDto_NewFromErrPrefDto_000500
+--- PASS: TestErrPrefixDto_NewFromErrPrefDto_000500 (0.00s)
 === RUN   TestErrPrefixDto_NewFromIErrorPrefix_000100
 --- PASS: TestErrPrefixDto_NewFromIErrorPrefix_000100 (0.00s)
 === RUN   TestErrPrefixDto_NewFromIErrorPrefix_000200
@@ -204,6 +220,8 @@
 --- PASS: TestErrPrefixDto_NewIEmpty_001500 (0.00s)
 === RUN   TestErrPrefixDto_NewIEmpty_001600
 --- PASS: TestErrPrefixDto_NewIEmpty_001600 (0.00s)
+=== RUN   TestErrPrefixDto_NewIEmpty_001700
+--- PASS: TestErrPrefixDto_NewIEmpty_001700 (0.00s)
 === RUN   TestErrPrefixDto_NewIEmptyWithDelimiters_000100
 --- PASS: TestErrPrefixDto_NewIEmptyWithDelimiters_000100 (0.00s)
 === RUN   TestErrPrefixDto_NewIEmptyWithDelimiters_000200
@@ -238,6 +256,12 @@
 --- PASS: TestErrPrefixDto_CopyInFromIBuilder_000100 (0.00s)
 === RUN   TestErrPrefixDto_CopyOutToIBuilder_000100
 --- PASS: TestErrPrefixDto_CopyOutToIBuilder_000100 (0.00s)
+=== RUN   TestErrPrefixDto_ReplaceLastErrPrefix_000100
+--- PASS: TestErrPrefixDto_ReplaceLastErrPrefix_000100 (0.00s)
+=== RUN   TestErrPrefixDto_ReplaceLastErrPrefix_000200
+--- PASS: TestErrPrefixDto_ReplaceLastErrPrefix_000200 (0.00s)
+=== RUN   TestErrPrefixDto_ReplaceLastErrPrefix_000300
+--- PASS: TestErrPrefixDto_ReplaceLastErrPrefix_000300 (0.00s)
 === RUN   TestErrPrefixDto_SetIBasic_000100
 --- PASS: TestErrPrefixDto_SetIBasic_000100 (0.00s)
 === RUN   TestErrPrefixDto_SetIBasic_000200
@@ -327,7 +351,7 @@
 === RUN   TestErrPrefixDto_SetIEmpty_000600
 --- PASS: TestErrPrefixDto_SetIEmpty_000600 (0.00s)
 === RUN   TestErrPrefixDto_SetIEmpty_000700
---- PASS: TestErrPrefixDto_SetIEmpty_000700 (0.01s)
+--- PASS: TestErrPrefixDto_SetIEmpty_000700 (0.00s)
 === RUN   TestErrPrefixDto_SetIEmpty_000800
 --- PASS: TestErrPrefixDto_SetIEmpty_000800 (0.00s)
 === RUN   TestErrPrefixDto_SetIEmpty_000900
@@ -388,6 +412,16 @@
 --- PASS: TestErrPrefixDto_ZEPrefOld_000100 (0.00s)
 === RUN   TestErrPrefixDto_ZEPrefOld_000200
 --- PASS: TestErrPrefixDto_ZEPrefOld_000200 (0.00s)
+=== RUN   TestLeadingText_000100
+--- PASS: TestLeadingText_000100 (0.00s)
+=== RUN   TestErrPrefixDto_GetLeadingTextStr_000100
+--- PASS: TestErrPrefixDto_GetLeadingTextStr_000100 (0.00s)
+=== RUN   TestErrPrefixDto_GetTrailingTextStr_000100
+--- PASS: TestErrPrefixDto_GetTrailingTextStr_000100 (0.00s)
+=== RUN   TestErrPrefixDto_ClearLeadingTextStr_000100
+--- PASS: TestErrPrefixDto_ClearLeadingTextStr_000100 (0.00s)
+=== RUN   TestErrPrefixDto_ClearTrailingTextStr_000100
+--- PASS: TestErrPrefixDto_ClearTrailingTextStr_000100 (0.00s)
 === RUN   TestErrPrefixDto_XMethods_000100
 --- PASS: TestErrPrefixDto_XMethods_000100 (0.00s)
 === RUN   TestErrPrefixDto_YMethods_000200
@@ -410,6 +444,50 @@
 --- PASS: TestErrPrefixDto_SetMaxTextLineLen_000100 (0.00s)
 === RUN   TestErrorPrefixInfo_SetErrPrefixStr
 --- PASS: TestErrorPrefixInfo_SetErrPrefixStr (0.00s)
+=== RUN   TestErrPref_EPrefFile_000100
+--- PASS: TestErrPref_EPrefFile_000100 (0.00s)
+=== RUN   TestErrPref_Mechanics_000100
+--- PASS: TestErrPref_Mechanics_000100 (0.00s)
+=== RUN   TestErrPref_Molecule_000100
+--- PASS: TestErrPref_Molecule_000100 (0.00s)
+=== RUN   TestErrPref_Nanobot_000100
+--- PASS: TestErrPref_Nanobot_000100 (0.00s)
+=== RUN   TestErrPref_Neutron_000100
+--- PASS: TestErrPref_Neutron_000100 (0.00s)
+=== RUN   TestErrPref_Quark_000100
+--- PASS: TestErrPref_Quark_000100 (0.00s)
+=== RUN   TestErrPrefixDelimiters_MainFile_000100
+--- PASS: TestErrPrefixDelimiters_MainFile_000100 (0.00s)
+=== RUN   TestErrPrefixDelimiters_Mechanics
+--- PASS: TestErrPrefixDelimiters_Mechanics (0.00s)
+=== RUN   TestErrPrefixDelimiters_Electron_000100
+--- PASS: TestErrPrefixDelimiters_Electron_000100 (0.00s)
+=== RUN   TestErrPrefixDelimiters_Quark_000100
+--- PASS: TestErrPrefixDelimiters_Quark_000100 (0.00s)
+=== RUN   TestEPrefixLineLenCalc_000100
+--- PASS: TestEPrefixLineLenCalc_000100 (0.00s)
+=== RUN   TestEPrefixLineLenCalc_Electron_000100
+--- PASS: TestEPrefixLineLenCalc_Electron_000100 (0.00s)
+=== RUN   TestEPrefixLineLenCalc_Quark_000100
+--- PASS: TestEPrefixLineLenCalc_Quark_000100 (0.00s)
+=== RUN   TestErrorPrefixInfo_Electron_000100
+--- PASS: TestErrorPrefixInfo_Electron_000100 (0.00s)
+=== RUN   TestErrorPrefixInfo_Quark_000100
+--- PASS: TestErrorPrefixInfo_Quark_000100 (0.00s)
+=== RUN   TestErrPrefixDto_MainFile_0001000
+--- PASS: TestErrPrefixDto_MainFile_0001000 (0.00s)
+=== RUN   TestErrPrefixDto_MainFile_000200
+--- PASS: TestErrPrefixDto_MainFile_000200 (0.00s)
+=== RUN   TestErrPrefixDto_Mechanics_000100
+--- PASS: TestErrPrefixDto_Mechanics_000100 (0.00s)
+=== RUN   TestErrPrefixDto_Nanobot_000100
+--- PASS: TestErrPrefixDto_Nanobot_000100 (0.00s)
+=== RUN   TestErrPrefixDto_Atom_000100
+--- PASS: TestErrPrefixDto_Atom_000100 (0.00s)
+=== RUN   TestErrPrefixDto_Electron_000100
+--- PASS: TestErrPrefixDto_Electron_000100 (0.00s)
+=== RUN   TestErrPrefixDto_Quark_000100
+--- PASS: TestErrPrefixDto_Quark_000100 (0.00s)
 PASS
-coverage: 87.5% of statements
-ok  	github.com/MikeAustin71/errpref	1.872s
+coverage: 96.4% of statements
+ok  	github.com/MikeAustin71/errpref	1.265s

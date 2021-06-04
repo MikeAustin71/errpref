@@ -74,6 +74,7 @@ func (errorPrefixInfo *ErrorPrefixInfo) CopyIn(
 	errorPrefixInfo.lock.Lock()
 
 	defer errorPrefixInfo.lock.Unlock()
+
 	ePrefix += "ErrorPrefixInfo.CopyIn()\n"
 
 	ePrefDtoElectron := errorPrefixInfoElectron{}

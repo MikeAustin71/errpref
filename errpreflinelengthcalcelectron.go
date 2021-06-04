@@ -118,12 +118,9 @@ func (ePrefLineLenCalcElectron *ePrefixLineLenCalcElectron) copyIn(
 		return err
 	}
 
-	targetLineLenCalc.errorPrefixInfo =
-		ErrorPrefixInfo{}.Ptr()
-
 	err =
 		targetLineLenCalc.errorPrefixInfo.CopyIn(
-			incomingLineLenCalc.errorPrefixInfo,
+			&incomingLineLenCalc.errorPrefixInfo,
 			ePrefix+
 				"incomingLineLenCalc->targetLineLenCalc\n")
 
@@ -231,12 +228,9 @@ func (ePrefLineLenCalcElectron *ePrefixLineLenCalcElectron) copyOut(
 		return newLineLenCalc, err
 	}
 
-	newLineLenCalc.errorPrefixInfo =
-		ErrorPrefixInfo{}.Ptr()
-
 	err =
 		newLineLenCalc.errorPrefixInfo.CopyIn(
-			lineLenCalc.errorPrefixInfo,
+			&lineLenCalc.errorPrefixInfo,
 			ePrefix+
 				"lineLenCalc->newLineLenCalc\n")
 
@@ -276,7 +270,7 @@ func (ePrefLineLenCalcElectron *ePrefixLineLenCalcElectron) equal(
 
 	defer ePrefLineLenCalcElectron.lock.Unlock()
 
-	ePrefix += "ePrefixLineLenCalcElectron.copyIn() "
+	ePrefix += "ePrefixLineLenCalcElectron.equal() "
 
 	areEqual = false
 
@@ -304,7 +298,7 @@ func (ePrefLineLenCalcElectron *ePrefixLineLenCalcElectron) equal(
 	}
 
 	if !lineLenCalcOne.errorPrefixInfo.Equal(
-		lineLenCalcTwo.errorPrefixInfo) {
+		&lineLenCalcTwo.errorPrefixInfo) {
 		return areEqual, err
 	}
 

@@ -213,6 +213,354 @@ func TestErrPrefixDto_CopyOutToIBuilder_000100(t *testing.T) {
 
 }
 
+func TestErrPrefixDto_ReplaceLastErrPrefix_000100(t *testing.T) {
+
+	funcName := "TestErrPrefixDto_ReplaceLastErrPrefix_000100()"
+
+	ePDto := ErrPrefixDto{}.New()
+
+	maxTextLineLen := 50
+
+	var twoDSlice [][2]string
+
+	twoDSlice = make([][2]string, 14)
+
+	twoDSlice[0][0] = "Tx1.Something()"
+	twoDSlice[0][1] = ""
+
+	twoDSlice[1][0] = "Tx2.SomethingElse()"
+	twoDSlice[1][1] = ""
+
+	twoDSlice[2][0] = "Tx3.DoSomething()"
+	twoDSlice[2][1] = ""
+
+	twoDSlice[3][0] = "Tx4()"
+	twoDSlice[3][1] = ""
+
+	twoDSlice[4][0] = "Tx5()"
+	twoDSlice[4][1] = ""
+
+	twoDSlice[5][0] = "Tx6.DoSomethingElse()"
+	twoDSlice[5][1] = ""
+
+	twoDSlice[6][0] = "Tx7.TrySomethingNew()"
+	twoDSlice[6][1] = "something->newSomething"
+
+	twoDSlice[7][0] = "Tx8.TryAnyCombination()"
+	twoDSlice[7][1] = ""
+
+	twoDSlice[8][0] = "Tx9.TryAHammer()"
+	twoDSlice[8][1] = "x->y"
+
+	twoDSlice[9][0] = "Tx10.X()"
+	twoDSlice[9][1] = ""
+
+	twoDSlice[10][0] = "Tx11.TryAnything()"
+	twoDSlice[10][1] = ""
+
+	twoDSlice[11][0] = "Tx12.TryASalad()"
+	twoDSlice[11][1] = ""
+
+	twoDSlice[12][0] = "Tx13.SomeFabulousAndComplexStuff()"
+	twoDSlice[12][1] = ""
+
+	twoDSlice[13][0] = "Tx14.MoreAwesomeGoodness"
+	twoDSlice[13][1] = "A=7 B=8 C=9"
+
+	ePDto.SetEPrefStrings(twoDSlice)
+
+	ePDto.SetMaxTextLineLen(maxTextLineLen)
+
+	replacementMethod := "Rx14.ReplacementMethod()"
+	replacementContext := "X=5 Y=900"
+
+	err :=
+		ePDto.ReplaceLastErrPrefix(
+			replacementMethod,
+			replacementContext,
+			funcName)
+
+	if err != nil {
+		t.Errorf("%v\n"+
+			"Error returned by ePDto.ReplaceLastErrPrefix()\n"+
+			"Error= '%v'\n",
+			funcName,
+			err.Error())
+
+		return
+	}
+
+	collectionLen := ePDto.GetEPrefCollectionLen()
+
+	if collectionLen != 14 {
+		t.Errorf("%v\n"+
+			"Error: Expected that collection length = '14'.\n"+
+			"Instead, colletion length = '%v'\n",
+			funcName,
+			collectionLen)
+
+		return
+	}
+
+	var lastErrPrefInfo ErrorPrefixInfo
+	var collectionIsEmpty bool
+
+	lastErrPrefInfo,
+		collectionIsEmpty,
+		err = ePDto.GetLastErrPrefix(funcName)
+
+	if err != nil {
+		t.Errorf("%v\n"+
+			"Error returned by ePDto.GetLastErrPrefix(funcName).\n"+
+			"Error= '%v'\n",
+			funcName,
+			err.Error())
+
+		return
+	}
+
+	if collectionIsEmpty {
+		t.Errorf("%v\n"+
+			"Error: Expected that collectionIsEmpty=='false'.\n"+
+			"Instead, collectionIsEmpty=='true'.\n",
+			funcName)
+		return
+	}
+
+	if lastErrPrefInfo.GetErrPrefixStr() != replacementMethod {
+		t.Errorf("%v\n"+
+			"Error: Expected Last Error Prefix == '%v'\n"+
+			"Instead, Last Error Prefix == '%v'\n",
+			funcName,
+			replacementMethod,
+			lastErrPrefInfo.GetErrPrefixStr())
+
+		return
+	}
+
+	if lastErrPrefInfo.GetErrContextStr() != replacementContext {
+		t.Errorf("%v\n"+
+			"Error: Expected Last Error Context == '%v'\n"+
+			"Instead, Last Error Context == '%v'\n",
+			funcName,
+			replacementContext,
+			lastErrPrefInfo.GetErrContextStr())
+	}
+
+}
+
+func TestErrPrefixDto_ReplaceLastErrPrefix_000200(t *testing.T) {
+
+	funcName := "TestErrPrefixDto_ReplaceLastErrPrefix_000200()"
+
+	ePDto := ErrPrefixDto{}.New()
+
+	maxTextLineLen := 50
+
+	var twoDSlice [][2]string
+
+	twoDSlice = make([][2]string, 14)
+
+	twoDSlice[0][0] = "Tx1.Something()"
+	twoDSlice[0][1] = ""
+
+	twoDSlice[1][0] = "Tx2.SomethingElse()"
+	twoDSlice[1][1] = ""
+
+	twoDSlice[2][0] = "Tx3.DoSomething()"
+	twoDSlice[2][1] = ""
+
+	twoDSlice[3][0] = "Tx4()"
+	twoDSlice[3][1] = ""
+
+	twoDSlice[4][0] = "Tx5()"
+	twoDSlice[4][1] = ""
+
+	twoDSlice[5][0] = "Tx6.DoSomethingElse()"
+	twoDSlice[5][1] = ""
+
+	twoDSlice[6][0] = "Tx7.TrySomethingNew()"
+	twoDSlice[6][1] = "something->newSomething"
+
+	twoDSlice[7][0] = "Tx8.TryAnyCombination()"
+	twoDSlice[7][1] = ""
+
+	twoDSlice[8][0] = "Tx9.TryAHammer()"
+	twoDSlice[8][1] = "x->y"
+
+	twoDSlice[9][0] = "Tx10.X()"
+	twoDSlice[9][1] = ""
+
+	twoDSlice[10][0] = "Tx11.TryAnything()"
+	twoDSlice[10][1] = ""
+
+	twoDSlice[11][0] = "Tx12.TryASalad()"
+	twoDSlice[11][1] = ""
+
+	twoDSlice[12][0] = "Tx13.SomeFabulousAndComplexStuff()"
+	twoDSlice[12][1] = ""
+
+	twoDSlice[13][0] = "Tx14.MoreAwesomeGoodness"
+	twoDSlice[13][1] = "A=7 B=8 C=9"
+
+	ePDto.SetEPrefStrings(twoDSlice)
+
+	ePDto.SetMaxTextLineLen(maxTextLineLen)
+
+	replacementMethod := "Rx14.ReplacementMethod()"
+	replacementContext := ""
+
+	err :=
+		ePDto.ReplaceLastErrPrefix(
+			replacementMethod,
+			replacementContext,
+			funcName)
+
+	if err != nil {
+		t.Errorf("%v\n"+
+			"Error returned by ePDto.ReplaceLastErrPrefix()\n"+
+			"Error= '%v'\n",
+			funcName,
+			err.Error())
+
+		return
+	}
+
+	collectionLen := ePDto.GetEPrefCollectionLen()
+
+	if collectionLen != 14 {
+		t.Errorf("%v\n"+
+			"Error: Expected that collection length = '14'.\n"+
+			"Instead, colletion length = '%v'\n",
+			funcName,
+			collectionLen)
+
+		return
+	}
+
+	var lastErrPrefInfo ErrorPrefixInfo
+	var collectionIsEmpty bool
+
+	lastErrPrefInfo,
+		collectionIsEmpty,
+		err = ePDto.GetLastErrPrefix(funcName)
+
+	if err != nil {
+		t.Errorf("%v\n"+
+			"Error returned by ePDto.GetLastErrPrefix(funcName).\n"+
+			"Error= '%v'\n",
+			funcName,
+			err.Error())
+
+		return
+	}
+
+	if collectionIsEmpty {
+		t.Errorf("%v\n"+
+			"Error: Expected that collectionIsEmpty=='false'.\n"+
+			"Instead, collectionIsEmpty=='true'.\n",
+			funcName)
+		return
+	}
+
+	if lastErrPrefInfo.GetErrPrefixStr() != replacementMethod {
+		t.Errorf("%v\n"+
+			"Error: Expected Last Error Prefix == '%v'\n"+
+			"Instead, Last Error Prefix == '%v'\n",
+			funcName,
+			replacementMethod,
+			lastErrPrefInfo.GetErrPrefixStr())
+
+		return
+	}
+
+	if lastErrPrefInfo.GetErrContextStr() != replacementContext {
+		t.Errorf("%v\n"+
+			"Error: Expected Last Error Context == '%v'\n"+
+			"Instead, Last Error Context == '%v'\n",
+			funcName,
+			replacementContext,
+			lastErrPrefInfo.GetErrContextStr())
+	}
+
+}
+
+func TestErrPrefixDto_ReplaceLastErrPrefix_000300(t *testing.T) {
+
+	funcName := "TestErrPrefixDto_ReplaceLastErrPrefix_000300()"
+
+	ePDto := ErrPrefixDto{}.New()
+
+	maxTextLineLen := 50
+
+	var twoDSlice [][2]string
+
+	twoDSlice = make([][2]string, 14)
+
+	twoDSlice[0][0] = "Tx1.Something()"
+	twoDSlice[0][1] = ""
+
+	twoDSlice[1][0] = "Tx2.SomethingElse()"
+	twoDSlice[1][1] = ""
+
+	twoDSlice[2][0] = "Tx3.DoSomething()"
+	twoDSlice[2][1] = ""
+
+	twoDSlice[3][0] = "Tx4()"
+	twoDSlice[3][1] = ""
+
+	twoDSlice[4][0] = "Tx5()"
+	twoDSlice[4][1] = ""
+
+	twoDSlice[5][0] = "Tx6.DoSomethingElse()"
+	twoDSlice[5][1] = ""
+
+	twoDSlice[6][0] = "Tx7.TrySomethingNew()"
+	twoDSlice[6][1] = "something->newSomething"
+
+	twoDSlice[7][0] = "Tx8.TryAnyCombination()"
+	twoDSlice[7][1] = ""
+
+	twoDSlice[8][0] = "Tx9.TryAHammer()"
+	twoDSlice[8][1] = "x->y"
+
+	twoDSlice[9][0] = "Tx10.X()"
+	twoDSlice[9][1] = ""
+
+	twoDSlice[10][0] = "Tx11.TryAnything()"
+	twoDSlice[10][1] = ""
+
+	twoDSlice[11][0] = "Tx12.TryASalad()"
+	twoDSlice[11][1] = ""
+
+	twoDSlice[12][0] = "Tx13.SomeFabulousAndComplexStuff()"
+	twoDSlice[12][1] = ""
+
+	twoDSlice[13][0] = "Tx14.MoreAwesomeGoodness"
+	twoDSlice[13][1] = "A=7 B=8 C=9"
+
+	ePDto.SetEPrefStrings(twoDSlice)
+
+	ePDto.SetMaxTextLineLen(maxTextLineLen)
+
+	replacementMethod := ""
+	replacementContext := ""
+
+	err :=
+		ePDto.ReplaceLastErrPrefix(
+			replacementMethod,
+			replacementContext,
+			funcName)
+
+	if err == nil {
+		t.Errorf("%v\n"+
+			"Expected an error return from ePDto.ReplaceLastErrPrefix() because\n"+
+			"input parameter 'replacementMethod' is an empty string.\n"+
+			"HOWEVER, NO ERROR WAS RETURNED!\n",
+			funcName)
+	}
+}
+
 func TestErrPrefixDto_SetIBasic_000100(t *testing.T) {
 
 	funcName := "TestErrPrefixDto_SetIBasic_000100()"

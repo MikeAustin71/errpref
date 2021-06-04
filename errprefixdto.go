@@ -1,6 +1,7 @@
 package errpref
 
 import (
+	"fmt"
 	"strings"
 	"sync"
 )
@@ -34,6 +35,8 @@ type ErrPrefixDto struct {
 	inputStrDelimiters              ErrPrefixDelimiters
 	outputStrDelimiters             ErrPrefixDelimiters
 	maxErrPrefixTextLineLength      uint
+	leadingTextStr                  string
+	trailingTextStr                 string
 	lock                            *sync.Mutex
 }
 
@@ -117,6 +120,12 @@ func (ePrefDto *ErrPrefixDto) AddEPrefCollectionStr(
 
 	defer ePrefDto.lock.Unlock()
 
+	errPrefixDtoQuark{}.ptr().normalizeErrPrefixDto(ePrefDto)
+
+	if len(errorPrefixCollectionStr) == 0 {
+		return numberOfCollectionItemsParsed
+	}
+
 	previousCollectionLen := len(ePrefDto.ePrefCol)
 
 	ePrefixAtom := errPrefixDtoAtom{}
@@ -134,6 +143,80 @@ func (ePrefDto *ErrPrefixDto) AddEPrefCollectionStr(
 			previousCollectionLen
 
 	return numberOfCollectionItemsParsed
+}
+
+// ClearLeadingTextStr - Clears or resets the internal member
+// variable, 'leadingTextStr' to a zero length or empty string.
+//
+// The leading text string is a string supplied by the user which
+// is stored in the current instance of ErrPrefixDto. It is used to
+// add a string of text characters to the beginning of formatted
+// error prefix text displays.
+//
+// When the output methods ErrPrefixDto.StrMaxLineLen() or
+// ErrPrefixDto.String() are called to display error prefix
+// information, the leading text string will be appended to the
+// beginning of that error prefix text display.
+//
+// The default for the leading text string is a zero length or
+// empty string. To clear or reset the leading text string to an
+// empty string, call this method, ErrPrefixDto.ClearLeadingTextStr().
+//
+// The value of the leading text string is set by calling the
+// method, ErrPrefixDto.SetLeadingTextStr().
+//
+// Calling this method, ErrPrefixDto.ClearLeadingTextStr(), will
+// effectively erase and remove any text characters previously
+// configured in the leading text string.
+//
+func (ePrefDto *ErrPrefixDto) ClearLeadingTextStr() {
+
+	if ePrefDto.lock == nil {
+		ePrefDto.lock = new(sync.Mutex)
+	}
+
+	ePrefDto.lock.Lock()
+
+	defer ePrefDto.lock.Unlock()
+
+	ePrefDto.leadingTextStr = ""
+}
+
+// ClearTrailingTextStr - Clears or resets the internal member
+// variable, 'trailingTextStr' to a zero length or empty string.
+//
+// The trailing text string is a string supplied by the user which
+// is stored in the current instance of ErrPrefixDto. It is used to
+// add a string of text characters to the end of formatted error
+// prefix text displays.
+//
+// When the output methods ErrPrefixDto.StrMaxLineLen() or
+// ErrPrefixDto.String() are called to display error prefix
+// information, the trailing text string will be appended to the
+// end of that error prefix text display.
+//
+// The default for the trailing text string is a zero length or
+// empty string. To clear or reset the trailing text string to an
+// empty string, call this method, ErrPrefixDto.ClearTrailingTextStr().
+//
+// The value of the trailing text string is set by calling the
+// method, ErrPrefixDto.SetTrailingTextStr().
+//
+// Calling this method, ErrPrefixDto.ClearTrailingTextStr(), will
+// effectively erase and remove any text characters previously
+// configured in the trailing text string.
+//
+func (ePrefDto *ErrPrefixDto) ClearTrailingTextStr() {
+
+	if ePrefDto.lock == nil {
+		ePrefDto.lock = new(sync.Mutex)
+	}
+
+	ePrefDto.lock.Lock()
+
+	defer ePrefDto.lock.Unlock()
+
+	ePrefDto.trailingTextStr = ""
 }
 
 // Copy - Creates a deep copy of the data fields contained in
@@ -210,12 +293,12 @@ func (ePrefDto *ErrPrefixDto) CopyPtr() *ErrPrefixDto {
 	defer ePrefDto.lock.Unlock()
 
 	newErrPrefixDto,
-		_ := errPrefixDtoAtom{}.ptr().
-		copyOutErrPrefDto(
+		_ := errPrefixDtoNanobot{}.ptr().
+		copyOutErrPrefDtoPtr(
 			ePrefDto,
 			"")
 
-	return &newErrPrefixDto
+	return newErrPrefixDto
 }
 
 // CopyIn - Copies the data fields from an incoming instance of
@@ -244,11 +327,13 @@ func (ePrefDto *ErrPrefixDto) CopyPtr() *ErrPrefixDto {
 //       ('ePrefDto').
 //
 //
-//  eMsg                       string
+//  eMsg                string
 //     - This is an error prefix which is included in all returned
-//       error messages. Usually, it contains the names of the calling
-//       method or methods. Note: Be sure to leave a space at the end
-//       of 'eMsg'. This parameter is optional.
+//       error messages returned by this method. Usually, it
+//       contains the names of the calling method or methods.
+//
+//       Note: Be sure to leave a space at the end of 'eMsg'.
+//       This parameter is optional.
 //
 //
 // ------------------------------------------------------------------------
@@ -298,6 +383,36 @@ func (ePrefDto *ErrPrefixDto) CopyIn(
 // likewise be configured with an identical empty set of error
 // prefix information.
 //
+//
+// ----------------------------------------------------------------
+//
+// Input Parameters
+//
+//  inComingIBuilder    IBuilderErrorPrefix
+//     - Any object which implements the IBuilderErrorPrefix
+//       interface.
+//
+//
+//  eMsg                string
+//     - This is an error prefix which is included in all returned
+//       error messages returned by this method. Usually, it
+//       contains the names of the calling method or methods.
+//
+//       Note: Be sure to leave a space at the end of 'eMsg'.
+//       This parameter is optional.
+//
+//
+// -----------------------------------------------------------------
+//
+// Return Values
+//
+//  error
+//     - If this method completes successfully, the returned error Type
+//       is set to 'nil'. If errors are encountered during processing,
+//       the returned error Type will encapsulate an error message.
+//       Note that this error message will incorporate the method
+//       chain and text passed by input parameter, 'eMsg'.
+//
 func (ePrefDto *ErrPrefixDto) CopyInFromIBuilder(
 	inComingIBuilder IBuilderErrorPrefix,
 	eMsg string) error {
@@ -329,6 +444,22 @@ func (ePrefDto *ErrPrefixDto) CopyInFromIBuilder(
 // This method will transfer error prefix and context information
 // OUT to object implementing the IBuilderErrorPrefix interface.
 //
+//
+// ----------------------------------------------------------------
+//
+// Input Parameters
+//
+//  inComingIBuilder    IBuilderErrorPrefix
+//     - Any object which implements the IBuilderErrorPrefix
+//       interface.
+//
+//
+// -----------------------------------------------------------------
+//
+// Return Values
+//
+//  --- NONE ---
+//
 func (ePrefDto *ErrPrefixDto) CopyOutToIBuilder(
 	inComingIBuilder IBuilderErrorPrefix) {
 
@@ -342,7 +473,7 @@ func (ePrefDto *ErrPrefixDto) CopyOutToIBuilder(
 
 	newTwoDSlice,
 		_ := errPrefixDtoMechanics{}.ptr().
-		getEPrefStrings(
+		get2dEPrefStrings(
 			ePrefDto,
 			"")
 
@@ -405,6 +536,59 @@ func (ePrefDto *ErrPrefixDto) CopyOut(
 		copyOutErrPrefDto(
 			ePrefDto,
 			eMsg)
+}
+
+// DeleteLastErrPrefix - Deletes the last Error Prefix Information
+// object in the collection maintained by this ErrPrefixDto
+// instance.
+//
+// After the deletion operation is completed, this method returns a
+// boolean value indicating whether the remaining collection of
+// Error Prefix Information objects is empty.
+//
+// Deleting the Error Prefix Information object deletes both the
+// error prefix and error context information elements.
+//
+// To delete all Error Prefix Information objects in the
+// collection, call ErrPrefixDto.EmptyEPrefCollection().
+//
+//
+// ----------------------------------------------------------------
+//
+// Input Parameters
+//
+//  --- NONE ---
+//
+//
+// ------------------------------------------------------------------------
+//
+// Return Values
+//
+//  isCollectionEmpty   bool
+//     - After this method completes the deletion of the Last Error
+//       Prefix Information object in the current ErrPrefixDto, it
+//       will set this to boolean return value to signal whether
+//       remaining collection of Error Prefix Information objects
+//       is empty. An empty collection means it contains zero
+//       objects.
+//
+func (ePrefDto *ErrPrefixDto) DeleteLastErrPrefix() (
+	isCollectionEmpty bool) {
+
+	if ePrefDto.lock == nil {
+		ePrefDto.lock = new(sync.Mutex)
+	}
+
+	ePrefDto.lock.Lock()
+
+	defer ePrefDto.lock.Unlock()
+
+	isCollectionEmpty,
+		_ = errPrefixDtoQuark{}.ptr().deleteLastErrPrefixInfo(
+		ePrefDto,
+		"")
+
+	return isCollectionEmpty
 }
 
 // Empty - Reinitializes all internal member variables for the
@@ -535,7 +719,8 @@ func (ePrefDto *ErrPrefixDto) GetInputStringDelimiters() ErrPrefixDelimiters {
 
 	defer ePrefDto.lock.Unlock()
 
-	ePrefDto.inputStrDelimiters.SetToDefaultIfEmpty()
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	inputDelims,
 		_ :=
@@ -588,6 +773,118 @@ func (ePrefDto *ErrPrefixDto) GetIsLastLineTerminatedWithNewLine() bool {
 	defer ePrefDto.lock.Unlock()
 
 	return ePrefDto.isLastLineTerminatedWithNewLine
+}
+
+// GetLastErrPrefix - Returns a deep copy of the last Error Prefix
+// Information object in the Error Prefix collection maintained by
+// the current ErrPrefixDto instance.
+//
+//
+// ----------------------------------------------------------------
+//
+// Input Parameters
+//
+//  eMsg                string
+//     - This is an error prefix which is included in all returned
+//       error messages returned by this method. Usually, it
+//       contains the names of the calling method or methods.
+//
+//       Note: Be sure to leave a space at the end of 'eMsg'.
+//       This parameter is optional.
+//
+//
+// ------------------------------------------------------------------------
+//
+// Return Values
+//
+//  errPrefInfo         ErrorPrefixInfo
+//     - If this method completes successfully, a deep copy of the
+//       last Error Prefix Information object in the current
+//       ErrPrefixDto collection will be returned in this
+//       parameter.
+//
+//
+//  collectionIsEmpty   bool
+//     - If the current Error Prefix Information collection
+//       maintained by the current ErrPrefixDto instance is empty,
+//       this returned boolean value will be set to 'true'. A
+//       return value of 'true' also signals that the returned
+//       'errPrefInfo' parameter described above is empty and
+//       invalid.
+//
+//
+//  err                 error
+//     - If this method completes successfully, the returned error Type
+//       is set to 'nil'. If errors are encountered during processing,
+//       the returned error Type will encapsulate an error message.
+//       Note that this error message will incorporate the method
+//       chain and text passed by input parameter, 'eMsg'.
+//
+func (ePrefDto *ErrPrefixDto) GetLastErrPrefix(
+	eMsg string) (
+	errPrefInfo ErrorPrefixInfo,
+	collectionIsEmpty bool,
+	err error) {
+
+	if ePrefDto.lock == nil {
+		ePrefDto.lock = new(sync.Mutex)
+	}
+
+	ePrefDto.lock.Lock()
+
+	defer ePrefDto.lock.Unlock()
+
+	eMsg += "ErrPrefixDto.GetLastErrPrefix()\n"
+
+	errPrefInfo = ErrorPrefixInfo{}.New()
+	collectionIsEmpty = true
+
+	lenEPrefCol := len(ePrefDto.ePrefCol)
+
+	if lenEPrefCol == 0 {
+		return errPrefInfo, collectionIsEmpty, err
+	}
+
+	collectionIsEmpty = false
+
+	err = errPrefInfo.CopyIn(
+		&ePrefDto.ePrefCol[lenEPrefCol-1],
+		eMsg)
+
+	return errPrefInfo, collectionIsEmpty, err
+}
+
+// GetLeadingTextStr - Returns the current value of the leading
+// text string. This value is stored internally in the member
+// variable, 'leadingTextStr'.
+//
+// The leading text string is a string supplied by the user which
+// is stored in the current instance of ErrPrefixDto. It is used to
+// add a string of text characters to the beginning of formatted
+// error prefix text output for display purposes.
+//
+// When the output methods ErrPrefixDto.StrMaxLineLen() or
+// ErrPrefixDto.String() are called to display error prefix
+// information, the leading text string will be appended to the
+// beginning of that error prefix text display.
+//
+// The value of the leading text string is set by calling the
+// method, ErrPrefixDto.SetLeadingTextStr().
+//
+// The default for the leading text string is a zero length or
+// empty string.
+//
+func (ePrefDto *ErrPrefixDto) GetLeadingTextStr() string {
+
+	if ePrefDto.lock == nil {
+		ePrefDto.lock = new(sync.Mutex)
+	}
+
+	ePrefDto.lock.Lock()
+
+	defer ePrefDto.lock.Unlock()
+
+	return ePrefDto.leadingTextStr
 }
 
 // GetLeftMarginChar - Returns a rune or text character which will
@@ -731,22 +1028,26 @@ func (ePrefDto *ErrPrefixDto) GetEPrefStrings() [][2]string {
 
 	newTwoDSlice,
 		_ := errPrefixDtoMechanics{}.ptr().
-		getEPrefStrings(
+		get2dEPrefStrings(
 			ePrefDto,
 			"")
 
 	return newTwoDSlice
 }
 
-// GetMaxTextLineLen - Returns the maximum limit on the
-// number of characters allowed in an error prefix text line output
-// for display purposes.
+// GetMaxTextLineLen - Returns the Maximum Error Prefix Line Length
+// value for the current ErrPrefixDto instance.
 //
-// This unsigned integer value controls the maximum character limit
-// for this specific ErrPrefixDto instance. This maximum limit will
-// remain in force for the life of this ErrPrefixDto instance or
-// until a call is made to the method 'SetMaxTextLineLen()'
-// which is used to change the value.
+// The Maximum Error Prefix Line Length is the maximum number of
+// characters allowed in a single line of error prefix information
+// output for display purposes.
+//
+// The returned unsigned integer value returned by this method
+// controls the maximum line length character limit for this
+// specific ErrPrefixDto instance. This maximum limit will remain
+// in force for the life of this ErrPrefixDto instance or until a
+// call is made to the method ErrPrefixDto.SetMaxTextLineLen()
+// which is used to manage and change this value.
 //
 //
 // ----------------------------------------------------------------
@@ -776,7 +1077,10 @@ func (ePrefDto *ErrPrefixDto) GetMaxTextLineLen() uint {
 
 	defer ePrefDto.lock.Unlock()
 
-	if ePrefDto.maxErrPrefixTextLineLength < 10 {
+	minimumLineLen := errPrefPreon{}.ptr().
+		getMinErrPrefLineLength()
+
+	if ePrefDto.maxErrPrefixTextLineLength < minimumLineLen {
 
 		ePrefDto.maxErrPrefixTextLineLength =
 			errPrefQuark{}.ptr().getMasterErrPrefDisplayLineLength()
@@ -830,8 +1134,8 @@ func (ePrefDto *ErrPrefixDto) GetMaxTextLineLenDefault() uint {
 
 	defer ePrefDto.lock.Unlock()
 
-	return errPrefQuark{}.ptr().
-		getMasterErrPrefDisplayLineLength()
+	return errPrefPreon{}.ptr().
+		getDefaultErrPrefLineLength()
 }
 
 // GetOutputStringDelimiters - Returns the output string delimiters
@@ -869,7 +1173,8 @@ func (ePrefDto *ErrPrefixDto) GetOutputStringDelimiters() ErrPrefixDelimiters {
 
 	defer ePrefDto.lock.Unlock()
 
-	ePrefDto.outputStrDelimiters.SetToDefaultIfEmpty()
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	outputDelims,
 		_ :=
@@ -918,9 +1223,8 @@ func (ePrefDto *ErrPrefixDto) GetStrDelimiters() (
 
 	defer ePrefDto.lock.Unlock()
 
-	ePrefDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	ePrefDto.outputStrDelimiters.SetToDefaultIfEmpty()
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	inputStrDelimiters,
 		_ = ePrefDto.inputStrDelimiters.
@@ -931,6 +1235,39 @@ func (ePrefDto *ErrPrefixDto) GetStrDelimiters() (
 		CopyOut("")
 
 	return inputStrDelimiters, outputStrDelimiters
+}
+
+// GetTrailingTextStr - Returns the current value of the trailing
+// text string. This value is stored internally in the member
+// variable, 'trailingTextStr'.
+//
+// The trailing text string is a string supplied by the user which
+// is stored in the current instance of ErrPrefixDto. It is used to
+// append a string of text characters to the end of formatted error
+// prefix text output for display purposes.
+//
+// When the output methods ErrPrefixDto.StrMaxLineLen() or
+// ErrPrefixDto.String() are called to display error prefix
+// information, the trailing text string will be appended to the
+// end of that error prefix text display.
+//
+// The value of the trailing text string is set by calling the
+// method, ErrPrefixDto.SetTrailingTextStr().
+//
+// The default for the trailing text string is a zero length or
+// empty string.
+//
+func (ePrefDto *ErrPrefixDto) GetTrailingTextStr() string {
+
+	if ePrefDto.lock == nil {
+		ePrefDto.lock = new(sync.Mutex)
+	}
+
+	ePrefDto.lock.Lock()
+
+	defer ePrefDto.lock.Unlock()
+
+	return ePrefDto.trailingTextStr
 }
 
 // GetTurnOffTextDisplay - Returns the current value of the
@@ -1067,7 +1404,7 @@ func (ePrefDto *ErrPrefixDto) IsValidInstanceError(
 		err := errPrefixDtoQuark{}.ptr().
 		testValidityOfErrPrefixDto(
 			ePrefDto,
-			"")
+			ePrefix)
 
 	return err
 }
@@ -1142,18 +1479,8 @@ func (ePrefDto ErrPrefixDto) New() ErrPrefixDto {
 
 	defer ePrefDto.lock.Unlock()
 
-	newErrPrefixDto := ErrPrefixDto{}
-
-	newErrPrefixDto.lock = new(sync.Mutex)
-
-	newErrPrefixDto.ePrefCol = nil
-
-	newErrPrefixDto.maxErrPrefixTextLineLength =
-		errPrefQuark{}.ptr().getMasterErrPrefDisplayLineLength()
-
-	newErrPrefixDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	newErrPrefixDto.outputStrDelimiters.SetToDefaultIfEmpty()
+	newErrPrefixDto := errPrefixDtoQuark{}.
+		ptr().newZeroErrPrefixDto()
 
 	return newErrPrefixDto
 }
@@ -1221,18 +1548,8 @@ func (ePrefDto ErrPrefixDto) NewEPrefCtx(
 
 	defer ePrefDto.lock.Unlock()
 
-	newErrPrefixDto := ErrPrefixDto{}
-
-	newErrPrefixDto.lock = new(sync.Mutex)
-
-	newErrPrefixDto.ePrefCol = nil
-
-	newErrPrefixDto.maxErrPrefixTextLineLength =
-		errPrefQuark{}.ptr().getMasterErrPrefDisplayLineLength()
-
-	newErrPrefixDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	newErrPrefixDto.outputStrDelimiters.SetToDefaultIfEmpty()
+	newErrPrefixDto := errPrefixDtoQuark{}.
+		ptr().newZeroErrPrefixDto()
 
 	errPrefNanobot{}.ptr().addEPrefInfo(
 		newErrPrefix,
@@ -1313,18 +1630,8 @@ func (ePrefDto ErrPrefixDto) NewEPrefOld(
 
 	defer ePrefDto.lock.Unlock()
 
-	newErrPrefixDto := ErrPrefixDto{}
-
-	newErrPrefixDto.lock = new(sync.Mutex)
-
-	newErrPrefixDto.ePrefCol = nil
-
-	newErrPrefixDto.maxErrPrefixTextLineLength =
-		errPrefQuark{}.ptr().getMasterErrPrefDisplayLineLength()
-
-	newErrPrefixDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	newErrPrefixDto.outputStrDelimiters.SetToDefaultIfEmpty()
+	newErrPrefixDto := errPrefixDtoQuark{}.
+		ptr().newZeroErrPrefixDto()
 
 	ePrefAtom := errPrefixDtoAtom{}
 
@@ -1397,16 +1704,8 @@ func (ePrefDto ErrPrefixDto) NewEPrefCollection(
 
 	defer ePrefDto.lock.Unlock()
 
-	newErrPrefixDto.lock = new(sync.Mutex)
-
-	newErrPrefixDto.ePrefCol = nil
-
-	newErrPrefixDto.maxErrPrefixTextLineLength =
-		errPrefQuark{}.ptr().getMasterErrPrefDisplayLineLength()
-
-	newErrPrefixDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	newErrPrefixDto.outputStrDelimiters.SetToDefaultIfEmpty()
+	newErrPrefixDto = errPrefixDtoQuark{}.
+		ptr().newZeroErrPrefixDto()
 
 	_ = errPrefixDtoNanobot{}.ptr().setFromString(
 		&newErrPrefixDto,
@@ -1417,6 +1716,161 @@ func (ePrefDto ErrPrefixDto) NewEPrefCollection(
 		len(newErrPrefixDto.ePrefCol)
 
 	return numberOfCollectionItemsParsed, newErrPrefixDto
+}
+
+// NewFromErrPrefDto - Receives a pointer to an instance of
+// ErrPrefixDto, a new error prefix string and a new error context
+// string. The method then proceeds to merge these three elements
+// into a new instance of ErrPrefixDto.
+//
+// The new returned instance is configured as a pointer to the new
+// ErrPrefixDto instance.
+//
+// If the pointer to the ErrPrefixDto input parameter is nil, this
+// method will not return an error. Instead the new returned
+// instance of ErrPrefixDto will include on the 'newErrPrefix' and
+// 'newErrContext' values.
+//
+// If the pointer to the ErrPrefixDto input parameter is not nil
+// but contains invalid values, this method will return an error.
+//
+// If the pointer to the ErrPrefixDto input parameter is nil and
+// input parameter 'newErrPrefix' is an empty string, this method
+// will return an error.
+//
+//
+// ----------------------------------------------------------------
+//
+// Input Parameters
+//
+//  dto                 *ErrPrefixDto
+//     - An instance of ErrPrefixDto which will be merged with
+//       input parameters 'newErrPrefix' and 'newErrContext'.
+//
+//       If 'dto' is a nil value no error will be returned and the
+//       new returned instance of ErrPrefixDto will consist solely
+//       of input parameters 'newErrPrefix' and 'newErrContext'.
+//
+//
+//  newErrPrefix        string
+//     - A new error prefix represents typically identifies the
+//       function or method which is currently executing. This
+//       information is used to document source code execution flow
+//       in error messages.
+//
+//       This error prefix information will be added to the
+//       internal collection of error prefixes maintained by the
+//       new instance of ErrPrefixDto returned by this method.
+//
+//       If this parameter is set to an empty string and input
+//       parameter 'dto' is a nil value, this method will return an
+//       error.
+//
+//
+//  newErrContext       string
+//     - This is error context information associated with the new
+//       error prefix ('newErrPrefix') string described above.
+//
+//       This parameter is optional and will accept an empty
+//       string.
+//
+//
+// -----------------------------------------------------------------
+//
+// Return Values
+//
+//  *ErrPrefixDto
+//     - If this method completes successfully, it will return a
+//       pointer to a new instance of ErrPrefixDto containing
+//       consolidated error prefix and error context information
+//       generated from input parameters 'dto, 'newErrPrefix',
+//       and 'newErrContext'.
+//
+//
+//  error
+//     - If this method completes successfully, the returned error
+//       Type is set equal to 'nil'.
+//
+//       If errors are encountered during processing, the returned
+//       error Type will encapsulate an error message.
+//
+//       In the event of an error, the value of parameter
+//       'newErrPrefix' will be prefixed and attached to the
+//       beginning of the error message.
+//
+func (ePrefDto ErrPrefixDto) NewFromErrPrefDto(
+	dto *ErrPrefixDto,
+	newErrPrefix string,
+	newErrContext string) (
+	newErrPrefDto *ErrPrefixDto,
+	err error) {
+
+	if ePrefDto.lock == nil {
+		ePrefDto.lock = new(sync.Mutex)
+	}
+
+	ePrefDto.lock.Lock()
+
+	defer ePrefDto.lock.Unlock()
+
+	methodNames := newErrPrefix + "\n" +
+		"ErrPrefixDto.NewFromErrPrefDto()"
+
+	newErrPrefDto = errPrefixDtoElectron{}.
+		ptr().newPtrZeroErrPrefixDto()
+
+	lenNewErrPrefix := len(newErrPrefix)
+
+	if dto == nil &&
+		lenNewErrPrefix == 0 {
+		err = fmt.Errorf(methodNames + "\n" +
+			"Error: Input parameter 'dto' is nil and input parameter\n" +
+			"'newErrPrefix' is an empty string!\n")
+
+		return newErrPrefDto, err
+	}
+
+	if dto != nil {
+
+		errPrefixDtoQuark{}.ptr().normalizeErrPrefixDto(dto)
+
+		err = dto.IsValidInstanceError(methodNames)
+
+		if err != nil {
+			return newErrPrefDto, err
+		}
+
+		err = errPrefixDtoAtom{}.ptr().
+			copyInErrPrefDto(
+				newErrPrefDto,
+				dto,
+				methodNames)
+
+		if err != nil {
+			return newErrPrefDto, err
+		}
+
+	}
+
+	errPrefDtoAtom := errPrefixDtoAtom{}
+
+	if lenNewErrPrefix == 0 {
+
+		errPrefDtoAtom.setFlagsErrorPrefixInfoArray(
+			newErrPrefDto.ePrefCol)
+
+		return newErrPrefDto, err
+	}
+
+	errPrefNanobot{}.ptr().addEPrefInfo(
+		newErrPrefix,
+		newErrContext,
+		&newErrPrefDto.ePrefCol)
+
+	errPrefDtoAtom.setFlagsErrorPrefixInfoArray(
+		newErrPrefDto.ePrefCol)
+
+	return newErrPrefDto, err
 }
 
 // NewFromIErrorPrefix - Receives an object which implements the
@@ -1460,18 +1914,8 @@ func (ePrefDto ErrPrefixDto) NewFromIErrorPrefix(
 
 	defer ePrefDto.lock.Unlock()
 
-	newErrPrefixDto := ErrPrefixDto{}
-
-	newErrPrefixDto.lock = new(sync.Mutex)
-
-	newErrPrefixDto.ePrefCol = nil
-
-	newErrPrefixDto.maxErrPrefixTextLineLength =
-		errPrefQuark{}.ptr().getMasterErrPrefDisplayLineLength()
-
-	newErrPrefixDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	newErrPrefixDto.outputStrDelimiters.SetToDefaultIfEmpty()
+	newErrPrefixDto := errPrefixDtoQuark{}.
+		ptr().newZeroErrPrefixDto()
 
 	var oldErrPrefStr string
 
@@ -1658,16 +2102,8 @@ func (ePrefDto ErrPrefixDto) NewFromStrings(
 
 	ePrefix += " ErrPrefixDto.NewFromStrings() "
 
-	newErrPrefixDto := ErrPrefixDto{}
-
-	newErrPrefixDto.lock = new(sync.Mutex)
-
-	newErrPrefixDto.ePrefCol = nil
-
-	newErrPrefixDto.maxErrPrefixTextLineLength =
-		errPrefQuark{}.ptr().getMasterErrPrefDisplayLineLength()
-
-	newErrPrefixDto.ePrefCol = nil
+	newErrPrefixDto := errPrefixDtoQuark{}.
+		ptr().newZeroErrPrefixDto()
 
 	err :=
 		newErrPrefixDto.inputStrDelimiters.
@@ -1783,7 +2219,7 @@ func (ePrefDto ErrPrefixDto) NewFromStrings(
 //
 //       In the event of an error, the value of parameter
 //       'newErrPrefix' will be prefixed and attached to the
-//       beginning of the error message
+//       beginning of the error message.
 //
 func (ePrefDto ErrPrefixDto) NewIBasicErrorPrefix(
 	iEPref IBasicErrorPrefix,
@@ -1800,18 +2236,8 @@ func (ePrefDto ErrPrefixDto) NewIBasicErrorPrefix(
 
 	defer ePrefDto.lock.Unlock()
 
-	newErrPrefixDto := new(ErrPrefixDto)
-
-	newErrPrefixDto.lock = new(sync.Mutex)
-
-	newErrPrefixDto.maxErrPrefixTextLineLength =
-		errPrefQuark{}.ptr().getMasterErrPrefDisplayLineLength()
-
-	newErrPrefixDto.ePrefCol = nil
-
-	newErrPrefixDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	newErrPrefixDto.outputStrDelimiters.SetToDefaultIfEmpty()
+	newErrPrefixDto := errPrefixDtoElectron{}.
+		ptr().newPtrZeroErrPrefixDto()
 
 	methodName := newErrPrefix +
 		"\nErrPrefixDto.NewIBasicErrorPrefix()"
@@ -1972,43 +2398,33 @@ func (ePrefDto ErrPrefixDto) NewIEmpty(
 
 	defer ePrefDto.lock.Unlock()
 
-	newErrPrefixDto := new(ErrPrefixDto)
+	newErrPrefixDto := errPrefixDtoElectron{}.
+		ptr().newPtrZeroErrPrefixDto()
 
-	newErrPrefixDto.lock = new(sync.Mutex)
-
-	newErrPrefixDto.maxErrPrefixTextLineLength =
-		errPrefQuark{}.ptr().getMasterErrPrefDisplayLineLength()
-
-	newErrPrefixDto.ePrefCol = nil
-
-	newErrPrefixDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	newErrPrefixDto.outputStrDelimiters.SetToDefaultIfEmpty()
-
-	methodName := newErrPrefix +
+	callingMethodNames := newErrPrefix +
 		"\nErrPrefixDto.NewIEmpty()"
 
 	err := errPrefixDtoMechanics{}.ptr().
 		setFromEmptyInterface(
 			newErrPrefixDto,
 			iEPref,
-			methodName)
+			callingMethodNames)
 
 	if err != nil {
 		return newErrPrefixDto, err
 	}
 
-	if len(newErrPrefix) > 0 {
-
-		errPrefNanobot{}.ptr().addEPrefInfo(
-			newErrPrefix,
-			newErrContext,
-			&newErrPrefixDto.ePrefCol)
-
-		errPrefixDtoAtom{}.ptr().setFlagsErrorPrefixInfoArray(
-			newErrPrefixDto.ePrefCol)
-
+	if len(newErrPrefix) == 0 {
+		return newErrPrefixDto, err
 	}
+
+	errPrefNanobot{}.ptr().addEPrefInfo(
+		newErrPrefix,
+		newErrContext,
+		&newErrPrefixDto.ePrefCol)
+
+	errPrefixDtoAtom{}.ptr().setFlagsErrorPrefixInfoArray(
+		newErrPrefixDto.ePrefCol)
 
 	return newErrPrefixDto, err
 }
@@ -2210,14 +2626,8 @@ func (ePrefDto ErrPrefixDto) NewIEmptyWithDelimiters(
 	ePrefix += newErrPrefix +
 		"\nErrPrefixDto.NewIEmptyWithDelimiters()"
 
-	newErrPrefixDto := new(ErrPrefixDto)
-
-	newErrPrefixDto.lock = new(sync.Mutex)
-
-	newErrPrefixDto.maxErrPrefixTextLineLength =
-		errPrefQuark{}.ptr().getMasterErrPrefDisplayLineLength()
-
-	newErrPrefixDto.ePrefCol = nil
+	newErrPrefixDto := errPrefixDtoElectron{}.
+		ptr().newPtrZeroErrPrefixDto()
 
 	err :=
 		newErrPrefixDto.inputStrDelimiters.
@@ -2294,20 +2704,111 @@ func (ePrefDto ErrPrefixDto) Ptr() *ErrPrefixDto {
 
 	defer ePrefDto.lock.Unlock()
 
-	newErrPrefixDto := new(ErrPrefixDto)
-
-	newErrPrefixDto.lock = new(sync.Mutex)
-
-	newErrPrefixDto.maxErrPrefixTextLineLength =
-		errPrefQuark{}.ptr().getMasterErrPrefDisplayLineLength()
-
-	newErrPrefixDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	newErrPrefixDto.outputStrDelimiters.SetToDefaultIfEmpty()
-
-	newErrPrefixDto.ePrefCol = nil
+	newErrPrefixDto := errPrefixDtoElectron{}.
+		ptr().newPtrZeroErrPrefixDto()
 
 	return newErrPrefixDto
+}
+
+// ReplaceLastErrPrefix - This method deletes and replaces the Last
+// Error Prefix Information object in the current ErrPrefixDto
+// collection with new error prefix and error context information
+// generated from input parameters 'newErrPrefix' and
+// 'newErrContext'.
+//
+//
+// ----------------------------------------------------------------
+//
+// Input Parameters
+//
+//  newErrPrefix        string
+//     - The new error prefix represents typically identifies
+//       the function or method which is currently executing. This
+//       information is used to document source code execution flow
+//       in error messages.
+//
+//       This method is designed to process a single new error
+//       prefix string and therefore 'newErrPrefix' is a required
+//       parameter. If 'newErrPrefix' is passed as a zero length or
+//       empty string, this method will return an error.
+//
+//
+//  newErrContext       string
+//     - This is the error context information associated with the
+//       new error prefix ('newErrPrefix'). This parameter is
+//       optional and will accept an empty string.
+//
+//
+//  eMsg                string
+//     - This is an error prefix which is included in all returned
+//       error messages returned by this method. Usually, it
+//       contains the names of the calling method or methods.
+//
+//       Note: Be sure to leave a space at the end of 'eMsg'.
+//       This parameter is optional.
+//
+//
+// -----------------------------------------------------------------
+//
+// Return Values
+//
+//  err                 error
+//     - If this method completes successfully, the returned error Type
+//       is set to 'nil'. If errors are encountered during processing,
+//       the returned error Type will encapsulate an error message.
+//       Note that this error message will incorporate the method
+//       chain and text passed by input parameter, 'eMsg'.
+//
+func (ePrefDto *ErrPrefixDto) ReplaceLastErrPrefix(
+	newErrPrefix string,
+	newErrContext string,
+	eMsg string) (
+	err error) {
+
+	if ePrefDto.lock == nil {
+		ePrefDto.lock = new(sync.Mutex)
+	}
+
+	ePrefDto.lock.Lock()
+
+	defer ePrefDto.lock.Unlock()
+
+	eMsg += "ErrPrefixDto.ReplaceLastErrPrefix()\n"
+
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
+
+	if len(newErrPrefix) == 0 {
+		err = fmt.Errorf("%v\n"+
+			"ERROR: Input parameter 'newErrPrefix' is an empty string!\n",
+			eMsg)
+
+		return err
+	}
+
+	lenEPrefCol := len(ePrefDto.ePrefCol)
+
+	if lenEPrefCol > 0 {
+		_,
+			err = errPrefixDtoQuark{}.ptr().
+			deleteLastErrPrefixInfo(
+				ePrefDto,
+				eMsg)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	errPrefNanobot{}.ptr().addEPrefInfo(
+		newErrPrefix,
+		newErrContext,
+		&ePrefDto.ePrefCol)
+
+	errPrefixDtoAtom{}.ptr().setFlagsErrorPrefixInfoArray(
+		ePrefDto.ePrefCol)
+
+	return err
 }
 
 // SetCtx - Sets or resets the error context for the last error
@@ -2366,9 +2867,8 @@ func (ePrefDto *ErrPrefixDto) SetCtx(
 
 	defer ePrefDto.lock.Unlock()
 
-	ePrefDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	ePrefDto.outputStrDelimiters.SetToDefaultIfEmpty()
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	if len(ePrefDto.ePrefCol) == 0 {
 		return
@@ -2475,6 +2975,9 @@ func (ePrefDto *ErrPrefixDto) SetEPref(
 
 	defer ePrefDto.lock.Unlock()
 
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
+
 	errPrefNanobot{}.ptr().addEPrefInfo(
 		newErrPrefix,
 		"",
@@ -2524,6 +3027,9 @@ func (ePrefDto *ErrPrefixDto) SetEPrefCollection(
 	ePrefDto.lock.Lock()
 
 	defer ePrefDto.lock.Unlock()
+
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	lenNewEPrefCol := len(newEPrefCollection)
 
@@ -2591,6 +3097,9 @@ func (ePrefDto *ErrPrefixDto) SetEPrefCtx(
 	ePrefDto.lock.Lock()
 
 	defer ePrefDto.lock.Unlock()
+
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	errPrefNanobot{}.ptr().addEPrefInfo(
 		newErrPrefix,
@@ -2665,14 +3174,15 @@ func (ePrefDto *ErrPrefixDto) SetEPrefOld(
 
 	defer ePrefDto.lock.Unlock()
 
-	_ = errPrefixDtoQuark{}.ptr().
+	errPrefQuark := errPrefixDtoQuark{}
+
+	_ = errPrefQuark.
 		emptyErrPrefInfoCollection(
 			ePrefDto,
 			"")
 
-	ePrefDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	ePrefDto.outputStrDelimiters.SetToDefaultIfEmpty()
+	errPrefQuark.
+		normalizeErrPrefixDto(ePrefDto)
 
 	ePrefAtom := errPrefixDtoAtom{}
 
@@ -2725,7 +3235,12 @@ func (ePrefDto *ErrPrefixDto) SetEPrefStrings(
 		return
 	}
 
-	_ = errPrefixDtoQuark{}.ptr().emptyErrPrefInfoCollection(
+	ePrefQuark := errPrefixDtoQuark{}
+
+	ePrefQuark.
+		normalizeErrPrefixDto(ePrefDto)
+
+	_ = ePrefQuark.emptyErrPrefInfoCollection(
 		ePrefDto,
 		"")
 
@@ -2758,12 +3273,12 @@ func (ePrefDto *ErrPrefixDto) SetEPrefStrings(
 //
 //
 //  ePrefix             string
-//     - A string containing the name of the function which called
-//       this method. If an error occurs this string will be
-//       prefixed to the beginning of the returned error message.
+//     - This is an error prefix which is included in all returned
+//       error messages returned by this method. Usually, it
+//       contains the names of the calling method or methods.
 //
-//       This parameter is optional. If an error prefix is not
-//       required, submit an empty string for this parameter ("").
+//       Note: Be sure to leave a space at the end of 'eMsg'.
+//       This parameter is optional.
 //
 //
 // -----------------------------------------------------------------
@@ -2796,9 +3311,8 @@ func (ePrefDto *ErrPrefixDto) SetIBasic(
 	ePrefix = ePrefix +
 		"\nErrPrefixDto.SetIBasic()"
 
-	ePrefDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	ePrefDto.outputStrDelimiters.SetToDefaultIfEmpty()
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	return errPrefixDtoNanobot{}.ptr().
 		setFromIBasicErrorPrefix(
@@ -2869,9 +3383,8 @@ func (ePrefDto *ErrPrefixDto) SetIBuilder(
 	callingMethodName = callingMethodName +
 		"\nErrPrefixDto.SetIBuilder()"
 
-	ePrefDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	ePrefDto.outputStrDelimiters.SetToDefaultIfEmpty()
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	return errPrefixDtoNanobot{}.ptr().
 		setFromIBuilder(
@@ -2989,6 +3502,9 @@ func (ePrefDto *ErrPrefixDto) SetIEmpty(
 	callingMethodName = callingMethodName +
 		"\nErrPrefixDto.SetIEmpty()"
 
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
+
 	err := errPrefixDtoMechanics{}.ptr().
 		setFromEmptyInterface(
 			ePrefDto,
@@ -3038,6 +3554,9 @@ func (ePrefDto *ErrPrefixDto) SetInputStringDelimiters(
 
 	ePrefix += " ErrPrefixDto.SetInputStringDelimiters() \n" +
 		"inputStrDelimiters "
+
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	err :=
 		ePrefDto.inputStrDelimiters.
@@ -3091,8 +3610,56 @@ func (ePrefDto *ErrPrefixDto) SetIsLastLineTermWithNewLine(
 
 	defer ePrefDto.lock.Unlock()
 
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
+
 	ePrefDto.isLastLineTerminatedWithNewLine =
 		isLastLineTerminatedWithNewLine
+}
+
+// SetLeadingTextStr - Sets the internal member variable
+// 'leadingTextStr'.
+//
+// The leading text string is a string supplied by the user which
+// is stored in the current instance of ErrPrefixDto. It is used to
+// add a string of text characters to the beginning of formatted
+// error prefix text displays.
+//
+// When the output methods ErrPrefixDto.StrMaxLineLen()
+// or ErrPrefixDto.String() are called to display error prefix
+// information, the leading text string will be appended to the
+// beginning of that error prefix text display.
+//
+// The default for the leading text string is a zero length or
+// empty string. To clear or reset the leading text string to an
+// empty string, call this method, ErrPrefixDto.SetLeadingTextStr(),
+// with an empty string or call the method
+// ErrPrefixDto.ClearLeadingTextStr().
+//
+// The leading text string can be used to add any combination of
+// string characters to the beginning of an error prefix text
+// display. Ideas for usage could include newline characters,
+// dash lines ('-'), asterisk lines ('*'), equal lines ('-') or any
+// other combination of text characters.
+//
+// The leading text string is often used in conjunction with the
+// trailing text string to highlight or separate error prefix
+// information. The trailing text string is configured using method
+// ErrPrefixDto.SetTrailingTextStr().
+//
+func (ePrefDto *ErrPrefixDto) SetLeadingTextStr(
+	leadingTextStr string) {
+
+	if ePrefDto.lock == nil {
+		ePrefDto.lock = new(sync.Mutex)
+	}
+
+	ePrefDto.lock.Lock()
+
+	defer ePrefDto.lock.Unlock()
+
+	ePrefDto.leadingTextStr = leadingTextStr
+
 }
 
 // SetLeftMarginChar - Sets the character used in creating the left
@@ -3165,6 +3732,9 @@ func (ePrefDto *ErrPrefixDto) SetLeftMarginChar(
 	ePrefDto.lock.Lock()
 
 	defer ePrefDto.lock.Unlock()
+
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	ePrefDto.leftMarginChar = leftMarginCharacter
 }
@@ -3244,6 +3814,9 @@ func (ePrefDto *ErrPrefixDto) SetLeftMarginLength(
 		return
 	}
 
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
+
 	ePrefDto.leftMarginLength = leftMarginLength
 }
 
@@ -3293,16 +3866,26 @@ func (ePrefDto *ErrPrefixDto) SetMaxTextLineLen(
 
 	defer ePrefDto.lock.Unlock()
 
-	if maxErrPrefixTextLineLength < 10 {
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
-		ePrefDto.maxErrPrefixTextLineLength =
-			errPrefQuark{}.ptr().getMasterErrPrefDisplayLineLength()
+	minimumLineLen := errPrefPreon{}.ptr().getMinErrPrefLineLength()
 
-		return
+	normalizedMaxErrPrefTextLineLen :=
+		uint(maxErrPrefixTextLineLength)
+
+	if normalizedMaxErrPrefTextLineLen <
+		minimumLineLen ||
+		normalizedMaxErrPrefTextLineLen >
+			1000000 {
+
+		normalizedMaxErrPrefTextLineLen =
+			errPrefQuark{}.ptr().
+				getMasterErrPrefDisplayLineLength()
 	}
 
 	ePrefDto.maxErrPrefixTextLineLength =
-		uint(maxErrPrefixTextLineLength)
+		normalizedMaxErrPrefTextLineLen
 }
 
 // SetMaxTextLineLenToDefault - Maximum Error Prefix Line
@@ -3321,6 +3904,9 @@ func (ePrefDto *ErrPrefixDto) SetMaxTextLineLenToDefault() {
 	ePrefDto.lock.Lock()
 
 	defer ePrefDto.lock.Unlock()
+
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	ePrefDto.maxErrPrefixTextLineLength =
 		errPrefQuark{}.ptr().getMasterErrPrefDisplayLineLength()
@@ -3364,6 +3950,9 @@ func (ePrefDto *ErrPrefixDto) SetOutputStringDelimiters(
 	defer ePrefDto.lock.Unlock()
 
 	ePrefix += " ErrPrefixDto.SetOutputStringDelimiters() "
+
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	err :=
 		ePrefDto.outputStrDelimiters.
@@ -3438,9 +4027,54 @@ func (ePrefDto *ErrPrefixDto) SetStrDelimitersToDefault() {
 	ePrefDto.lock.Lock()
 
 	defer ePrefDto.lock.Unlock()
+
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
+
 	ePrefDto.inputStrDelimiters.SetToDefault()
 
 	ePrefDto.outputStrDelimiters.SetToDefault()
+}
+
+// SetTrailingTextStr - Sets the internal member variable
+// 'trailingTextStr'. The trailing text string is a string supplied
+// by the user which is stored in the current instance of
+// ErrPrefixDto.
+//
+// When the output methods ErrPrefixDto.SetOutputStringDelimiters()
+// or ErrPrefixDto.String() are called to display error prefix
+// information, the trailing text string will be appended to the
+// end of that error prefix text display.
+//
+// The default for the trailing text string is a zero length or
+// empty string. To clear or reset the trailing text string to an
+// empty string, call this method, ErrPrefixDto.SetTrailingTextStr(),
+// with an empty string or call the method
+// ErrPrefixDto.ClearTrailingTextStr().
+//
+// The trailing text string can be used to add any combination of
+// string characters to the end of an error prefix text display.
+// Ideas for usage could include newline characters ('\n'), dash
+// lines ('-'), asterisk lines ('*'), equal lines ('-') or any
+// other combination of text characters.
+//
+// The trailing text string is often used in conjunction with the
+// leading text string to highlight or separate error prefix
+// information. The leading text string is configured using method
+// ErrPrefixDto.SetLeadingTextStr().
+//
+func (ePrefDto *ErrPrefixDto) SetTrailingTextStr(
+	trailingTextStr string) {
+
+	if ePrefDto.lock == nil {
+		ePrefDto.lock = new(sync.Mutex)
+	}
+
+	ePrefDto.lock.Lock()
+
+	defer ePrefDto.lock.Unlock()
+
+	ePrefDto.trailingTextStr = trailingTextStr
 }
 
 // SetTurnOffTextDisplay - Controls the "Turn Off Text Display"
@@ -3471,6 +4105,9 @@ func (ePrefDto *ErrPrefixDto) SetTurnOffTextDisplay(
 	ePrefDto.lock.Lock()
 
 	defer ePrefDto.lock.Unlock()
+
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	ePrefDto.turnOffTextDisplay =
 		turnOffTextDisplay
@@ -3517,6 +4154,11 @@ func (ePrefDto *ErrPrefixDto) SetTurnOffTextDisplay(
 // To set and control output string delimiters, use method:
 //    ErrPrefixDto.SetOutputStringDelimiters()
 //
+// If the Maximum Error Prefix Line Length value is less than
+// 10-characters, this method will reset this value to the
+// default of 40-characters. For more information, see the
+// documentation for method:
+//      ErrPrefixDto.SetMaxTextLineLen()
 //
 func (ePrefDto ErrPrefixDto) String() string {
 
@@ -3533,7 +4175,10 @@ func (ePrefDto ErrPrefixDto) String() string {
 		return ""
 	}
 
-	if ePrefDto.maxErrPrefixTextLineLength < 10 {
+	minimumLineLen := errPrefPreon{}.ptr().
+		getMinErrPrefLineLength()
+
+	if ePrefDto.maxErrPrefixTextLineLength < minimumLineLen {
 
 		ePrefDto.maxErrPrefixTextLineLength =
 			errPrefQuark{}.ptr().getMasterErrPrefDisplayLineLength()
@@ -3547,6 +4192,8 @@ func (ePrefDto ErrPrefixDto) String() string {
 
 	outPutStr := errPrefNanobot{}.ptr().
 		formatErrPrefixComponents(
+			ePrefDto.leadingTextStr,
+			ePrefDto.trailingTextStr,
 			ePrefDto.maxErrPrefixTextLineLength,
 			ePrefDto.isLastLineTerminatedWithNewLine,
 			ePrefDto.outputStrDelimiters,
@@ -3626,11 +4273,18 @@ func (ePrefDto *ErrPrefixDto) StrMaxLineLen(
 
 	defer ePrefDto.lock.Unlock()
 
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
+
 	maxErrPrefixTextLineLength := uint(maxLineLen)
 
-	if maxErrPrefixTextLineLength < 10 {
+	minimumErrPrefixTextLineLen := errPrefPreon{}.ptr().
+		getMinErrPrefLineLength()
 
-		if ePrefDto.maxErrPrefixTextLineLength < 10 {
+	if maxErrPrefixTextLineLength <
+		minimumErrPrefixTextLineLen {
+
+		if ePrefDto.maxErrPrefixTextLineLength < minimumErrPrefixTextLineLen {
 
 			ePrefDto.maxErrPrefixTextLineLength =
 				errPrefQuark{}.ptr().getMasterErrPrefDisplayLineLength()
@@ -3654,10 +4308,10 @@ func (ePrefDto *ErrPrefixDto) StrMaxLineLen(
 	errPrefixDtoAtom{}.ptr().setFlagsErrorPrefixInfoArray(
 		ePrefDto.ePrefCol)
 
-	ePrefDto.outputStrDelimiters.SetToDefaultIfEmpty()
-
 	return errPrefNanobot{}.ptr().
 		formatErrPrefixComponents(
+			ePrefDto.leadingTextStr,
+			ePrefDto.trailingTextStr,
 			maxErrPrefixTextLineLength,
 			ePrefDto.isLastLineTerminatedWithNewLine,
 			ePrefDto.outputStrDelimiters,
@@ -3728,6 +4382,9 @@ func (ePrefDto *ErrPrefixDto) XCtx(
 
 	defer ePrefDto.lock.Unlock()
 
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
+
 	if len(ePrefDto.ePrefCol) == 0 {
 		return ePrefDto
 	}
@@ -3777,6 +4434,9 @@ func (ePrefDto *ErrPrefixDto) XCtxEmpty() *ErrPrefixDto {
 	ePrefDto.lock.Lock()
 
 	defer ePrefDto.lock.Unlock()
+
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	if len(ePrefDto.ePrefCol) == 0 {
 		return ePrefDto
@@ -3842,6 +4502,9 @@ func (ePrefDto *ErrPrefixDto) XEPref(
 	ePrefDto.lock.Lock()
 
 	defer ePrefDto.lock.Unlock()
+
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	errPrefNanobot{}.ptr().addEPrefInfo(
 		newErrPrefix,
@@ -3915,6 +4578,9 @@ func (ePrefDto *ErrPrefixDto) XEPrefCtx(
 	ePrefDto.lock.Lock()
 
 	defer ePrefDto.lock.Unlock()
+
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	errPrefNanobot{}.ptr().addEPrefInfo(
 		newErrPrefix,
@@ -3998,11 +4664,10 @@ func (ePrefDto *ErrPrefixDto) XEPrefOld(
 
 	defer ePrefDto.lock.Unlock()
 
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
+
 	ePrefDto.ePrefCol = make([]ErrorPrefixInfo, 0)
-
-	ePrefDto.inputStrDelimiters.SetToDefaultIfEmpty()
-
-	ePrefDto.outputStrDelimiters.SetToDefaultIfEmpty()
 
 	ePrefAtom := errPrefixDtoAtom{}
 
@@ -4149,11 +4814,13 @@ func (ePrefDto *ErrPrefixDto) XEPrefOld(
 //         ErrPrefixDto.GetOutputStringDelimiters()
 //
 //
-//  ePrefix             string
+//  ePrefix                    string
 //     - This is an error prefix which is included in all returned
-//       error messages. Usually, it contains the names of the calling
-//       method or methods. Note: Be sure to leave a space at the end
-//       of 'ePrefix'. This parameter is optional.
+//       error messages returned by this method. Usually, it
+//       contains the names of the calling method or methods.
+//
+//       Note: Be sure to leave a space at the end of 'eMsg'.
+//       This parameter is optional.
 //
 //
 // ------------------------------------------------------------------------
@@ -4219,6 +4886,9 @@ func (ePrefDto *ErrPrefixDto) XSetFromStrings(
 	ePrefDto.lock.Lock()
 
 	defer ePrefDto.lock.Unlock()
+
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	ePrefix += " ErrPrefixDto.XSetFromStrings() "
 
@@ -4353,29 +5023,34 @@ func (ePrefDto *ErrPrefixDto) ZCtx(
 
 	defer ePrefDto.lock.Unlock()
 
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
+
 	var newErrPrefixDto ErrPrefixDto
 
-	if len(ePrefDto.ePrefCol) == 0 {
+	if len(ePrefDto.ePrefCol) > 0 {
 
-	} else if len(newErrContext) == 0 {
+		if len(newErrContext) == 0 {
 
-		errPrefixDtoNanobot{}.ptr().
-			deleteLastErrContext(ePrefDto)
+			errPrefixDtoNanobot{}.ptr().
+				deleteLastErrContext(ePrefDto)
 
-	} else {
+		} else {
 
-		errPrefNanobot{}.ptr().
-			setLastCtx(
-				newErrContext,
-				ePrefDto.ePrefCol)
+			errPrefNanobot{}.ptr().
+				setLastCtx(
+					newErrContext,
+					ePrefDto.ePrefCol)
 
-	}
+		}
+
+	} // End of if len(ePrefDto.ePrefCol) > 0
 
 	newErrPrefixDto,
 		_ = errPrefixDtoAtom{}.ptr().
 		copyOutErrPrefDto(
 			ePrefDto,
-			"")
+			"ErrPrefixDto.ZCtx() ")
 
 	return newErrPrefixDto
 }
@@ -4414,6 +5089,9 @@ func (ePrefDto *ErrPrefixDto) ZCtxEmpty() ErrPrefixDto {
 	ePrefDto.lock.Lock()
 
 	defer ePrefDto.lock.Unlock()
+
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	if len(ePrefDto.ePrefCol) > 0 {
 
@@ -4489,6 +5167,9 @@ func (ePrefDto *ErrPrefixDto) ZEPref(
 	ePrefDto.lock.Lock()
 
 	defer ePrefDto.lock.Unlock()
+
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	errPrefNanobot{}.ptr().addEPrefInfo(
 		newErrPrefix,
@@ -4573,6 +5254,9 @@ func (ePrefDto *ErrPrefixDto) ZEPrefCtx(
 	ePrefDto.lock.Lock()
 
 	defer ePrefDto.lock.Unlock()
+
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	errPrefNanobot{}.ptr().addEPrefInfo(
 		newErrPrefix,
@@ -4664,6 +5348,9 @@ func (ePrefDto *ErrPrefixDto) ZEPrefOld(
 	ePrefDto.lock.Lock()
 
 	defer ePrefDto.lock.Unlock()
+
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
 
 	_ = errPrefixDtoQuark{}.ptr().emptyErrPrefInfoCollection(
 		ePrefDto,

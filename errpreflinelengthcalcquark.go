@@ -104,15 +104,6 @@ func (ePrefLineLenCalcQuark *ePrefixLineLenCalcQuark) testValidityOfEPrefixLineL
 		return isValid, err
 	}
 
-	if ePrefLineLenCalc.errorPrefixInfo == nil {
-		err = fmt.Errorf("%v\n"+
-			"Error: Internal member variable 'ePrefLineLenCalc.errorPrefixInfo'\n"+
-			"is a 'nil' pointer!\n",
-			ePrefix)
-
-		return isValid, err
-	}
-
 	err = ePrefLineLenCalc.errorPrefixInfo.IsValidInstanceError(
 		ePrefix +
 			"Testing validity of 'ePrefLineLenCalc.errorPrefixInfo'\n")

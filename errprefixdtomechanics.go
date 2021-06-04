@@ -27,7 +27,7 @@ func (ePrefDtoMech errPrefixDtoMechanics) ptr() *errPrefixDtoMechanics {
 	}
 }
 
-// getEPrefStrings - Receives a pointer to an instance of
+// get2dEPrefStrings - Receives a pointer to an instance of
 // ErrPrefixDto and proceeds to convert the internal collection of
 // ErrorPrefixInfo objects to a two dimensional string array
 // which is returned to the caller.
@@ -38,7 +38,7 @@ func (ePrefDtoMech errPrefixDtoMechanics) ptr() *errPrefixDtoMechanics {
 // [x][1] position. The Error Context string is optional and may be
 // an empty string.
 //
-func (ePrefDtoMech *errPrefixDtoMechanics) getEPrefStrings(
+func (ePrefDtoMech *errPrefixDtoMechanics) get2dEPrefStrings(
 	errPrefDto *ErrPrefixDto,
 	errorPrefStr string) (
 	twoDStrArray [][2]string,
@@ -53,7 +53,7 @@ func (ePrefDtoMech *errPrefixDtoMechanics) getEPrefStrings(
 	defer ePrefDtoMech.lock.Unlock()
 
 	methodNames := errorPrefStr + "\n" +
-		"errPrefixDtoMechanics.getEPrefStrings()"
+		"errPrefixDtoMechanics.get2dEPrefStrings()"
 
 	twoDStrArray = nil
 
@@ -207,6 +207,10 @@ func (ePrefDtoMech *errPrefixDtoMechanics) setFromEmptyInterface(
 			methodNames)
 	}
 
+	ePrefDtoQuark := errPrefixDtoQuark{}
+
+	ePrefDtoQuark.normalizeErrPrefixDto(errPrefDto)
+
 	errNanobot := errPrefixDtoNanobot{}
 
 	ePrfAtom := errPrefixDtoAtom{}
@@ -224,7 +228,7 @@ func (ePrefDtoMech *errPrefixDtoMechanics) setFromEmptyInterface(
 		originalDataIsGood = false
 	}
 
-	_ = errPrefixDtoQuark{}.ptr().
+	_ = ePrefDtoQuark.
 		emptyErrPrefInfoCollection(
 			errPrefDto,
 			"")

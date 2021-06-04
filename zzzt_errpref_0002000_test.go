@@ -74,6 +74,272 @@ func TestErrPrefixDto_AddEPrefCollectionStr_000100(t *testing.T) {
 
 }
 
+func TestErrPrefixDto_DeleteLastErrPrefix_000100(t *testing.T) {
+
+	funcName := "TestErrPrefixDto_DeleteLastErrPrefix_000100"
+
+	ePDto := ErrPrefixDto{}.New()
+
+	maxTextLineLen := 50
+
+	var twoDSlice [][2]string
+
+	twoDSlice = make([][2]string, 14)
+
+	twoDSlice[0][0] = "Tx1.Something()"
+	twoDSlice[0][1] = ""
+
+	twoDSlice[1][0] = "Tx2.SomethingElse()"
+	twoDSlice[1][1] = ""
+
+	twoDSlice[2][0] = "Tx3.DoSomething()"
+	twoDSlice[2][1] = ""
+
+	twoDSlice[3][0] = "Tx4()"
+	twoDSlice[3][1] = ""
+
+	twoDSlice[4][0] = "Tx5()"
+	twoDSlice[4][1] = ""
+
+	twoDSlice[5][0] = "Tx6.DoSomethingElse()"
+	twoDSlice[5][1] = ""
+
+	twoDSlice[6][0] = "Tx7.TrySomethingNew()"
+	twoDSlice[6][1] = "something->newSomething"
+
+	twoDSlice[7][0] = "Tx8.TryAnyCombination()"
+	twoDSlice[7][1] = ""
+
+	twoDSlice[8][0] = "Tx9.TryAHammer()"
+	twoDSlice[8][1] = "x->y"
+
+	twoDSlice[9][0] = "Tx10.X()"
+	twoDSlice[9][1] = ""
+
+	twoDSlice[10][0] = "Tx11.TryAnything()"
+	twoDSlice[10][1] = ""
+
+	twoDSlice[11][0] = "Tx12.TryASalad()"
+	twoDSlice[11][1] = ""
+
+	twoDSlice[12][0] = "Tx13.SomeFabulousAndComplexStuff()"
+	twoDSlice[12][1] = ""
+
+	twoDSlice[13][0] = "Tx14.MoreAwesomeGoodness()"
+	twoDSlice[13][1] = "A=7 B=8 C=9"
+
+	ePDto.SetEPrefStrings(twoDSlice)
+
+	ePDto.SetMaxTextLineLen(maxTextLineLen)
+
+	collectionLen := ePDto.GetEPrefCollectionLen()
+
+	if collectionLen != 14 {
+		t.Errorf("%v\n"+
+			"Error: Expected initial collection length to equal '14'\n"+
+			"Instead, collection length = '%v'\n",
+			funcName,
+			collectionLen)
+
+		return
+	}
+
+	isCollectionEmpty := ePDto.DeleteLastErrPrefix()
+
+	if isCollectionEmpty {
+		t.Error("After deleting the Last Error Prefix\n" +
+			"Information object, the returned flag shows that\n" +
+			"the collection is empty. This is an error.\n" +
+			"THE COLLECTION SHOULD NOT BE EMPTY!\n")
+		return
+	}
+
+	var lastErrInfo ErrorPrefixInfo
+	var err error
+
+	lastErrInfo,
+		isCollectionEmpty,
+		err = ePDto.GetLastErrPrefix(funcName)
+
+	if err != nil {
+		t.Errorf("Error returned by ePDto.GetLastErrPrefix(funcName).\n"+
+			"Error= '%v'\n",
+			err.Error())
+		return
+	}
+
+	expectedLastErrorPrefix := twoDSlice[12][0]
+
+	if expectedLastErrorPrefix !=
+		lastErrInfo.GetErrPrefixStr() {
+		t.Errorf("Error: Expected new Last Error Prefix ='%v'\n"+
+			"Instead, Last Error Prefix = '%v'\n",
+			expectedLastErrorPrefix,
+			lastErrInfo.GetErrPrefixStr())
+
+		return
+	}
+
+	if !lastErrInfo.GetIsLastIndex() {
+		t.Error("ERROR: Expected final lastErrInfo.GetIsLastIndex()=='true'\n" +
+			"Instead, lastErrInfo.GetIsLastIndex()='false'\n")
+		return
+	}
+
+	collectionLen = ePDto.GetEPrefCollectionLen()
+
+	if collectionLen != 13 {
+		t.Errorf("%v\n"+
+			"Error: Expected final collection length to equal '13'\n"+
+			"Instead, collection length = '%v'\n",
+			funcName,
+			collectionLen)
+	}
+
+}
+
+func TestErrPrefixDto_DeleteLastErrPrefix_000200(t *testing.T) {
+
+	funcName := "TestErrPrefixDto_DeleteLastErrPrefix_000200"
+
+	ePDto := ErrPrefixDto{}.New()
+
+	maxTextLineLen := 50
+
+	var twoDSlice [][2]string
+
+	twoDSlice = make([][2]string, 14)
+
+	twoDSlice[0][0] = "Tx1.Something()"
+	twoDSlice[0][1] = ""
+
+	ePDto.SetEPrefStrings(twoDSlice)
+
+	ePDto.SetMaxTextLineLen(maxTextLineLen)
+
+	collectionLen := ePDto.GetEPrefCollectionLen()
+
+	if collectionLen != 1 {
+		t.Errorf("%v\n"+
+			"Error: Expected initial collection length to equal '1'\n"+
+			"Instead, collection length = '%v'\n",
+			funcName,
+			collectionLen)
+
+		return
+	}
+
+	isCollectionEmpty := ePDto.DeleteLastErrPrefix()
+
+	if !isCollectionEmpty {
+		t.Error("After deleting the Last Error Prefix\n" +
+			"Information object in the collection, the returned\n" +
+			"flag shows that the collection is NOT empty.\n" +
+			"This is an error. THE COLLECTION SHOULD BE EMPTY!\n")
+		return
+	}
+
+	var err error
+
+	_,
+		isCollectionEmpty,
+		err = ePDto.GetLastErrPrefix(funcName)
+
+	if err != nil {
+		t.Errorf("Error returned by ePDto.GetLastErrPrefix(funcName).\n"+
+			"Error= '%v'\n",
+			err.Error())
+		return
+	}
+
+	if isCollectionEmpty == false {
+		t.Error("ERROR: After deleting the last Error Prefix\n" +
+			"Information object, the call to ePDto.GetLastErrPrefix(funcName)\n" +
+			"should have returned isCollectionEmpty=='true'.\n" +
+			"Instead, isCollectionEmpty=='false'\n")
+
+		return
+	}
+
+	collectionLen = ePDto.GetEPrefCollectionLen()
+
+	if collectionLen != 0 {
+		t.Errorf("%v\n"+
+			"Error: Expected final collection length to equal zero.\n"+
+			"Instead, collection length = '%v'\n",
+			funcName,
+			collectionLen)
+	}
+
+}
+
+func TestErrPrefixDto_DeleteLastErrPrefix_000300(t *testing.T) {
+
+	funcName := "TestErrPrefixDto_DeleteLastErrPrefix_000300"
+
+	ePDto := ErrPrefixDto{}.New()
+
+	maxTextLineLen := 50
+
+	ePDto.SetMaxTextLineLen(maxTextLineLen)
+
+	collectionLen := ePDto.GetEPrefCollectionLen()
+
+	if collectionLen != 0 {
+		t.Errorf("%v\n"+
+			"Error: Expected initial collection length to equal zero.\n"+
+			"Instead, collection length = '%v'\n",
+			funcName,
+			collectionLen)
+
+		return
+	}
+
+	isCollectionEmpty := ePDto.DeleteLastErrPrefix()
+
+	if !isCollectionEmpty {
+		t.Error("After deleting the Last Error Prefix\n" +
+			"Information object in an empty collection, the returned\n" +
+			"flag shows that the collection is NOT empty.\n" +
+			"This is an error. THE COLLECTION SHOULD BE EMPTY!\n")
+		return
+	}
+
+	var err error
+
+	_,
+		isCollectionEmpty,
+		err = ePDto.GetLastErrPrefix(funcName)
+
+	if err != nil {
+		t.Errorf("Error returned by ePDto.GetLastErrPrefix(funcName).\n"+
+			"Error= '%v'\n",
+			err.Error())
+		return
+	}
+
+	if isCollectionEmpty == false {
+		t.Error("ERROR: After deleting the last Error Prefix\n" +
+			"Information object in an empty collection, the call to\n" +
+			"ePDto.GetLastErrPrefix(funcName) should have returned\n" +
+			"isCollectionEmpty=='true'.\n" +
+			"Instead, isCollectionEmpty=='false'\n")
+
+		return
+	}
+
+	collectionLen = ePDto.GetEPrefCollectionLen()
+
+	if collectionLen != 0 {
+		t.Errorf("%v\n"+
+			"Error: Expected final collection length to equal zero.\n"+
+			"Instead, collection length = '%v'\n",
+			funcName,
+			collectionLen)
+	}
+
+}
+
 func TestErrPrefixDto_CopyPtr_000100(t *testing.T) {
 
 	initialStr := "Tx1.Something()\nTx2.SomethingElse()\nTx3.DoSomething()\nTx4() - Tx5()\nTx6.DoSomethingElse()\n"
@@ -299,37 +565,17 @@ func TestErrPrefixDto_CopyIn_000300(t *testing.T) {
 }
 
 func TestErrPrefixDto_CopyIn_000400(t *testing.T) {
-	initialStr :=
-		"Tx1.Something() - Tx2.SomethingElse() - Tx3.DoSomething()\n" +
-			"Tx4() - Tx5() - Tx6.DoSomethingElse()\n" +
-			"Tx7.TrySomethingNew() : something->newSomething\n" +
-			"Tx8.TryAnyCombination() - Tx9.TryAHammer() : x->y - Tx10.X()\n" +
-			"Tx11.TryAnything() - Tx12.TryASalad()\n" +
-			"Tx13.SomeFabulousAndComplexStuff()\n" +
-			"Tx14.MoreAwesomeGoodness : A=7 B=8 C=9"
-
-	ePDto := ErrPrefixDto{}.NewEPrefOld(initialStr)
-
-	ePDto.SetMaxTextLineLen(40)
-
-	ePDto.SetLeftMarginLength(5)
-
-	ePDto.SetLeftMarginChar('*')
-
-	ePDto.SetIsLastLineTermWithNewLine(true)
 
 	ePDto2 := ErrPrefixDto{}.Ptr()
 
-	ePDto.Empty()
-
 	err := ePDto2.CopyIn(
-		&ePDto,
+		nil,
 		"TestErrPrefixDto_CopyIn_000200")
 
 	if err == nil {
 		t.Error("Error:\n" +
 			"Expected error return from ePDto2.CopyIn(&ePDto)\n" +
-			"because ePDto is empty and invalid.\n" +
+			"because ePDto is a nil pointer.\n" +
 			"HOWEVER, NO ERROR WAS RETURNED!!\n")
 	}
 }

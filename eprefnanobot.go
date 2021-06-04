@@ -144,6 +144,17 @@ func (ePrefNanobot *errPrefNanobot) extractLastErrPrfInfo(
 //
 // Input Parameters
 //
+//  leadingTextStr                     string
+//     - This text string will be prefixed to the beginning of the
+//       formatted error prefix information returned by this
+//       method.
+//
+//
+//  trailingTextStr                    string
+//     - This text string will be appended or suffixed to the end
+//       of the formatted error prefix information returned by this
+//       method.
+//
 //
 //  maxErrPrefixTextLineLength         uint
 //     - This unsigned integer value will be used to set the
@@ -193,6 +204,8 @@ func (ePrefNanobot *errPrefNanobot) extractLastErrPrfInfo(
 //       error prefix and error context information.
 //
 func (ePrefNanobot *errPrefNanobot) formatErrPrefixComponents(
+	leadingTextStr string,
+	trailingTextStr string,
 	maxErrPrefixTextLineLength uint,
 	isLastLineTerminatedWithNewLine bool,
 	delimiters ErrPrefixDelimiters,
@@ -252,6 +265,10 @@ func (ePrefNanobot *errPrefNanobot) formatErrPrefixComponents(
 
 	ePrefMolecule := errPrefMolecule{}
 
+	if len(leadingTextStr) > 0 {
+		b1.WriteString(leadingTextStr)
+	}
+
 	for i := 0; i < lenPrefixContextCol; i++ {
 
 		if i == lastIdx {
@@ -308,6 +325,10 @@ func (ePrefNanobot *errPrefNanobot) formatErrPrefixComponents(
 
 	if isLastLineTerminatedWithNewLine {
 		b1.WriteRune('\n')
+	}
+
+	if len(trailingTextStr) > 0 {
+		b1.WriteString(trailingTextStr)
 	}
 
 	lineLenCalculator.Empty()

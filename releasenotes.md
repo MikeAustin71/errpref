@@ -1,8 +1,71 @@
-# *errpref* (Error Prefix) Release Notes Version 1.6.1
+# *errpref* (Error Prefix) Release Notes Version 1.7.0
 
-This version of ***errpref*** was compiled and tested using ***Go*** 1.16.3.
+This version of ***errpref*** was compiled and tested using ***Go*** Version 1.16.4.
 
 This version supports ***Go*** modules.
+
+## Version 1.7.0
+
+##### Documentation Updates
+Modified Best Practices documentation for implementing ErrPrefixDto in calls to **Internal or Private Methods**. See the [REAEDME File](README.md).
+
+
+
+##### ErrPrefixDto
+
+1. Added new method ***ErrPrefixDto{}.NewFromErrPrefDto()***
+   This method can be used to reduce the lines of code required to implement ***ErrPrefixDto*** objects in **Internal or Private Methods**. See the [REAEDME File](README.md).
+   
+   ```go
+   func (ePrefDto ErrPrefixDto) NewFromErrPrefDto(
+      dto *ErrPrefixDto,
+      newErrPrefix string,
+      newErrContext string) (
+      newErrPrefDto *ErrPrefixDto,
+      err error)
+   ```
+   
+2. Added new method ***ErrPrefixDto.DeleteLastErrPrefix()***
+   This method deletes the last Error Prefix Information object in the current ***ErrPrefixDto*** collection.
+   
+3. Added new method ***ErrPrefixDto.GetLastErrPrefix()***
+   This method returns a deep copy of the last Error Prefix Information object in the current ***ErrPrefixDto*** collection.
+   
+4. Added new method ***ErrPrefixDto.ReplaceLastErrPrefix()***
+   This method deletes and replaces the Last Error Prefix Information object in the current ***ErrPrefixDto*** collection with new error prefix and context information.
+
+
+
+##### New Leading and Trailing Text Feature
+
+***ErrPrefixDto*** has added a new feature which allows the user to configure leading and trailing strings. These strings will be added to the beginning and ending of error prefix text displays. The leading and trailing text strings may be comprised of any string of characters including new lines ('\n'), tabs ('\t') and line separators.
+
+For more information see the documentation on the following methods:
+1. **ErrPrefixDto.SetLeadingTextStr()**
+2. ***ErrPrefixDto.SetTrailingTextStr(***)
+3. ***ErrPrefixDto.GetLeadingTextStr()***
+4. ***ErrPrefixDto.GetTrailingTextStr()***
+5. ***ErrPrefixDto.ClearLeadingTextStr()***
+6. ***ErrPrefixDto.ClearTrailingTextStr()***
+
+
+
+##### Enforcing Minimum Error Prefix Line Length
+
+Users have always had the ability to set the maximum line length for error prefix text displays. As of this release, the minimum line length will be enforced by methods in the ***ErrPrefixDto*** and ***ErrPref*** types. The Minimum Error Prefix Line Length is '10' characters. Depending on the function called, any attempt to set a value less than the Minimum Error Prefix Line Length will cause a reset to the default Line Length value (40-characters), or generate an error. For more information see the documentation on the following methods:
+1. ***ErrPref.SetMaxErrPrefTextLineLength()***
+2. ***ErrPrefixDto.SetMaxTextLineLen()***
+3. ***ErrPrefixDto.GetMaxTextLineLen()***
+4. ***ErrPrefixDto. SetMaxTextLineLenToDefault()***
+
+
+
+##### Added More Tests
+
+Code coverage for tests is now at 96%.
+
+
+
 
 ## Version 1.6.1
 
@@ -64,7 +127,7 @@ Storage and distribution of the ***errpref*** software package will be processed
        ePrefix string) (ErrPrefixDto, error)
     ```
 
-11. **Variable String Delimiter Feature** - Added methods to control input and output string delimiters. These methods effectively implement the Variable String Delimiter Feature. Users are now able to control the string delimiters used to parse input strings containing error prefix information as well as the string delimiters used to format output error prefix text for presentations and display. 
+11. **Variable String Delimiter Feature** - Added methods to control input and output string delimiters. These methods effectively implement the Variable String Delimiter Feature. Users are now able to control the string delimiters used to parse input strings containing error prefix information as will as the string delimiters used to format output error prefix text for presentations and display. 
 
     ```
     func (ePrefDto *ErrPrefixDto) SetInputStringDelimiters(
