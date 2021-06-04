@@ -1,6 +1,9 @@
 package errpref
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestErrPrefixDto_AddEPrefCollectionStr_000100(t *testing.T) {
 
@@ -887,6 +890,108 @@ func TestErrPrefixDto_Equal_000100(t *testing.T) {
 			"Expected ePDto to be UNEqual to ePDto2.\n" +
 			"However, THEY ARE EQUAL!\n")
 
+		return
+	}
+}
+
+func TestErrPrefixDto_Equal_0002000(t *testing.T) {
+
+	ePDtoOne := getValidErrorPrefixDto()
+
+	ePDtoOne.SetMaxTextLineLen(50)
+
+	ePDtoTwo := getValidErrorPrefixDto()
+
+	ePDtoTwo.SetMaxTextLineLen(50)
+
+	ePDtoOne.leadingTextStr = "\n" +
+		strings.Repeat("-", 49)
+
+	ePDtoTwo.leadingTextStr = "\n" +
+		strings.Repeat("-", 49)
+
+	if !ePDtoOne.Equal(&ePDtoTwo) {
+		t.Error("Evaluation-01" +
+			"Expected ePDtoOne == ePDtoTwo\n" +
+			"HOWEVER, THEY ARE NOT EQUAL!")
+		return
+	}
+
+	ePDtoOne.trailingTextStr = "\n" +
+		strings.Repeat("-", 49)
+
+	ePDtoTwo.trailingTextStr = "\n" +
+		strings.Repeat("-", 49)
+
+	if !ePDtoOne.Equal(&ePDtoTwo) {
+		t.Error("Evaluation-02" +
+			"Expected ePDtoOne == ePDtoTwo\n" +
+			"HOWEVER, THEY ARE NOT EQUAL!")
+		return
+	}
+
+	ePDtoTwo.trailingTextStr = ""
+
+	if ePDtoOne.Equal(&ePDtoTwo) {
+		t.Error("Evaluation-03" +
+			"Expected ePDtoOne != ePDtoTwo\n" +
+			"HOWEVER, THEY ARE EQUAL!")
+		return
+	}
+}
+
+func TestErrPrefixDto_Equal_000300(t *testing.T) {
+
+	funcName := "TestErrPrefixDto_Equal_000300()"
+
+	ePDtoOne := getValidErrorPrefixDto()
+
+	ePDtoOne.SetMaxTextLineLen(50)
+
+	ePDtoTwo := getValidErrorPrefixDto()
+
+	ePDtoTwo.SetMaxTextLineLen(50)
+
+	ePDtoOne.leadingTextStr = ""
+
+	ePDtoTwo.leadingTextStr = "\n" +
+		strings.Repeat("-", 49) +
+		"\n"
+
+	if ePDtoOne.Equal(&ePDtoTwo) {
+		t.Error("Evaluation-01" +
+			"Expected ePDtoOne != ePDtoTwo\n" +
+			"HOWEVER, THEY ARE EQUAL!")
+		return
+	}
+
+	ePDtoTwo.trailingTextStr = "\n" +
+		strings.Repeat("-", 49) +
+		"\n"
+
+	err := ePDtoOne.CopyIn(
+		&ePDtoTwo,
+		funcName)
+
+	if err != nil {
+		t.Errorf("Error return from ePDtoOne.CopyIn()\n"+
+			"%v\n", err.Error())
+		return
+	}
+
+	if !ePDtoOne.Equal(&ePDtoTwo) {
+		t.Error("Evaluation-02" +
+			"Expected ePDtoOne == ePDtoTwo\n" +
+			"HOWEVER, THEY ARE NOT EQUAL!")
+		return
+	}
+
+	ePDtoOne.trailingTextStr = ""
+
+	if ePDtoOne.Equal(&ePDtoTwo) {
+		t.Error("Evaluation-03" +
+			"Expected ePDtoOne != ePDtoTwo\n" +
+			"HOWEVER, THEY ARE EQUAL!")
 		return
 	}
 }

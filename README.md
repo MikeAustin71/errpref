@@ -1,4 +1,5 @@
 # *errpref* - Adding error prefix, function execution chains and error context to Error Messages In Go
+[![Go Reference](https://pkg.go.dev/badge/github.com/MikeAustin71/errpref.svg)](https://pkg.go.dev/github.com/MikeAustin71/errpref)
 
 **The *errpref* software package contains two GoLang types designed to attach error prefix text, function execution chain lists and error context strings to error messages.**
 
