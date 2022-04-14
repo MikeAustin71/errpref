@@ -221,7 +221,7 @@ func (ePrefDto *ErrPrefixDto) ClearTrailingTextStr() {
 
 // Copy - Creates a deep copy of the data fields contained in
 // the current ErrPrefixDto instance, and returns that data as a
-// as a new instance of ErrPrefixDto.
+// new instance of ErrPrefixDto.
 //
 //
 // ------------------------------------------------------------------------
@@ -340,7 +340,7 @@ func (ePrefDto *ErrPrefixDto) CopyPtr() *ErrPrefixDto {
 //
 // Return Values
 //
-//  err                        error
+//  error
 //     - If this method completes successfully, the returned error Type
 //       is set to 'nil'. If errors are encountered during processing,
 //       the returned error Type will encapsulate an error message.
@@ -379,7 +379,7 @@ func (ePrefDto *ErrPrefixDto) CopyIn(
 //
 // This means that if IBuilderErrorPrefix parameter,
 // 'inComingIBuilder' generates an empty set of error prefix
-// error prefix information, the current ErrPrefixDto instance will
+//  information, the current ErrPrefixDto instance will
 // likewise be configured with an identical empty set of error
 // prefix information.
 //
@@ -900,7 +900,7 @@ func (ePrefDto *ErrPrefixDto) GetLeadingTextStr() string {
 // ErrPrefixDto.SetLeftMarginChar().
 //
 // Finally, remember that the Left Margin will never be applied to
-// error prefix strings unless the the Left Margin Length parameter
+// error prefix strings unless the Left Margin Length parameter
 // is greater than zero. To set the Left Margin Length, see method:
 // ErrPrefixDto.SetLeftMarginLength().
 //
@@ -922,7 +922,7 @@ func (ePrefDto *ErrPrefixDto) GetLeftMarginChar() rune {
 // error prefix strings returned by method ErrPrefixDto.String().
 //
 // If the length of the Left Margin is set to zero, no left margin
-// will applied to error prefix strings  returned by method
+// will be applied to error prefix strings  returned by method
 //ErrPrefixDto.String().
 //
 func (ePrefDto *ErrPrefixDto) GetLeftMarginLength() int {
@@ -1009,7 +1009,7 @@ func (ePrefDto *ErrPrefixDto) GetEPrefCollectionLen() int {
 	return len(ePrefDto.ePrefCol)
 }
 
-// GetEPrefStrings - Returns a two dimensional slice of Error
+// GetEPrefStrings - Returns a two-dimensional slice of Error
 // Prefix and Context strings.
 //
 // The Error Prefix is always in the [x][0] position. The Error
@@ -1899,7 +1899,7 @@ func (ePrefDto ErrPrefixDto) NewFromErrPrefDto(
 // Return Values
 //
 //  ErrPrefixDto
-//     - This method will return a instance of ErrPrefixDto
+//     - This method will return an instance of ErrPrefixDto
 //       containing a duplicate of error prefix information
 //       extracted from input parameter 'iEPref'.
 //
@@ -4316,6 +4316,100 @@ func (ePrefDto *ErrPrefixDto) StrMaxLineLen(
 			ePrefDto.isLastLineTerminatedWithNewLine,
 			ePrefDto.outputStrDelimiters,
 			ePrefDto.ePrefCol)
+}
+
+// XCpy - Creates a copy of the current ErrPrefixDto instance and
+// modifies that copy to set the last error prefix with the text
+// string passed as an input parameter ('newErrContext'). A pointer
+// to this deep copy is returned to the calling function.
+//
+// ----------------------------------------------------------------
+//
+// IMPORTANT
+//
+// This method, 'ErrPrefixDto.XCpy()', differs from method
+// 'ErrPrefixDto.XCtx()' in that this method returns a pointer to
+// a deep copy of the current ErrPrefixDto instance. That copy
+// of the original  ErrPrefixDto instance is modified to contain a
+// new error prefix string passed as an input parameter ('newErrContext').
+// The original ErrPrefixDto instance remains unchanged.
+//
+// In contrast, method 'ErrPrefixDto.XCtx()' modifies the original
+// ErrPrefixDto instance and returns a pointer to that original
+// modified instance.
+//
+// Method 'ErrPrefixDto.XCtx()' modifies the current ErrPrefixDto
+// instance. Method 'ErrPrefixDto.XCpy()' only modifies the
+// deep copy of the current ErrPrefixDto instance.
+//
+//
+// ----------------------------------------------------------------
+//
+// Input Parameters
+//
+//  newErrContext       string
+//     - This string holds the new error context information. This
+//       method creates a copy of the current ErrPrefixDto instance
+//       and modifies that copy to set the last error prefix with
+//       the text string passed by this input parameter.
+//
+//       A pointer to this deep copy is returned to the calling
+//       function.
+//
+//       If this string is 'empty' (zero length string), this
+//       method will delete the last error context associated with
+//       the last error prefix in the error prefix collection of the
+//       deep copy returned by this method.
+//
+//
+// -----------------------------------------------------------------
+//
+// Return Values
+//
+//  *ErrPrefixDto
+//     - Returns a pointer to a deep copy of the current
+//       ErrPrefixDto instance which is updated with the error
+//       context passed as an input parameter (newErrContext).
+//
+//
+func (ePrefDto *ErrPrefixDto) XCpy(
+	newErrContext string) *ErrPrefixDto {
+
+	if ePrefDto.lock == nil {
+		ePrefDto.lock = new(sync.Mutex)
+	}
+
+	ePrefDto.lock.Lock()
+
+	defer ePrefDto.lock.Unlock()
+
+	errPrefixDtoQuark{}.ptr().
+		normalizeErrPrefixDto(ePrefDto)
+
+	newErrMsg,
+		_ :=
+		errPrefixDtoAtom{}.ptr().
+			copyOutErrPrefDto(
+				ePrefDto,
+				"")
+
+	if len(newErrMsg.ePrefCol) == 0 {
+		return &newErrMsg
+	}
+
+	if len(newErrContext) == 0 {
+
+		errPrefixDtoNanobot{}.ptr().
+			deleteLastErrContext(&newErrMsg)
+
+		return &newErrMsg
+	}
+
+	errPrefNanobot{}.ptr().setLastCtx(
+		newErrContext,
+		newErrMsg.ePrefCol)
+
+	return &newErrMsg
 }
 
 // XCtx - Sets or resets the error context for the last error

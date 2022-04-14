@@ -1,10 +1,98 @@
-# *errpref* (Error Prefix) Release Notes Version 1.7.0
+# *errpref* (Error Prefix) Release Notes Version 1.7.1
 
-This version of ***errpref*** was compiled and tested using ***Go*** Version 1.16.4.
+This version of ***errpref*** was compiled and tested using ***Go Version 1.18.1***.
 
 This version supports ***Go*** modules.
 
-## Version 1.7.0
+## Version 1.7.1
+
+#### Compiled with Go Version 1.18.1
+
+This version of ***errpref*** was compiled with ***Go Version 1.18.1***. Currently ***errpref*** does not employ ***generics***.
+
+
+
+#### Added New Method *ErrPrefixDto.XCpy()*
+
+The new new method ***ErrPrefixDto.XCpy()*** is designed for use in calling subsidiary methods with error context information. 
+
+See the two examples of ***ErrPrefixDto.XCpy()*** included in the code shown below. **ErrPrefixDto.XCpy()** sends a deep copy of the original  ***ePrefix*** modified with error prefix information. The original ***ePrefix*** instance is **NOT** modified.
+
+```go
+func (stdLine *TextLineSpecStandardLine) AddTextField(
+	iTextField ITextFieldSpecification,
+	errorPrefix interface{}) (
+	lastIndexId int,
+	err error) {
+
+	if stdLine.lock == nil {
+		stdLine.lock = new(sync.Mutex)
+	}
+
+	stdLine.lock.Lock()
+
+	defer stdLine.lock.Unlock()
+
+	var ePrefix *ePref.ErrPrefixDto
+
+	lastIndexId = -1
+
+	ePrefix,
+		err = ePref.ErrPrefixDto{}.NewIEmpty(
+		errorPrefix,
+		"TextLineSpecStandardLine.AddTextField()",
+		"")
+
+	if err != nil {
+		return lastIndexId, err
+	}
+
+	if iTextField == nil {
+		err = fmt.Errorf("%v - ERROR\n"+
+			"Input parameter 'iTextField' is 'nil'!\n",
+			ePrefix.XCtxEmpty().String())
+
+		return
+	}
+
+    // In this example, 'XCpy()' is used to 
+    // send error context info to a subsidiary
+    // method. The original instance of 'ePrefix'
+    // is not unchanged. A deep copy of 'ePrefix'
+    // is submitted with the new error context info.
+	err = iTextField.IsValidInstanceError(
+		ePrefix.XCpy("iTextField"))
+
+	if err != nil {
+		return lastIndexId, err
+	}
+
+	var newTextField ITextFieldSpecification
+
+    // In this example, 'XCpy()' is used to 
+    // send error context info to a subsidiary
+    // method. The original instance of 'ePrefix'
+    // is not unchanged. A deep copy of 'ePrefix'
+    // is submitted with the new error context info.
+	newTextField,
+		err = iTextField.CopyOutITextField(
+		ePrefix.XCpy("iTextField->newTextField"))
+
+	if err != nil {
+		return lastIndexId, err
+	}
+
+	stdLine.textFields = append(stdLine.textFields,
+		newTextField)
+
+	lastIndexId = len(stdLine.textFields) - 1
+
+	return lastIndexId, err
+}
+
+```
+
+## Version 1.7
 
 ##### Documentation Updates
 Modified Best Practices documentation for implementing ErrPrefixDto in calls to **Internal or Private Methods**. See the [REAEDME File](README.md).
@@ -127,7 +215,7 @@ Storage and distribution of the ***errpref*** software package will be processed
        ePrefix string) (ErrPrefixDto, error)
     ```
 
-11. **Variable String Delimiter Feature** - Added methods to control input and output string delimiters. These methods effectively implement the Variable String Delimiter Feature. Users are now able to control the string delimiters used to parse input strings containing error prefix information as will as the string delimiters used to format output error prefix text for presentations and display. 
+11. **Variable String Delimiter Feature** - Added methods to control input and output string delimiters. These methods effectively implement the Variable String Delimiter Feature. Users are now able to control the string delimiters used to parse input strings containing error prefix information as well as the string delimiters used to format output error prefix text for presentations and display.
 
     ```
     func (ePrefDto *ErrPrefixDto) SetInputStringDelimiters(

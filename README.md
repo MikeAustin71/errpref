@@ -7,10 +7,10 @@ The ***errpref*** software package was written in the [Go](https://golang.org/) 
 
 ***errpref*** supports [Go Modules](https://golang.org/ref/mod).
 
-The current version of ***errpref*** is Version 1.7.0 which includes two important upgrades:
+The current version of ***errpref*** is ***Version 1.7.1*** which features:
 
-- The [Leading and Trailing Text Feature](#leading-and-trailing-text-strings)
--  The new new method ***ErrPrefixDto{}.NewFromErrPrefDto()*** which reduces the lines of code required to configure error prefix information in [Internal or Private Methods](#internal-or-private-methods). 
+- Compiled using ***Go 1.18.1***
+-  The new new method ***ErrPrefixDto.XCpy()*** is designed for use in calling subsidiary methods with error context information. See [Example-2 under Error Context Examples Below](#example-2-calling-subsidiary-functions).
 
 For more details, see the [Release Notes](./releasenotes.md).
 
@@ -29,7 +29,9 @@ For more details, see the [Release Notes](./releasenotes.md).
    - [ErrPrefixDto - A Full Featured Solution](#errprefixdto---a-full-featured-solution)
      - [Public Facing Methods](#public-facing-methods)
      - [Internal or Private Methods](#internal-or-private-methods)
-     - [Error Context Example](#error-context-example)
+     - [Error Context Examples](#error-context-examples)
+       - [Example-1 Error Flow](#example-1-error-flow)
+       - [Example-2 Calling Subsidiary Functions](#example-2-calling-subsidiary-functions)	
      - [Customizing Input and Output String Delimiters](#customizing-input-and-output-string-delimiters)
      - [Maximum Text Line Length](#maximum-text-line-length)
      - [Left Margin Feature](#left-margin-feature)
@@ -125,7 +127,7 @@ testFuncDtoAlpha05.tx5DoSomethingBig()
  :  A->B
 testFuncDtoAlpha06.tx6TryGivingUp()
  :  A/B = C B==0
-Example Error: An Error Ocurred! Something bad.
+Example Error: An Error Occurred! Something bad.
 Like Divide by Zero
 ```
 
@@ -312,7 +314,9 @@ This pattern provides a separate function chain string for each method. This arc
 
 
 
-#### Error Context Example
+#### Error Context Examples
+
+##### Example-1 Error Flow
 
 Recall that **Error Context** strings are designed to provide additional information about the function or method identified by the associated **Error Prefix** text. Typical context information might include variable names, variable values and additional details on function execution.
 
@@ -393,6 +397,84 @@ When this error is returned up the function chain and finally printed out, the t
 
 ```
 
+##### Example-2 Calling Subsidiary Functions
+
+See the two examples of ***ErrPrefixDto.XCpy()*** included in the code shown below. **ErrPrefixDto.XCpy()** sends a deep copy of the original  ***ePrefix*** modified with error prefix information. The original ***ePrefix*** instance is **NOT** modified.
+
+```go
+func (stdLine *TextLineSpecStandardLine) AddTextField(
+	iTextField ITextFieldSpecification,
+	errorPrefix interface{}) (
+	lastIndexId int,
+	err error) {
+
+	if stdLine.lock == nil {
+		stdLine.lock = new(sync.Mutex)
+	}
+
+	stdLine.lock.Lock()
+
+	defer stdLine.lock.Unlock()
+
+	var ePrefix *ePref.ErrPrefixDto
+
+	lastIndexId = -1
+
+	ePrefix,
+		err = ePref.ErrPrefixDto{}.NewIEmpty(
+		errorPrefix,
+		"TextLineSpecStandardLine.AddTextField()",
+		"")
+
+	if err != nil {
+		return lastIndexId, err
+	}
+
+	if iTextField == nil {
+		err = fmt.Errorf("%v - ERROR\n"+
+			"Input parameter 'iTextField' is 'nil'!\n",
+			ePrefix.XCtxEmpty().String())
+
+		return
+	}
+
+    // In this example, 'XCpy()' is used to 
+    // send error context info to a subsidiary
+    // method. The original instance of 'ePrefix'
+    // is not unchanged. A deep copy of 'ePrefix'
+    // is submitted with the error context info.
+	err = iTextField.IsValidInstanceError(
+		ePrefix.XCpy("iTextField"))
+
+	if err != nil {
+		return lastIndexId, err
+	}
+
+	var newTextField ITextFieldSpecification
+
+    // In this example, 'XCpy()' is used to 
+    // send error context info to a subsidiary
+    // method. The original instance of 'ePrefix'
+    // is not unchanged. A deep copy of 'ePrefix'
+    // is submitted with the error context info.
+	newTextField,
+		err = iTextField.CopyOutITextField(
+		ePrefix.XCpy("iTextField->newTextField"))
+
+	if err != nil {
+		return lastIndexId, err
+	}
+
+	stdLine.textFields = append(stdLine.textFields,
+		newTextField)
+
+	lastIndexId = len(stdLine.textFields) - 1
+
+	return lastIndexId, err
+}
+
+```
+
 
 
 #### Customizing Input and Output String Delimiters
@@ -413,14 +495,14 @@ ErrPrefixDto.XEPrefOld()
 ErrPrefixDto.ZEPrefOld()
 ```
 
- Output String Delimiters are used by ErrPrefixDto instances to join or concatenate individual error prefix and error context components to form presentation text for output and use in preparation of error message strings. Methods performing this type of operation are: 
+ Output String Delimiters are used by ***ErrPrefixDto*** instances to join or concatenate individual error prefix and error context components to form presentation text for output and use in preparation of error message strings. Methods performing this type of operation are: 
 
 ```go
 ErrPrefixDto.String()
 ErrPrefixDto.StrMaxLineLen()
 ```
 
- Initially, both the Input and Output String Delimiters for any given ErrPrefixDto instance are set to the system default values. This means that if the Input and Output String Delimiters were not directly configured by the user, the system default string delimiters are applied.
+ Initially, both the Input and Output String Delimiters for any given ***ErrPrefixDto*** instance are set to the system default values. This means that if the Input and Output String Delimiters were not directly configured by the user, the system default string delimiters are applied.
 
 The system defaults for both Input and Output String Delimiters are listed as follows:  
 
@@ -498,7 +580,7 @@ testFuncDtoAlpha03.tx3DoAnything()
 testFuncDtoAlpha04.tx4DoNothing() : A/B==4
 testFuncDtoAlpha05.tx5DoSomethingBig() : A->B
 testFuncDtoAlpha06.tx6TryGivingUp() : A/B = C B==0
-Example Error: An Error Ocurred! Something bad.
+Example Error: An Error Occurred! Something bad.
 Like Divide by Zero!
 ```
 
@@ -768,7 +850,7 @@ When this error is returned up the function chain and finally printed out, the t
 
 ``` tex
  Tx1.Something() - Tx2.SomethingElse()
- Tx3.DoSomething() : A=B/C C== 0.0 <--- New line character automatically added to end of error prefix sring.
+ Tx3.DoSomething() : A=B/C C== 0.0 <--- New line character automatically added to end of error prefix string.
  I divided by zero and got this error.
 
 ```
@@ -933,8 +1015,7 @@ Type ***ErrPrefixDto*** allows users to configure input string delimiters used t
 
 1. ***ErrPrefixDto.NewEPrefOld()***
 2. ***ErrPrefixDto.NewFromStrings()***
-3. ***ErrPrefixDto.NewFromStrings()***
-4. ***ErrPrefixDto.NewIEmptyWithDelimiters()***
+3. ***ErrPrefixDto.NewIEmptyWithDelimiters()***
 5. ***ErrPrefixDto.SetEPrefOld()***
 6. ***ErrPrefixDto.XEPrefOld()***
 7. ***ErrPrefixDto.ZEPrefOld()***
@@ -961,7 +1042,7 @@ Additional code examples can be found in the Error Prefix Examples Application l
 ### Go Get Command
 
 ```go
-go get github.com/MikeAustin71/errpref/@v1.7.0
+go get github.com/MikeAustin71/errpref/@v1.7.1
 ```
 
 ​	-- or --
@@ -1019,11 +1100,11 @@ Tests are running successfully on Windows 10 and Ubuntu 20.04 LTS.
 
 ## Version
 
-The latest version is Version 1.7.0.
+The latest version is ***Version 1.7.1***.
 
 As with all previous versions, this Version supports [Go Modules](https://golang.org/ref/mod).
 
-This version was compiled and tested using using ***Go*** Version 1.16.4.
+This version was compiled and tested using using ***Go*** ***Version 1.18.1***.
 
 For more details, see the [Release Notes](./releasenotes.md).
 

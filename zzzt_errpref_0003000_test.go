@@ -2,6 +2,156 @@ package errpref
 
 import "testing"
 
+func TestErrPrefixDto_XCpy_000100(t *testing.T) {
+
+	ePDto := ErrPrefixDto{}.New()
+
+	ePDto.SetMaxTextLineLen(40)
+
+	initialStr :=
+		"Tx1.AVeryVeryLongMethodNameCalledSomething() : A->B\nTx2.SomethingElse() : A==B\n" +
+			"Tx3.DoSomething() : A==10\nTx4() : A/10==4 - Tx5()"
+
+	expectedStr := "Tx1.AVeryVeryLongMethodNameCalledSomething()\\n" +
+		"[SPACE]:[SPACE][SPACE]A->B\\n" +
+		"Tx2.SomethingElse()[SPACE]:[SPACE]A==B\\n" +
+		"Tx3.DoSomething()[SPACE]:[SPACE]A==10\\n" +
+		"Tx4()[SPACE]:[SPACE]A/10==4[SPACE]-[SPACE]Tx5()[SPACE]:[SPACE]A!=B"
+
+	ePDto.SetEPrefOld(initialStr)
+
+	xEPDto := ePDto.XCpy("A!=B")
+
+	actualStr := xEPDto.String()
+
+	expectedStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(expectedStr),
+		true)
+
+	actualStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(actualStr),
+		true)
+
+	if expectedStr != actualStr {
+
+		t.Errorf("Error: TestErrPrefixDto_XCpy_000100\n"+
+			"Expected actualStr= '%v'\n"+
+			"Instead, actualStr= '%v'\n",
+			expectedStr,
+			actualStr)
+
+		return
+	}
+
+	return
+}
+
+func TestErrPrefixDto_XCpy_000200(t *testing.T) {
+
+	ePrefix := ErrPrefixDto{}.NewEPrefCtx(
+		"TestErrPrefixDto_XCpy_000200()",
+		"")
+
+	ePDto := ErrPrefixDto{}.New()
+
+	ePDto.SetMaxTextLineLen(40)
+
+	initialStr :=
+		"Tx1.AVeryVeryLongMethodNameCalledSomething() : A->B\nTx2.SomethingElse() : A==B\n" +
+			"Tx3.DoSomething() : A==10\nTx4() : A/10==4 - Tx5()"
+
+	expectedStr := "Tx1.AVeryVeryLongMethodNameCalledSomething()\\n" +
+		"[SPACE]:[SPACE][SPACE]A->B\\n" +
+		"Tx2.SomethingElse()[SPACE]:[SPACE]A==B\\n" +
+		"Tx3.DoSomething()[SPACE]:[SPACE]A==10\\n" +
+		"Tx4()[SPACE]:[SPACE]A/10==4[SPACE]-[SPACE]Tx5()[SPACE]:[SPACE]A!=B"
+
+	ePDto.SetEPrefOld(initialStr)
+
+	xEPDto := ePDto.XCpy("A!=B")
+
+	actualStr := xEPDto.String()
+
+	expectedStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(expectedStr),
+		true)
+
+	actualStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(actualStr),
+		true)
+
+	if expectedStr != actualStr {
+
+		t.Errorf("Error: %v\n"+
+			"Expected actualStr= '%v'\n"+
+			"Instead, actualStr= '%v'\n",
+			ePrefix.String(),
+			expectedStr,
+			actualStr)
+
+		return
+	}
+
+	expectedStr2 := "Tx1.AVeryVeryLongMethodNameCalledSomething()\\n" +
+		"[SPACE]:[SPACE][SPACE]A->B\\n" +
+		"Tx2.SomethingElse()[SPACE]:[SPACE]A==B\\n" +
+		"Tx3.DoSomething()[SPACE]:[SPACE]A==10\\n" +
+		"Tx4()[SPACE]:[SPACE]A/10==4[SPACE]-[SPACE]Tx5()"
+
+	xEPDto = xEPDto.XCpy("")
+
+	actualStr = xEPDto.String()
+
+	expectedStr2 = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(expectedStr2),
+		true)
+
+	actualStr = ErrPref{}.ConvertNonPrintableChars(
+		[]rune(actualStr),
+		true)
+
+	if expectedStr2 != actualStr {
+
+		t.Errorf("Error:\n"+
+			"Expected actualStr= '%v'\n"+
+			"Instead, actualStr= '%v'\n",
+			expectedStr2,
+			actualStr)
+
+		return
+	}
+
+	return
+}
+
+func TestErrPrefixDto_XCpy_000300(t *testing.T) {
+
+	ePrefix := ErrPrefixDto{}.NewEPrefCtx(
+		"TestErrPrefixDto_XCpy_000300()",
+		"")
+
+	ePDto := ErrPrefixDto{}
+
+	xEPDto := ePDto.XCpy("A!=B")
+
+	expectedStr := ""
+
+	actualStr := xEPDto.String()
+
+	if expectedStr != actualStr {
+
+		t.Errorf("Error: %v\n"+
+			"Expected actualStr= ' ' (Empty String)\n"+
+			"Instead, actualStr= '%v'\n",
+			ePrefix.String(),
+			actualStr)
+
+		return
+	}
+
+	return
+}
+
 func TestErrPrefixDto_XCtx_000100(t *testing.T) {
 
 	ePDto := ErrPrefixDto{}.New()
