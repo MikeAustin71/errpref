@@ -10,13 +10,13 @@ This version supports ***Go*** modules.
 
 #### Compiled with Go Version 1.18.1
 
-This version of ***errpref*** was compiled with ***Go Version 1.18.1***. Currently ***errpref*** does not employ ***generics***.
+This version of ***errpref*** was compiled with ***Go Version 1.18.1***. Currently, ***errpref*** does not employ ***generics***.
 
 
 
 #### Added New Method *ErrPrefixDto.XCpy()*
 
-The new new method ***ErrPrefixDto.XCpy()*** is designed for use in calling subsidiary methods with error context information. 
+The new method ***ErrPrefixDto.XCpy()*** is designed for use in calling subsidiary methods with error context information.
 
 See the two examples of ***ErrPrefixDto.XCpy()*** included in the code shown below. **ErrPrefixDto.XCpy()** sends a deep copy of the original  ***ePrefix*** modified with error prefix information. The original ***ePrefix*** instance is **NOT** modified.
 
@@ -105,7 +105,7 @@ Modified Best Practices documentation for implementing ErrPrefixDto in calls to 
 
 ##### ErrPrefixDto
 
-1. Added new method ***ErrPrefixDto{}.NewFromErrPrefDto()***
+1. Added a new method ***ErrPrefixDto{}.NewFromErrPrefDto()***
    This method can be used to reduce the lines of code required to implement ***ErrPrefixDto*** objects in **Internal or Private Methods**. See the [REAEDME File](README.md).
    
    ```go
@@ -117,22 +117,22 @@ Modified Best Practices documentation for implementing ErrPrefixDto in calls to 
       err error)
    ```
    
-2. Added new method ***ErrPrefixDto.DeleteLastErrPrefix()***
+2. Added a new method ***ErrPrefixDto.DeleteLastErrPrefix()***
    This method deletes the last Error Prefix Information object in the current ***ErrPrefixDto*** collection.
    
-3. Added new method ***ErrPrefixDto.GetLastErrPrefix()***
+3. Added a new method ***ErrPrefixDto.GetLastErrPrefix()***
    This method returns a deep copy of the last Error Prefix Information object in the current ***ErrPrefixDto*** collection.
    
-4. Added new method ***ErrPrefixDto.ReplaceLastErrPrefix()***
+4. Added a new method ***ErrPrefixDto.ReplaceLastErrPrefix()***
    This method deletes and replaces the Last Error Prefix Information object in the current ***ErrPrefixDto*** collection with new error prefix and context information.
 
 
 
 ##### New Leading and Trailing Text Feature
 
-***ErrPrefixDto*** has added a new feature which allows the user to configure leading and trailing strings. These strings will be added to the beginning and ending of error prefix text displays. The leading and trailing text strings may be comprised of any string of characters including new lines ('\n'), tabs ('\t') and line separators.
+***ErrPrefixDto*** has added a new feature which allows the user to configure leading and trailing strings. These strings will be added to the beginning and ending of error prefix text displays. The leading and trailing text strings may include any string of characters including new lines ('\n'), tabs ('\t') and line separators.
 
-For more information see the documentation on the following methods:
+For more information, see the documentation on the following methods:
 1. **ErrPrefixDto.SetLeadingTextStr()**
 2. ***ErrPrefixDto.SetTrailingTextStr(***)
 3. ***ErrPrefixDto.GetLeadingTextStr()***
@@ -144,7 +144,7 @@ For more information see the documentation on the following methods:
 
 ##### Enforcing Minimum Error Prefix Line Length
 
-Users have always had the ability to set the maximum line length for error prefix text displays. As of this release, the minimum line length will be enforced by methods in the ***ErrPrefixDto*** and ***ErrPref*** types. The Minimum Error Prefix Line Length is '10' characters. Depending on the function called, any attempt to set a value less than the Minimum Error Prefix Line Length will cause a reset to the default Line Length value (40-characters), or generate an error. For more information see the documentation on the following methods:
+Users have always had the ability to set the maximum line length for error prefix text displays. As of this release, the minimum line length will be enforced by methods in the ***ErrPrefixDto*** and ***ErrPref*** types. The Minimum Error Prefix Line Length is '10' characters. Depending on the function called, any attempt to set a value less than the Minimum Error Prefix Line Length will cause a reset to the default Line Length value (40-characters) or generate an error. For more information, see the documentation on the following methods:
 1. ***ErrPref.SetMaxErrPrefTextLineLength()***
 2. ***ErrPrefixDto.SetMaxTextLineLen()***
 3. ***ErrPrefixDto.GetMaxTextLineLen()***
@@ -170,7 +170,7 @@ Documentation updates.
 
 ##### Directory Structure: Development Environment and Package Distribution
 
-This version marks a paradigm change in organization of the ***errpref*** project. 
+This version marks a paradigm change in the organization of the ***errpref*** project.
 
 Moving forward, all development and testing will be conducted in the development environment ***errprefops*** located in software repository https://github.com/MikeAustin71/errprefops .  
 
@@ -197,7 +197,7 @@ Storage and distribution of the ***errpref*** software package will be processed
 
 4. Added new method ErrPrefixDto.GetDelimiters(). This method returns the input and output string delimiters used to delimit error prefix and error context strings.
 
-5. Added new method ErrPrefixDto.CopyOutToIBuilder(). This method takes an object implementing the IBuilderErrorPrefix interface and populates than object with error prefix and context information contained in the current instance of ErrPrefixDto. This method is used to facilitate the exchange of error prefix information with custom user developed types.
+5. Added new method ErrPrefixDto.CopyOutToIBuilder(). This method takes an object implementing the IBuilderErrorPrefix interface and populates that object with error prefix and context information contained in the current instance of ErrPrefixDto. This method is used to facilitate the exchange of error prefix information with custom user developed types.
 
 6. Added new method ErrPrefixDto.CopyInFromIBuilder(). This method takes an object implementing the IBuilderErrorPrefix interface and copies its error prefix and context information into the current instance of ErrPrefixDto.  This method is used to facilitate the exchange of error prefix information with custom user developed types. This method is used to facilitate the exchange of error prefix information with custom user developed types.
 
