@@ -4,6 +4,8 @@ This version of ***errpref*** was compiled and tested using ***Go Version 1.18.1
 
 This version supports ***Go*** modules.
 
+
+
 ## Version 1.7.1
 
 #### Compiled with Go Version 1.18.1
@@ -91,6 +93,8 @@ func (stdLine *TextLineSpecStandardLine) AddTextField(
 }
 
 ```
+
+
 
 ## Version 1.7
 
