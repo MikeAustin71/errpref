@@ -1,61 +1,5 @@
 ## Table of Contents
-- [*errpref* - Adding function execution chains and error context to Error Messages In Go](#errpref---adding-function-execution-chains-and-error-context-to-error-messages-in-go)
-- [The Problem](#the-problem)
-- [A New Solution: ***ErrorGenericFactory***](#a-new-solution-errorgenericfactory)
-		- [Specialized Error Types](#specialized-error-types)
-		- [Custom Error Creation and Usage](#custom-error-creation-and-usage)
-			- [1. Create an Instance of the Factory](#1-create-an-instance-of-the-factory)
-			- [2. Select and Generate a Specialized Custom Error Instance](#2-select-and-generate-a-specialized-custom-error-instance)
-			- [3. Apply the Specialized Error Instance As Needed](#3-apply-the-specialized-error-instance-as-needed)
-		- [***ErrorGenericFactory*** Example Usage](#errorgenericfactory-example-usage)
-			- [Call Tree for Test](#call-tree-for-test)
-			- [Test Source Code](#test-source-code)
-		- [***ErrorGenericFactory*** Source Code](#errorgenericfactory-source-code)
-- [An Earlier Solution](#an-earlier-solution)
-		- [Wait a Minute - Let's Think About This](#wait-a-minute---lets-think-about-this)
-	- [What *errpref* Does and Doesn't Do](#what-errpref-does-and-doesnt-do)
-	- [Definition of Terms](#definition-of-terms)
-		- [Error Prefix](#error-prefix)
-		- [Error Context](#error-context)
-	- [Getting Started](#getting-started)
-		- [Two Types To Choose From](#two-types-to-choose-from)
-		- [ErrPrefixDto - A Full Featured Solution](#errprefixdto---a-full-featured-solution)
-			- [Public Facing Methods](#public-facing-methods)
-			- [Internal or Private Methods](#internal-or-private-methods)
-			- [Error Context Examples](#error-context-examples)
-				- [Example-1 Error Flow](#example-1-error-flow)
-				- [Example-2 Calling Subsidiary Functions](#example-2-calling-subsidiary-functions)
-			- [Customizing Input and Output String Delimiters](#customizing-input-and-output-string-delimiters)
-			- [Maximum Text Line Length](#maximum-text-line-length)
-			- [Left Margin Feature](#left-margin-feature)
-			- [Leading And Trailing Text Strings](#leading-and-trailing-text-strings)
-			- [Text Display On/Off Switch](#text-display-onoff-switch)
-			- [***Is Last Text Line Terminated With New Line***](#is-last-text-line-terminated-with-new-line)
-		- [ErrPref - Quick And Simple Solution](#errpref---quick-and-simple-solution)
-			- [Example Usage Summary](#example-usage-summary)
-			- [String Formatting Conventions](#string-formatting-conventions)
-				- [Error Prefix Delimiters](#error-prefix-delimiters)
-				- [Error Context Delimiters](#error-context-delimiters)
-	- [Exchanging Error Prefix Information with User Defined Types](#exchanging-error-prefix-information-with-user-defined-types)
-		- [*IBuilderErrorPrefix*](#ibuildererrorprefix)
-		- [IBasicErrorPrefix](#ibasicerrorprefix)
-		- [Custom Input String Delimiters](#custom-input-string-delimiters)
-	- [Usage Examples](#usage-examples)
-		- [Test Code](#test-code)
-		- [Example Application](#example-application)
-	- [Package Configuration and Import](#package-configuration-and-import)
-		- [Go Get Command](#go-get-command)
-		- [Import Configuration](#import-configuration)
-	- [External Dependencies](#external-dependencies)
-	- [Tests](#tests)
-	- [OS Support](#os-support)
-	- [Version](#version)
-	- [Release Notes](#release-notes)
-	- [License](#license)
-	- [Comments And Questions](#comments-and-questions)
-
-
-# *errpref* - Adding function execution chains and error context to Error Messages In Go
+- *errpref* - Adding function execution chains and error context to Error Messages In Go
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/MikeAustin71/errpref.svg)](https://pkg.go.dev/github.com/MikeAustin71/errpref)
 
@@ -63,7 +7,7 @@
 
 The ***errpref*** software package was written in the [Go](https://golang.org/) programming language, a.k.a. ***Golang***.
 
-The current version of ***errpref*** is ***Version 2.0.0*** which features:
+The current version of ***errpref*** is ***Version 2.0.1*** which features:
 
 - Support for ***Go Version 1.27.3***
 -  A new custom error type, ***ErrorGenericFactory*** 

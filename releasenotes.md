@@ -1,65 +1,19 @@
 ## Table of Contents
 
-- [*errpref* (Error Prefix) Release Notes Version 2.0.0](#errpref-error-prefix-release-notes-version-200)
-	- [*errpref* Version 2.0.0](#errpref-version-200)
-		- [A New Solution: ***ErrorGenericFactory***](#a-new-solution-errorgenericfactory)
-			- [Specialized Error Types](#specialized-error-types)
-			- [Custom Error Creation and Usage](#custom-error-creation-and-usage)
-				- [1. Create an Instance of the Factory](#1-create-an-instance-of-the-factory)
-				- [2. Select and Generate a Specialized Custom Error Instance](#2-select-and-generate-a-specialized-custom-error-instance)
-				- [3. Apply the Specialized Error Instance As Needed](#3-apply-the-specialized-error-instance-as-needed)
-		- [***ErrorGenericFactory*** Example Usage](#errorgenericfactory-example-usage)
-			- [Call Tree for Test](#call-tree-for-test)
-			- [Test Source Code](#test-source-code)
-		- [***ErrorGenericFactory*** Source Code](#errorgenericfactory-source-code)
-	- [Version 1.7.1](#version-171)
-			- [Compiled with Go Version 1.18.1](#compiled-with-go-version-1181)
-			- [Added New Method *ErrPrefixDto.XCpy()*](#added-new-method-errprefixdtoxcpy)
-	- [Version 1.7](#version-17)
-				- [Documentation Updates](#documentation-updates)
-				- [ErrPrefixDto](#errprefixdto)
-				- [New Leading and Trailing Text Feature](#new-leading-and-trailing-text-feature)
-				- [Enforcing Minimum Error Prefix Line Length](#enforcing-minimum-error-prefix-line-length)
-				- [Added More Tests](#added-more-tests)
-	- [Version 1.6.1](#version-161)
-			- [Changes](#changes)
-	- [Version 1.6.0](#version-160)
-			- [Changes](#changes-1)
-				- [Directory Structure: Development Environment and Package Distribution](#directory-structure-development-environment-and-package-distribution)
-				- [ErrPrefixDto](#errprefixdto-1)
-				- [ErrPref](#errpref)
-	- [Version 1.5.2](#version-152)
-			- [Changes](#changes-2)
-	- [Version 1.5.1](#version-151)
-			- [Changes](#changes-3)
-	- [Version 1.5.0](#version-150)
-			- [Changes](#changes-4)
-	- [Version 1.4.0](#version-140)
-			- [Changes](#changes-5)
-	- [Version 1.3.0](#version-130)
-			- [Changes](#changes-6)
-	- [Version 1.2.0](#version-120)
-			- [Changes](#changes-7)
-	- [Version 1.1.0](#version-110)
-		- [ErrPrefixDto](#errprefixdto-2)
-	- [Version 1.0.0](#version-100)
 
 
 
-
-
-
-# *errpref* (Error Prefix) Release Notes Version 2.0.0
+# *errpref* (Error Prefix) Release Notes Version 2.0.1
 
 This version of ***errpref*** was compiled and tested using ***Go Version 1.27.3***.
 
 
 
-## Version 2.0.0
+## Version 2.0.1
 
 ### Compiled with Go Version 1.27.3
 
-### Added new type ***ErrorGenericFactory***
+### Includes new type ***ErrorGenericFactory***
 
 ### ***ErrorGenericFactory*** Source Code
 
@@ -412,6 +366,16 @@ func (egc *ErrorGenericFactory) buildErrorStr() string {
 }
 
 ```
+
+
+
+## Version 2.0.0
+
+### Compiled with Go Version 1.27.3
+
+### Invalid Release
+
+***errpref*** Version 2.0.0 omitted the ***`go.mod`*** file and was therefore unserviceable. Skip this release, it is unusable.
 
 
 
