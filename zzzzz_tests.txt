@@ -1,3 +1,74 @@
+=== RUN   TestFunc04
+--- zzzt_ErrorGenericFactory_0010_test.go TestFunc04 ---
+--- Testing ErrorGenericFactory ---
+--- FULL COMBINED ERROR OUTPUT ---
+
+Source File: series04.go
+This Function Type: Service
+This Function: Series04Func01
+Called Function: Series04Func02
+Error Context: orchestrating downstream sequence
+Error Message: top-level operation failed
+: 
+Source File: series04.go
+This Function Type: Service
+This Function: Series04Func02
+Called Function: Series03Func03
+Error Context: validating intermediate system state
+Error Message: mid-level verification failed
+: 
+Source File: series03.go
+This Function Type: Repository
+This Function: Series03Func03
+Called Function: Series03Func04
+Error Context: executing data processing operation
+Error Message: low-level repository failed
+: 
+Source File: series03.go
+This Function Type: Repository
+This Function: Series03Func04
+Parameter: userID
+Path: /var/log/app
+FileName: data.bin
+URL: https://example.com
+Error Context: internal buffer alignment
+Error Message: encountered fatal calculation error: value out of bounds
+
+---------------------------------
+    zzzt_ErrorGenericFactory_0010_test.go:102: ✅ Success: Target ErrorNativeToFunction was found in the error chain!
+Root Cause parameters identified at top:
+    zzzt_ErrorGenericFactory_0010_test.go:124: ✅ Success: Intercepted intermediate wrapper showing called function: 
+        Source File: series04.go
+        This Function Type: Service
+        This Function: Series04Func01
+        Called Function: Series04Func02
+        Error Context: orchestrating downstream sequence
+        Error Message: top-level operation failed
+        : 
+        Source File: series04.go
+        This Function Type: Service
+        This Function: Series04Func02
+        Called Function: Series03Func03
+        Error Context: validating intermediate system state
+        Error Message: mid-level verification failed
+        : 
+        Source File: series03.go
+        This Function Type: Repository
+        This Function: Series03Func03
+        Called Function: Series03Func04
+        Error Context: executing data processing operation
+        Error Message: low-level repository failed
+        : 
+        Source File: series03.go
+        This Function Type: Repository
+        This Function: Series03Func04
+        Parameter: userID
+        Path: /var/log/app
+        FileName: data.bin
+        URL: https://example.com
+        Error Context: internal buffer alignment
+        Error Message: encountered fatal calculation error: value out of bounds
+--- PASS: TestFunc04 (0.00s)
 === RUN   TestErrPrefixDto_AddEPrefStrings_000100
 --- PASS: TestErrPrefixDto_AddEPrefStrings_000100 (0.00s)
 === RUN   TestErrPref_ConvertNonPrintableChars_000100
@@ -499,5 +570,4 @@
 === RUN   TestErrPrefixDto_Quark_000100
 --- PASS: TestErrPrefixDto_Quark_000100 (0.00s)
 PASS
-coverage: 96.5% of statements
-ok  	github.com/MikeAustin71/errpref	0.640s
+ok  	github.com/MikeAustin71/errprefops/errpref	0.237s

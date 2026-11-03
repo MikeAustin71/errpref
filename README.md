@@ -1,69 +1,79 @@
-# *errpref* - Adding error prefix, function execution chains and error context to Error Messages In Go
+## Table of Contents
+- [*errpref* - Adding function execution chains and error context to Error Messages In Go](#errpref---adding-function-execution-chains-and-error-context-to-error-messages-in-go)
+- [The Problem](#the-problem)
+- [A New Solution: ***ErrorGenericFactory***](#a-new-solution-errorgenericfactory)
+		- [Specialized Error Types](#specialized-error-types)
+		- [Custom Error Creation and Usage](#custom-error-creation-and-usage)
+			- [1. Create an Instance of the Factory](#1-create-an-instance-of-the-factory)
+			- [2. Select and Generate a Specialized Custom Error Instance](#2-select-and-generate-a-specialized-custom-error-instance)
+			- [3. Apply the Specialized Error Instance As Needed](#3-apply-the-specialized-error-instance-as-needed)
+		- [***ErrorGenericFactory*** Example Usage](#errorgenericfactory-example-usage)
+			- [Call Tree for Test](#call-tree-for-test)
+			- [Test Source Code](#test-source-code)
+		- [***ErrorGenericFactory*** Source Code](#errorgenericfactory-source-code)
+- [An Earlier Solution](#an-earlier-solution)
+		- [Wait a Minute - Let's Think About This](#wait-a-minute---lets-think-about-this)
+	- [What *errpref* Does and Doesn't Do](#what-errpref-does-and-doesnt-do)
+	- [Definition of Terms](#definition-of-terms)
+		- [Error Prefix](#error-prefix)
+		- [Error Context](#error-context)
+	- [Getting Started](#getting-started)
+		- [Two Types To Choose From](#two-types-to-choose-from)
+		- [ErrPrefixDto - A Full Featured Solution](#errprefixdto---a-full-featured-solution)
+			- [Public Facing Methods](#public-facing-methods)
+			- [Internal or Private Methods](#internal-or-private-methods)
+			- [Error Context Examples](#error-context-examples)
+				- [Example-1 Error Flow](#example-1-error-flow)
+				- [Example-2 Calling Subsidiary Functions](#example-2-calling-subsidiary-functions)
+			- [Customizing Input and Output String Delimiters](#customizing-input-and-output-string-delimiters)
+			- [Maximum Text Line Length](#maximum-text-line-length)
+			- [Left Margin Feature](#left-margin-feature)
+			- [Leading And Trailing Text Strings](#leading-and-trailing-text-strings)
+			- [Text Display On/Off Switch](#text-display-onoff-switch)
+			- [***Is Last Text Line Terminated With New Line***](#is-last-text-line-terminated-with-new-line)
+		- [ErrPref - Quick And Simple Solution](#errpref---quick-and-simple-solution)
+			- [Example Usage Summary](#example-usage-summary)
+			- [String Formatting Conventions](#string-formatting-conventions)
+				- [Error Prefix Delimiters](#error-prefix-delimiters)
+				- [Error Context Delimiters](#error-context-delimiters)
+	- [Exchanging Error Prefix Information with User Defined Types](#exchanging-error-prefix-information-with-user-defined-types)
+		- [*IBuilderErrorPrefix*](#ibuildererrorprefix)
+		- [IBasicErrorPrefix](#ibasicerrorprefix)
+		- [Custom Input String Delimiters](#custom-input-string-delimiters)
+	- [Usage Examples](#usage-examples)
+		- [Test Code](#test-code)
+		- [Example Application](#example-application)
+	- [Package Configuration and Import](#package-configuration-and-import)
+		- [Go Get Command](#go-get-command)
+		- [Import Configuration](#import-configuration)
+	- [External Dependencies](#external-dependencies)
+	- [Tests](#tests)
+	- [OS Support](#os-support)
+	- [Version](#version)
+	- [Release Notes](#release-notes)
+	- [License](#license)
+	- [Comments And Questions](#comments-and-questions)
+
+
+# *errpref* - Adding function execution chains and error context to Error Messages In Go
+
 [![Go Reference](https://pkg.go.dev/badge/github.com/MikeAustin71/errpref.svg)](https://pkg.go.dev/github.com/MikeAustin71/errpref)
 
-**The *errpref* software package contains two GoLang types designed to attach error prefix text, function execution chain lists and error context strings to error messages.**
+**The *errpref* software package contains GoLang custom types designed to facilitate and improve the process of identifying, tracing and understanding errors generated in code.**
 
 The ***errpref*** software package was written in the [Go](https://golang.org/) programming language, a.k.a. ***Golang***.
 
-***errpref*** supports [Go Modules](https://golang.org/ref/mod).
+The current version of ***errpref*** is ***Version 2.0.0*** which features:
 
-The current version of ***errpref*** is ***Version 1.7.1*** which features:
-
-- Compiled using ***Go 1.18.1***
--  The new new method ***ErrPrefixDto.XCpy()*** is designed for use in calling subsidiary methods with error context information. See [Example-2 under Error Context Examples Below](#example-2-calling-subsidiary-functions).
+- Support for ***Go Version 1.27.3***
+-  A new custom error type, ***ErrorGenericFactory*** 
 
 For more details, see the [Release Notes](./releasenotes.md).
 
 
 
-## Table of Contents
+# The Problem
 
- - [The Problem](#the-problem)
- - [The Solution](#the-solution)
- - [What *errpref* Does and Doesn't Do](#what-errpref-does-and-doesnt-do)
- - [Definition of Terms](#definition-of-terms)
-   - [Error Prefix](#error-prefix)
-   - [Error Context](#error-context)
- - [Getting Started](#getting-started)
-   - [Two Types To Choose From](#two-types-to-choose-from) 
-   - [ErrPrefixDto - A Full Featured Solution](#errprefixdto---a-full-featured-solution)
-     - [Public Facing Methods](#public-facing-methods)
-     - [Internal or Private Methods](#internal-or-private-methods)
-     - [Error Context Examples](#error-context-examples)
-       - [Example-1 Error Flow](#example-1-error-flow)
-       - [Example-2 Calling Subsidiary Functions](#example-2-calling-subsidiary-functions)	
-     - [Customizing Input and Output String Delimiters](#customizing-input-and-output-string-delimiters)
-     - [Maximum Text Line Length](#maximum-text-line-length)
-     - [Left Margin Feature](#left-margin-feature)
-     - [Leading And Trailing Text Strings](#leading-and-trailing-text-strings)
-     - [Text Display On/Off Switch](#text-display-onoff-switch)
-     - [Is Last Text Line Terminated With New Line](#is-last-text-line-terminated-with-new-line)
-   - [ErrPref - Quick And Simple Solution](#errpref---quick-and-simple-solution)
-     - [String Formatting Conventions](#string-formatting-conventions)
-       - [Error Prefix Delimiters](#error-prefix-delimiters)
-       - [Error Context Delimiters](#error-context-delimiters)
- - [Exchanging Error Prefix Information with User Defined Types](#exchanging-error-prefix-information-with-user-defined-types)
-   - [IBuilderErrorPrefix](#ibuildererrorprefix)
-   - [IBasicErrorPrefix ](#ibasicerrorprefix)
-   - [Custom Input String Delimiters](#custom-input-string-delimiters)
- - [Usage Examples](#usage-examples)
-   - [Test Code](#test-code)
-   - [Example Application](#example-application)
- - [Package Configuration and Import](#package-configuration-and-import)
-   - [Go Get Command](#go-get-command)
-   - [Import Configuration](#import-configuration)
- - [External Dependencies](#external-dependencies)
- - [Source Code Documentation](#source-code-documentation)
- - [Tests](#tests)
- - [OS Support](#os-support)
- - [Version](#version)
- - [Release Notes](#release-notes)
- - [License](#license)
- - [Comments And Questions](#comments-and-questions)
-
-
-
-## The Problem
 
 As my **Go** programs, types and methods have grown in sophistication and complexity, the need for improved error tracking, detailed error messages, and a bread crumb trail of code execution has become more important. The terms 'Function Chains' or 'Method Chains', as used here, describes a list of the functions called prior to encountering a particular error. Adding function chain documentation to returned error messages makes error tracking and management a much easier proposition.
 
@@ -71,9 +81,579 @@ Basically, when I see an error message, especially during the development phase,
 
 
 
-## The Solution
+# A New Solution: ***ErrorGenericFactory***
 
-The ***errpref*** or Error Prefix project is intended to provide better function or method documentation in error messages returned by **Go** functions. Two types have been defined for this purpose: ***ErrPref*** and ***ErrPrefixDto***. Both of these types are designed to receive function chain information, format it and return the formatted strings for inclusion in error messages.
+Based on testing conducted to date, the ***ErrorGenericFactory*** custom error type was found to be most effective in providing detailed, flexible, and informative error messages for various error scenarios. These features allow developers to create custom error messages with specific error codes and descriptions, making it easier to identify and resolve issues in their Go code.
+
+***ErrorGenericFactory*** utilizes a bubble up approach. As errors bubble up through the function call tree, the features offered by ***ErrorGenericFactory*** allow developers to add context and trace identification information at every level of the call tree. 
+
+Based on testing conducted to date, the ***ErrorGenericFactory*** custom error type has been found to be most effective in providing detailed and informative error messages for various error scenarios. It allows developers to create custom error messages with specific error codes and descriptions, making it easier to identify and resolve issues in their Go code.
+
+***ErrorGenericFactory*** utilizes a bubble up approach. As errors bubble up through the function call tree, the features offered by ***ErrorGenericFactory*** allow developers to add context and trace identification information at every level of the call tree. 
+
+The ***ErrorGenericFactory*** type is located in source code file: **`errpref/ErrorGenericFactory_0010.go`** .
+
+### Specialized Error Types
+
+***ErrorGenericFactory*** incorporates the following specialized error types:
+
+1. **ErrorInputParameterOutOfRange**
+2. **ErrorInputParameterNilPointer**
+3. **ErrorNativeToFunction**
+4. **ErrorFromFunctionCall**
+
+These specialized error types will be identifiable when inspecting a series of **wrapped** errors. Reference the tests included in **`errpref/zzzt_ErrorGenericFactory_0010_test.go`** .
+
+### Custom Error Creation and Usage
+
+#### 1. Create an Instance of the Factory
+
+Call the Factory Constructor - ***ErrorGenericFactory.NewErrorGenericConfig()***
+
+#### 2. Select and Generate a Specialized Custom Error Instance
+
+Call one of the methods returning a specialized custom error instance. Example: ***ErrorGenericFactory. GetErrorFromFunctionCall()***
+
+#### 3. Apply the Specialized Error Instance As Needed
+
+See the Example Usage below [Test Source Code](#Test Source Code)
+
+
+
+### ***ErrorGenericFactory*** Example Usage
+
+#### Call Tree for Test
+
+```go
+TestFunc04() // Starting point.TestFunc04() calls Series04Func01() 
+            |
+            |----> Series04Func01() // Receives and Returns Error
+                 |
+                 ----> Series04Func02() // Receives and Returns Error
+                     |
+                     ----> Series04Func03()  // Receives and Returns Error
+                         |
+                          ----> Series04Func04() // Base error generated here
+```
+
+
+
+#### Test Source Code
+
+```go
+import (
+	"fmt"
+
+	ePref "github.com/MikeAustin71/errpref"
+)
+
+type TestSeries04Functions struct {
+}
+
+func (tf *TestSeries04Functions) TestFunc04() {
+
+	fmt.Printf("\nExecuting TestFunc04() ...\n")
+
+    // NewErrorGenericConfig()
+    // Add identification information for this function
+	errGenericCfg := new(ePref.ErrorGenericFactory).NewErrorGenericConfig(
+		"TestFuncs_04.go",
+		"TestSeries04Functions",
+		"TestFunc02")
+
+	err := tf.Series04Func01() // First function call in the chain
+
+	if err != nil {
+
+        // Error returned.
+        // Add context information for called function.
+		combinedWrappedErr := errGenericCfg.GetErrorFromFunctionCall(
+			"",
+			"Series04Func01()",
+			"",
+			"",
+			err)
+
+		fmt.Printf("%s\n", combinedWrappedErr)
+
+		innerMostErr := errGenericCfg.GetInnerMostError(combinedWrappedErr)
+
+		fmt.Println("Inner Most Error:")
+
+		fmt.Printf("%s\n", innerMostErr)
+
+		return
+	}
+
+	fmt.Println("TestFunc02() - Series04Func01() completed without error!")
+
+	return
+}
+
+func (tf *TestSeries04Functions) Series04Func01() error {
+
+    // NewErrorGenericConfig()
+    // Add identification information for this function
+	errGenericCfg := new(ePref.ErrorGenericFactory).NewErrorGenericConfig(
+		"TestFuncs_04.go",
+		"TestSeries04Functions",
+		"Series04Func01")
+
+	err := tf.Series04Func02()
+
+	if err != nil {
+
+        // Error returned.
+        // Add context information for called function.
+		return errGenericCfg.GetErrorFromFunctionCall(
+			"",
+			"Series04Func02()",
+			"",
+			"",
+			err)
+
+	}
+
+	return nil
+}
+
+func (tf *TestSeries04Functions) Series04Func02() error {
+
+    // NewErrorGenericConfig()
+    // Add identification information for this function
+	errGenericCfg := new(ePref.ErrorGenericFactory).NewErrorGenericConfig(
+		"TestFuncs_04.go",
+		"TestSeries04Functions",
+		"Series04Func02")
+
+	err := tf.Series04Func03()
+
+	if err != nil {
+
+        // Error returned.
+        // Add context information for called function.
+		return errGenericCfg.GetErrorFromFunctionCall(
+			"",
+			"Series04Func03()",
+			"",
+			"",
+			err)
+
+	}
+
+	return nil
+}
+
+func (tf *TestSeries04Functions) Series04Func03() error {
+
+    // NewErrorGenericConfig()
+    // Add identification information for this function
+	errGenericCfg := new(ePref.ErrorGenericFactory).NewErrorGenericConfig(
+		"TestFuncs_04.go",
+		"TestSeries04Functions",
+		"Series04Func03")
+
+	err := tf.Series04Func04()
+
+	if err != nil {
+
+        // Error returned.
+        // Add context information for called function.
+		return errGenericCfg.GetErrorFromFunctionCall(
+			"",
+			"Series04Func04()",
+			"",
+			"",
+			err)
+
+	}
+
+	return nil
+}
+
+func (tf *TestSeries04Functions) Series04Func04() error {
+
+    // NewErrorGenericConfig()
+    // Add identification information for this function
+	errGenericCfg := new(ePref.ErrorGenericFactory).NewErrorGenericConfig(
+		"TestFuncs_04.go",
+		"TestSeries04Functions",
+		"Series04Func04")
+
+        // Error originated in this function
+        // Add context information and error message
+        // for this error. 
+	err := errGenericCfg.GetErrorNativeToFunction(
+		"",
+		"",
+		"",
+		"",
+		"Serious Error Occurred!!",
+		"I'm feeling down - and sent this error.")
+
+	return err
+}
+```
+
+
+
+### ***ErrorGenericFactory*** Source Code
+
+```go
+// Source Code File: ErrorGenericFactory_0010.go
+
+package errpref
+
+import (
+	"errors"
+	"fmt"
+)
+
+// ============================================================================
+// 1. Core Configuration Types
+// ============================================================================
+
+type ErrorGenericFactory struct {
+	sourceFile         string // Source file containing 'thisFunction'.
+	thisFunctionType   string // The 'type' in which 'thisFunction' (method) resides.
+	thisFunction       string // The current function processing this error.
+	calledFunctionType string // The 'type' of the method identified in
+	// 'calledFunction', below.
+	calledFunction string // The method or function called by 'thisFunction'.
+	parameter      string // Parameter associated with this error.
+	path           string // File path associated with this error.
+	fileName       string // File name associated with this error.
+	url            string // URL associated with this error.
+	errorContext   string // Error context associated with this error.
+	errorMessage   string // The error message associated with this error.
+}
+
+// ============================================================================
+// 2. Specialized Struct-Based Error Types
+// ============================================================================
+
+// ErrorInputParameterOutOfRange represents a parameter value out of bounds.
+type ErrorInputParameterOutOfRange struct {
+	ErrorGenericFactory // Value embedding ensures an isolated, safe snapshot
+}
+
+func (e *ErrorInputParameterOutOfRange) Error() string {
+	return e.buildErrorStr()
+}
+
+// ErrorInputParameterNilPointer represents a required pointer passing a nil value.
+type ErrorInputParameterNilPointer struct {
+	ErrorGenericFactory
+}
+
+func (e *ErrorInputParameterNilPointer) Error() string {
+	return e.buildErrorStr()
+}
+
+// ErrorNativeToFunction represents an internal operational failure within a function.
+type ErrorNativeToFunction struct {
+	ErrorGenericFactory
+}
+
+func (e *ErrorNativeToFunction) Error() string {
+	return e.buildErrorStr()
+}
+
+// ErrorFromFunctionCall represents an error context layer wrapping a downstream failure.
+type ErrorFromFunctionCall struct {
+	ErrorGenericFactory
+	unwrapped error // Keeps track of the original wrapped error
+}
+
+func (e *ErrorFromFunctionCall) Error() string {
+	errorStr := e.buildErrorStr()
+	if e.unwrapped == nil {
+		return fmt.Sprintf("%s\nReturned error from called Function is nil!", errorStr)
+	}
+	return fmt.Sprintf("%s: %v", errorStr, e.unwrapped)
+}
+
+// Unwrap enables standard library tools (errors.Is, errors.As) to traverse past this type.
+func (e *ErrorFromFunctionCall) Unwrap() error {
+	return e.unwrapped
+}
+
+// ============================================================================
+// 3. Factory Constructors and Builders
+// ============================================================================
+
+// NewErrorGenericConfig is designed to be called at the beginning of a function when
+// only three elements are known: sourceFile, parentType, and thisFunction.
+func (egc *ErrorGenericFactory) NewErrorGenericConfig(
+	sourceFile string,
+	parentType string,
+	thisFunction string) *ErrorGenericFactory {
+
+	return &ErrorGenericFactory{
+		sourceFile:       sourceFile,
+		thisFunctionType: parentType,
+		thisFunction:     thisFunction,
+	}
+}
+
+// GetErrorInputParameterOutOfRange yields a unique ErrorInputParameterOutOfRange error.
+func (egc *ErrorGenericFactory) GetErrorInputParameterOutOfRange(
+	parameter string,
+	path string,
+	fileName string,
+	url string,
+	errorContext string,
+	errorMessage string) error {
+
+	egc.parameter = parameter
+	egc.path = path
+	egc.fileName = fileName
+	egc.url = url
+	egc.errorContext = errorContext
+	egc.errorMessage = errorMessage
+
+	// Dereferencing (*egc) makes a clean, isolated value copy for this instance
+	return &ErrorInputParameterOutOfRange{ErrorGenericFactory: *egc}
+}
+
+// GetErrorInputParameterNilPointer yields a unique ErrorInputParameterNilPointer error.
+func (egc *ErrorGenericFactory) GetErrorInputParameterNilPointer(
+	parameter string,
+	path string,
+	fileName string,
+	url string,
+	errorContext string,
+	errorMessage string) error {
+
+	egc.parameter = parameter
+	egc.path = path
+	egc.fileName = fileName
+	egc.url = url
+	egc.errorContext = errorContext
+	egc.errorMessage = errorMessage
+
+	return &ErrorInputParameterNilPointer{ErrorGenericFactory: *egc}
+}
+
+// GetErrorNativeToFunction yields a unique ErrorNativeToFunction error.
+func (egc *ErrorGenericFactory) GetErrorNativeToFunction(
+	parameter string,
+	path string,
+	fileName string,
+	url string,
+	errorContext string,
+	errorMessage string) error {
+
+	egc.parameter = parameter
+	egc.path = path
+	egc.fileName = fileName
+	egc.url = url
+	egc.errorContext = errorContext
+	egc.errorMessage = errorMessage
+
+	return &ErrorNativeToFunction{ErrorGenericFactory: *egc}
+}
+
+// GetErrorFromFunctionCall returns an inspectable, wrapped FunctionCallError.
+func (egc *ErrorGenericFactory) GetErrorFromFunctionCall(
+	calledFunctionType string,
+	calledFunction string,
+	errorContext string,
+	errorMessage string,
+	returnedCalledFunctionError error) error {
+
+	egc.calledFunctionType = calledFunctionType
+	egc.calledFunction = calledFunction
+	egc.errorContext = errorContext
+	egc.errorMessage = errorMessage
+
+	return &ErrorFromFunctionCall{
+		ErrorGenericFactory: *egc,
+		unwrapped:           returnedCalledFunctionError,
+	}
+}
+
+// GetInnerMostError
+//
+// Returns the innermost (or last) error from a series of
+// wrapped errors.
+func (egc *ErrorGenericFactory) GetInnerMostError(
+	wrappedErrors error) error {
+
+	if wrappedErrors == nil {
+		return errors.New("ErrorGenericConfig.GetInnerMostError()\n" +
+			"Input parameter 'wrappedErrors' is nil")
+	}
+
+	innerMostError := wrappedErrors
+
+	for {
+
+		unwrappedErr := errors.Unwrap(innerMostError)
+
+		if unwrappedErr == nil {
+			break
+		}
+
+		innerMostError = unwrappedErr
+	}
+
+	return innerMostError
+}
+
+// ============================================================================
+// 4. Utility Context Setters
+// ============================================================================
+
+// SetDetailErrorContext updates the detail variables if non-empty arguments are provided.
+func (egc *ErrorGenericFactory) SetDetailErrorContext(
+	parameter string,
+	path string,
+	fileName string,
+	url string) {
+
+	if parameter != "" {
+		egc.parameter = parameter
+	}
+	if path != "" {
+		egc.path = path
+	}
+	if fileName != "" {
+		egc.fileName = fileName
+	}
+	if url != "" {
+		egc.url = url
+	}
+}
+
+// SetErrorMessageElements updates context and messaging details if non-empty arguments are provided.
+func (egc *ErrorGenericFactory) SetErrorMessageElements(
+	errorContext string,
+	errorMessage string) {
+
+	if errorContext != "" {
+		egc.errorContext = errorContext
+	}
+	if errorMessage != "" {
+		egc.errorMessage = errorMessage
+	}
+}
+
+// buildErrorStr constructs a string representation of the populated elements.
+func (egc *ErrorGenericFactory) buildErrorStr() string {
+	errStr := ""
+	foundParametersCount := 0
+
+	if egc.sourceFile != "" {
+		errStr = "\n"
+		errStr += fmt.Sprintf("Source File: %s\n", egc.sourceFile)
+		foundParametersCount++
+	}
+
+	if egc.thisFunctionType != "" {
+		if foundParametersCount == 0 {
+			errStr = "\n"
+		}
+
+		errStr += fmt.Sprintf("This Function Type: %s\n", egc.thisFunctionType)
+		foundParametersCount++
+	}
+
+	if egc.thisFunction != "" {
+		if foundParametersCount == 0 {
+			errStr = "\n"
+		}
+
+		errStr += fmt.Sprintf("This Function: %s\n", egc.thisFunction)
+		foundParametersCount++
+	}
+
+	if egc.calledFunctionType != "" {
+		if foundParametersCount == 0 {
+			errStr = "\n"
+		}
+
+		errStr += fmt.Sprintf("Called Function Type: %s\n", egc.calledFunctionType)
+		foundParametersCount++
+	}
+
+	if egc.calledFunction != "" {
+		if foundParametersCount == 0 {
+			errStr = "\n"
+		}
+
+		errStr += fmt.Sprintf("Called Function: %s\n", egc.calledFunction)
+		foundParametersCount++
+	}
+
+	if egc.parameter != "" {
+		if foundParametersCount == 0 {
+			errStr = "\n"
+		}
+
+		errStr += fmt.Sprintf("Parameter: %s\n", egc.parameter)
+		foundParametersCount++
+	}
+
+	if egc.path != "" {
+		if foundParametersCount == 0 {
+			errStr = "\n"
+		}
+
+		errStr += fmt.Sprintf("Path: %s\n", egc.path)
+		foundParametersCount++
+	}
+
+	if egc.fileName != "" {
+		if foundParametersCount == 0 {
+			errStr = "\n"
+		}
+
+		errStr += fmt.Sprintf("FileName: %s\n", egc.fileName)
+		foundParametersCount++
+	}
+
+	if egc.url != "" {
+		if foundParametersCount == 0 {
+			errStr = "\n"
+		}
+
+		errStr += fmt.Sprintf("URL: %s\n", egc.url)
+		foundParametersCount++
+	}
+
+	if egc.errorContext != "" {
+		if foundParametersCount == 0 {
+			errStr = "\n"
+		}
+
+		errStr += fmt.Sprintf("Error Context: %s\n", egc.errorContext)
+		foundParametersCount++
+	}
+
+	if egc.errorMessage != "" {
+		if foundParametersCount == 0 {
+			errStr = "\n"
+		}
+
+		errStr += fmt.Sprintf("Error Message: %s\n", egc.errorMessage)
+		foundParametersCount++
+	}
+
+	if foundParametersCount == 0 {
+		errStr += "\nNo parameters found for this ErrorFunctionCall instance\n"
+	}
+
+	return errStr
+}
+
+```
+
+
+
+# An Earlier Solution
+
+This earlier version of ***errpref*** or Error Prefix project endeavored to provide better function or method documentation in error messages returned by **Go** functions. Two types have been defined for this purpose: ***ErrPref*** and ***ErrPrefixDto***. Both of these types are designed to receive function chain information, format it and return the formatted strings for inclusion in error messages.
 
 From a usage standpoint, ***ErrPref*** and ***ErrPrefixDto*** collect information in string form at each method or function in the execution chain. If an error occurs, the user is responsible for extracting the collected information from ***ErrPref*** or ***ErrPrefixDto*** and integrating that information into the returned error message. While these types are designed to collect error prefix and error context information, they can in fact be used to collect any required informational or error related messaging in string format. This could be error numbers, execution or debugging information or virtually any text specified by the developer. In addition, despite the name 'error prefix', there is no requirement that this information be attached to the beginning of an error message. As a practical matter, the information could be injected as a string anywhere in the returned error message or informational message display.
 
@@ -1074,37 +1654,31 @@ None. This software package is not dependent on any external module or package.
 
 
 
-## Source Code Documentation
-
-[*errpref* Source Code Documentation](https://pkg.go.dev/github.com/MikeAustin71/errpref)
-
-
-
 ## Tests
 
 Source code tests are located in the **errpref** directory of the source code repository. All files beginning with the letters "**zzzt_**" and ending with "**_test.go**" contain test code. The **errpref** directory is located here: [Test Code](https://github.com/MikeAustin71/errpref)
 
-Currently, tests show code coverage at 96%.
+To run the test code, first review the command syntax in **`~/errprefops/technotes/HowToRunTests.md`** .
 
-To run the test code, first review the command syntax in [zzzzHowToRunTests](https://github.com/MikeAustin71/errpref/blob/main/zzzzHowToRunTests.md).
+Test results are stored in the text file, **`~/errpref/zzzzz_tests.txt`**
 
-Test results are stored in the text file, [zzzzz_tests.txt](https://github.com/MikeAustin71/errpref/blob/main/zzzzz_tests.txt)
+All 500+ tests are currently passing including new tests for newly added type ***ErrorGenericFactory***.  
 
 
 
 ## OS Support
 
-Tests are running successfully on Windows 10 and Ubuntu 20.04 LTS.
+***errpref*** versions prior to **Version 2.0.0** were tested successfully on Windows 10 and Ubuntu 20.04 LTS.
+
+***errpref*** **Version 2.0.0** has been tested on Windows 11. It should have no problems running on **Linux**, but as yet <u>no tests have been run on **Linux** operating systems</u>.
 
 
 
 ## Version
 
-The latest version is ***Version 1.7.1***.
+The latest version is ***Version 2.0.0***.
 
-As with all previous versions, this Version supports [Go Modules](https://golang.org/ref/mod).
-
-This version was compiled and tested using using ***Go*** ***Version 1.18.1***.
+This version was compiled and tested using using ***Go*** ***Version 1.27.3***.
 
 For more details, see the [Release Notes](./releasenotes.md).
 

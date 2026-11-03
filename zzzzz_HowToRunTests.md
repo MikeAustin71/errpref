@@ -30,9 +30,9 @@ None so far.
 First pull down and install the ***cover*** package.
 
 ***go get golang.org/x/tools/cmd/cover***
-  
+
 Next, follow the test execution protocol.  
-  
+
 ### Test Execution with Code Coverage
 
 ***go test -cover -v > zzzzz_tests.txt***  
