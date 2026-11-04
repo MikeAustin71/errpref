@@ -1,5 +1,5 @@
 ## Table of Contents
-- *errpref* - Adding function execution chains and error context to Error Messages In Go
+- ***errpref*** - Adding function execution chains and error context to Error Messages In Go
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/MikeAustin71/errpref.svg)](https://pkg.go.dev/github.com/MikeAustin71/errpref)
 
@@ -1559,14 +1559,43 @@ Test Code provides many usage examples for types ***ErrPref*** and ***ErrPrefixD
 Additional code examples can be found in the Error Prefix Examples Application located at [https://github.com/MikeAustin71/errorPrefixExamples](https://github.com/MikeAustin71/errorPrefixExamples).  This application also contains a "Concurrency" example.
 
 
-## Package Configuration and Import
 
+## User Package Import and Configuration
 
+There are two basic requirements:
 
-### Go Get Command
+1. **The User must add `import` statements to those source code files incorporating `errPref` functions, types, methods, constants etc.**
+2. **The User MUST configure the local `go.mod` file to reference the `errPref` package.**
+
+### Required ***Golang*** Source Code File Import Statement
 
 ```go
-go get github.com/MikeAustin71/errpref/@v1.7.1
+// For the later errpref versions (Version 2)
+
+import (
+
+	ePref "github.com/MikeAustin71/errpref/v2"
+)
+
+// For earlier 'errpref' versions (Version 1)
+import (
+
+	ePref "github.com/MikeAustin71/errpref"
+)
+
+
+```
+
+The import example above shows an alias of '**ePref**' which is optional.
+
+### ***go.mod*** File Configuration
+
+**Users** must also configure their local ***go.mod*** file. There are two options to accomplish this: 
+
+#### Option 1: Go Get Command
+
+```go
+go get github.com/MikeAustin71/errpref/@v2.0.1
 ```
 
 ​	-- or --
@@ -1575,22 +1604,55 @@ go get github.com/MikeAustin71/errpref/@v1.7.1
 go get github.com/MikeAustin71/errpref/@latest
 ```
 
+##### How a User Employs `go get` (The Standard Workflow)
 
+When a developer wants to use your `errpref` library in their own source code, they will follow these exact steps from their terminal:
 
-### Import Configuration
+##### Step 1: Initialize Their Own Project (If they haven't already)
 
-```go
+The **User** creates their project folder and initializes their own ***`gomod`*** module:
 
-import (
-
-	erPref "github.com/MikeAustin71/errpref"
-)
-
+```bash
+go mod init mytestproject
 ```
 
-The import example above shows an alias of 'erPref' which is optional.
+At this point, their `go.mod` file is completely empty of dependencies.
 
+##### Step 2: Run the Modern `go get` Command
 
+Instead of opening `go.mod` and guessing the syntax, the user simply runs the command in their terminal:
+
+```
+go get github.com/MikeAustin71/errpref/v2@v2.0.1
+```
+
+##### Step 3: What Go Autonomously Does to `go.mod`
+
+The moment that command executes, the Go toolchain does three things simultaneously:
+
+1. **Downloads the source code** for `v2.0.1` into the local machine's global module cache.
+
+2. **Modifies the user's `go.mod` file automatically**, adding the exact block you expected:
+
+   ```
+   require github.com/MikeAustin71/errpref/v2 v2.0.1
+   ```
+
+   
+
+3. **Creates or updates a `go.sum` file** next to it, which stores the cryptographic security hashes of your code to ensure it's never altered downstream.
+
+------
+
+#### Option 2: ***go.mod*** Manual Configuration
+
+If the ***go.mod*** file was previously created, simply add the following ***require*** statement to the existing ***go.mod*** file.
+
+```bash
+require github.com/MikeAustin71/errpref/v2 v2.0.1
+```
+
+###  
 
 ## External Dependencies
 
@@ -1612,19 +1674,27 @@ All 500+ tests are currently passing including new tests for newly added type **
 
 ## OS Support
 
-***errpref*** versions prior to **Version 2.0.0** were tested successfully on Windows 10 and Ubuntu 20.04 LTS.
+***errpref*** versions prior to **Version 2.0.1** were tested successfully on Windows 10 and Ubuntu 20.04 LTS.
 
-***errpref*** **Version 2.0.0** has been tested on Windows 11. It should have no problems running on **Linux**, but as yet <u>no tests have been run on **Linux** operating systems</u>.
+***errpref*** **Version 2.0.1** has been tested on Windows 11. It should have no problems running on **Linux**, but as yet, <u>no tests have been run on **Linux** operating systems</u>.
 
 
 
 ## Version
 
-The latest version is ***Version 2.0.0***.
+The latest version is ***Version 2.0.1***.
 
 This version was compiled and tested using using ***Go*** ***Version 1.27.3***.
 
 For more details, see the [Release Notes](./releasenotes.md).
+
+
+
+## ***errPref*** Source Code Repository
+
+The source code repository for ***errPref*** is **github.com/MikeAustin71/errpref/** . This repository is used to distribute release versions.
+
+The development repository is ***errprefops*** located at ***github.com/MikeAustin71/errprefops***
 
 
 
