@@ -1660,7 +1660,7 @@ The import example above shows an alias of '**ePref**' which is optional.
 #### Option 1: Go Get Command
 
 ```go
-go get github.com/MikeAustin71/errpref/@v2.0.1
+go get github.com/MikeAustin71/errpref/v2/@v2.0.1
 ```
 
 ​	-- or --
