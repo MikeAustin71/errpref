@@ -570,4 +570,4 @@ Root Cause parameters identified at top:
 === RUN   TestErrPrefixDto_Quark_000100
 --- PASS: TestErrPrefixDto_Quark_000100 (0.00s)
 PASS
-ok  	github.com/MikeAustin71/errprefops/errpref	0.237s
+ok  	github.com/MikeAustin71/errpref	0.196s
