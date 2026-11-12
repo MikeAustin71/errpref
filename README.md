@@ -66,7 +66,7 @@
 
 # ***errpref*** - Adding function execution chains and error context to Error Messages In Go
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/MikeAustin71/errpref.svg)](https://pkg.go.dev/github.com/MikeAustin71/errpref)
+[![Go Reference](https://pkg.go.dev/badge/github.com/MikeAustin71/errpref.svg)](https://pkg.go.dev/github.com/MikeAustin71/errpref/v2)
 
 **The *errpref* software package contains GoLang custom types designed to facilitate and improve the process of identifying, tracing and understanding errors generated in code.**
 
@@ -2310,6 +2310,12 @@ The latest version is ***Version 2.0.1***.
 This version was compiled and tested using using ***Go*** ***Version 1.27.3***.
 
 For more details, see the [Release Notes](./releasenotes.md).
+
+
+
+## Documentation
+
+[Source Code Documentation](https://pkg.go.dev/github.com/MikeAustin71/errpref/v2)
 
 
 
